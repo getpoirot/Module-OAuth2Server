@@ -1,0 +1,12 @@
+{
+    "name": "poirot/mod-oauth2_server"
+    , "authors": [
+        {
+            "name": "Payam Naderi"
+            , "email": "naderi.payam@gmail.com"
+        }
+    ]
+    , "require": {
+        "poirot/authsystem": "dev-devel"
+    }
+}
