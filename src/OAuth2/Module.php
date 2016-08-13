@@ -2,6 +2,7 @@
 namespace Module\OAuth2;
 
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
+use Poirot\Application\ModuleManager\Interfaces\iModuleManager;
 use Poirot\Application\Sapi;
 
 use Poirot\Ioc\Container;
@@ -28,6 +29,7 @@ use Poirot\Std\Interfaces\Struct\iDataEntity;
 
 class Module implements iSapiModule
     , Sapi\Module\Feature\FeatureModuleAutoload
+    , Sapi\Module\Feature\FeatureModuleInitModuleManager
     , Sapi\Module\Feature\FeatureOnPostLoadModulesGrabServices
     , Sapi\Module\Feature\FeatureModuleMergeConfig
 {
@@ -49,6 +51,23 @@ class Module implements iSapiModule
         $nameSpaceLoader->addResource('Poirot\OAuth2', __DIR__. '/../../vendor/poirot/');
         
         require_once __DIR__ . '/../../vendor/poirot/Poirot/OAuth2/_functions.php';
+    }
+
+    /**
+     * Initialize Module Manager
+     *
+     * priority: 1000 C
+     *
+     * @param iModuleManager $moduleManager
+     *
+     * @return void
+     */
+    function initModuleManager(iModuleManager $moduleManager)
+    {
+        if (!$moduleManager->hasLoaded('Authorization'))
+            // Authorization Module Is Required.
+            $moduleManager->loadModule('Authorization');
+
     }
 
     /**
