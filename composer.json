@@ -6,7 +6,4 @@
             , "email": "naderi.payam@gmail.com"
         }
     ]
-    , "require": {
-        "poirot/authsystem": "dev-devel"
-    }
 }
