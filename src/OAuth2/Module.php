@@ -3,7 +3,7 @@ namespace Module\OAuth2;
 
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\ModuleManager\Interfaces\iModuleManager;
-use Poirot\Application\Sapi;
+use Poirot\Application\Interfaces\Sapi;
 
 use Poirot\Ioc\Container;
 
@@ -28,10 +28,10 @@ use Poirot\Std\Interfaces\Struct\iDataEntity;
  */
 
 class Module implements iSapiModule
-    , Sapi\Module\Feature\FeatureModuleAutoload
-    , Sapi\Module\Feature\FeatureModuleInitModuleManager
-    , Sapi\Module\Feature\FeatureOnPostLoadModulesGrabServices
-    , Sapi\Module\Feature\FeatureModuleMergeConfig
+    , Sapi\Module\Feature\iFeatureModuleAutoload
+    , Sapi\Module\Feature\iFeatureModuleInitModuleManager
+    , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
+    , Sapi\Module\Feature\iFeatureModuleMergeConfig
 {
     /**
      * Register class autoload on Autoload
