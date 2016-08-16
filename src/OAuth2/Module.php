@@ -47,7 +47,7 @@ class Module implements iSapiModule
         #$nameSpaceLoader = \Poirot\Loader\Autoloader\LoaderAutoloadNamespace::class;
         $nameSpaceLoader = 'Poirot\Loader\Autoloader\LoaderAutoloadNamespace';
         /** @var LoaderAutoloadNamespace $nameSpaceLoader */
-        $nameSpaceLoader = $baseAutoloader->by($nameSpaceLoader);
+        $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
         $nameSpaceLoader->addResource('Poirot\OAuth2', __DIR__. '/../../vendor/poirot/');
         
         require_once __DIR__ . '/../../vendor/poirot/Poirot/OAuth2/_functions.php';
