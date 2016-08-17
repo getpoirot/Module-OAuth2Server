@@ -5,8 +5,10 @@ use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\ModuleManager\Interfaces\iModuleManager;
 use Poirot\Application\Interfaces\Sapi;
 
+use Poirot\Application\Sapi\Module\ContainerForFeatureActions;
 use Poirot\Ioc\Container;
 
+use Poirot\Ioc\Container\BuildContainer;
 use Poirot\Loader\Autoloader\LoaderAutoloadAggregate;
 use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
 use Poirot\Loader\Interfaces\iLoaderAutoload;
@@ -19,19 +21,12 @@ use Poirot\Router\Interfaces\iRouterStack;
 use Poirot\Std\Interfaces\Struct\iDataEntity;
 
 
-/**
- * [] Exception Handler
- * [] Repositories
- * [] EndPoints
- * [] Grant Types
- * [] Server
- */
-
 class Module implements iSapiModule
     , Sapi\Module\Feature\iFeatureModuleAutoload
     , Sapi\Module\Feature\iFeatureModuleInitModuleManager
-    , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
     , Sapi\Module\Feature\iFeatureModuleMergeConfig
+    , Sapi\Module\Feature\iFeatureModuleNestActions
+    , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
     /**
      * Register class autoload on Autoload
@@ -49,7 +44,8 @@ class Module implements iSapiModule
         /** @var LoaderAutoloadNamespace $nameSpaceLoader */
         $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
         $nameSpaceLoader->addResource('Poirot\OAuth2', __DIR__. '/../../vendor/poirot/');
-        
+        $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
+
         require_once __DIR__ . '/../../vendor/poirot/Poirot/OAuth2/_functions.php';
     }
 
@@ -88,6 +84,20 @@ class Module implements iSapiModule
     }
 
     /**
+     * Get Action Services
+     *
+     * priority not that serious
+     *
+     * - return Array used to Build ModuleActionsContainer
+     *
+     * @return array|ContainerForFeatureActions|BuildContainer|\Traversable
+     */
+    function getActions()
+    {
+        return include __DIR__.'/../../config/actions.conf.php';
+    }
+    
+    /**
      * Resolve to service with name
      *
      * - each argument represent requested service by registered name
@@ -96,12 +106,14 @@ class Module implements iSapiModule
      *
      * ! after all modules loaded
      *
-     * @param iRouterStack                   $router
+     * @param iRouterStack $router
+     * @param LoaderAggregate $viewModelResolver
      *
      * @internal param null $services service names must have default value
      */
     function resolveRegisteredServices(
         $router = null
+        , $viewModelResolver = null
     ) {
         # Register Http Routes:
         if ($router) {
@@ -109,6 +121,15 @@ class Module implements iSapiModule
             $buildRoute = new BuildRouterStack();
             $buildRoute->setRoutes($routes);
             $buildRoute->build($router);
+        }
+
+        # ViewScripts To View Resolver:
+        if ($viewModelResolver) {
+            /** @var LoaderNamespaceStack $resolver */
+            $resolver = $viewModelResolver->loader('Poirot\Loader\LoaderNamespaceStack');
+            $resolver->with(array(
+                'main/oauth' => __DIR__. '/../../view/main/oauth',
+            ));
         }
     }
 }

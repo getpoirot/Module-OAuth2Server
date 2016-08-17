@@ -1,5 +1,22 @@
 <?php
 return array(
+
+    Module\Authorization\Module::CONF_KEY => array(
+        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => array(
+            'oauth_routes' => array(
+                '_class_' => array(
+                    \Module\Authorization\Guard\GuardRoute::class,
+                    'options' => array(
+                        'authenticator' => \Module\Authorization\Module\AuthenticatorFacade::AUTHENTICATOR_DEFAULT,
+                        'routes_denied' => array(
+                            'main/oauth/authorize',
+                        ),
+                    ),
+                )
+            ),
+        ),
+    ),
+
     Module\MongoDriver\Module::CONF_KEY => array(
         'clients' => array(
             'anar_production'
@@ -15,4 +32,5 @@ return array(
             ),
         ),
     ),
+
 );

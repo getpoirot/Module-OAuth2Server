@@ -8,12 +8,6 @@ return array(
             'criteria'    => '/oauth',
             'match_whole' => false,
         ),
-        'params'  => array(
-            ListenerDispatch::CONF_KEY => function()
-            {
-                k('OAuth');
-            },
-        ),
         'routes' => array(
             'authorize' => array(
                 'route' => 'RouteSegment',
@@ -21,10 +15,7 @@ return array(
                     'criteria'    => '/authorize',
                 ),
                 'params'  => array(
-                    ListenerDispatch::CONF_KEY => function()
-                    {
-                        kd('Authorize');
-                    },
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/authorize',
                 ),
             ),
             'token' => array(
@@ -33,10 +24,7 @@ return array(
                     'criteria'    => '/token',
                 ),
                 'params'  => array(
-                    ListenerDispatch::CONF_KEY => function()
-                    {
-                        kd('Token');
-                    },
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/token',
                 ),
             ),
         ),
