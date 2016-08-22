@@ -15,7 +15,7 @@ return array(
                     'criteria'    => '/authorize',
                 ),
                 'params'  => array(
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/authorize',
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Authorize',
                 ),
             ),
             'token' => array(
@@ -24,7 +24,7 @@ return array(
                     'criteria'    => '/token',
                 ),
                 'params'  => array(
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/token',
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RespondToRequest',
                 ),
             ),
         ),

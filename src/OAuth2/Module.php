@@ -1,20 +1,22 @@
 <?php
 namespace Module\OAuth2;
 
+use Module\OAuth2\Services\BuildContainerOfNestedServices;
+
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\ModuleManager\Interfaces\iModuleManager;
 use Poirot\Application\Interfaces\Sapi;
-
 use Poirot\Application\Sapi\Module\ContainerForFeatureActions;
-use Poirot\Ioc\Container;
 
+use Poirot\Ioc\Container;
 use Poirot\Ioc\Container\BuildContainer;
+
 use Poirot\Loader\Autoloader\LoaderAutoloadAggregate;
 use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
 use Poirot\Loader\Interfaces\iLoaderAutoload;
 use Poirot\Loader\LoaderAggregate;
-
 use Poirot\Loader\LoaderNamespaceStack;
+
 use Poirot\Router\BuildRouterStack;
 use Poirot\Router\Interfaces\iRouterStack;
 
@@ -25,9 +27,13 @@ class Module implements iSapiModule
     , Sapi\Module\Feature\iFeatureModuleAutoload
     , Sapi\Module\Feature\iFeatureModuleInitModuleManager
     , Sapi\Module\Feature\iFeatureModuleMergeConfig
+    , Sapi\Module\Feature\iFeatureModuleNestServices
     , Sapi\Module\Feature\iFeatureModuleNestActions
     , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
+    const CONF_KEY = 'module.oauth2';
+    
+    
     /**
      * Register class autoload on Autoload
      *
@@ -43,9 +49,12 @@ class Module implements iSapiModule
         $nameSpaceLoader = 'Poirot\Loader\Autoloader\LoaderAutoloadNamespace';
         /** @var LoaderAutoloadNamespace $nameSpaceLoader */
         $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
-        $nameSpaceLoader->addResource('Poirot\OAuth2', __DIR__. '/../../vendor/poirot/');
         $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
-
+        
+        require_once __DIR__ . '/_functions.php';
+        
+        
+        $nameSpaceLoader->addResource('Poirot\OAuth2', __DIR__. '/../../vendor/poirot/Poirot/OAuth2');
         require_once __DIR__ . '/../../vendor/poirot/Poirot/OAuth2/_functions.php';
     }
 
@@ -64,6 +73,9 @@ class Module implements iSapiModule
             // Authorization Module Is Required.
             $moduleManager->loadModule('Authorization');
 
+        if (!$moduleManager->hasLoaded('MongoDriver'))
+            // MongoDriver Module Is Required.
+            $moduleManager->loadModule('MongoDriver');
     }
 
     /**
@@ -95,6 +107,26 @@ class Module implements iSapiModule
     function getActions()
     {
         return include __DIR__.'/../../config/actions.conf.php';
+    }
+
+    /**
+     * Get Nested Module Services
+     *
+     * priority not that serious
+     *
+     * @return array|BuildContainer|\Traversable
+     */
+    function getServices()
+    {
+        $builder = new BuildContainerOfNestedServices;
+        
+        $confFile = __DIR__.'/../../config/nest-services.conf.php';
+        if (file_exists($confFile)) {
+            $conf = include $confFile;
+            $builder->with($builder::parseWith($conf));
+        }
+
+        return $builder;
     }
     
     /**
