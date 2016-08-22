@@ -39,6 +39,26 @@ return array(
                         ),
                     ),
                 ),
+
+                array(
+                    \Poirot\Config\INIT_INS => array(
+                        \Poirot\OAuth2\Server\Grant\GrantRefreshToken::class,
+                        'options' => array(
+                            'repo_client' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Clients'), // this is registered service
+                            ),
+                            'repo_user' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users'), // this is registered service
+                            ),
+                            'repo_access_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/AccessToken'),
+                            ),
+                            'repo_refresh_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/RefreshToken'),
+                            ),
+                        ),
+                    ),
+                ),
             ),
         ),
     ),
