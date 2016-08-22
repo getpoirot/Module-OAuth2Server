@@ -8,6 +8,7 @@ use Poirot\Http\HttpResponse;
 
 use Poirot\Http\Psr\ResponseBridgeInPsr;
 
+use Poirot\OAuth2\Server\Grant\Exception\exInvalidRequest;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
 class RespondToRequest extends aAction
@@ -15,10 +16,11 @@ class RespondToRequest extends aAction
     /**
      * Respond To Access Token Requests
      *
-     * @param HttpRequest $request Injected service
+     * @param HttpRequest  $request  Injected service
      * @param HttpResponse $response Injected service
-     *
+     * 
      * @return HttpResponse
+     * @throws exInvalidRequest
      */
     function __invoke(HttpRequest $request = null, HttpResponse $response = null)
     {
@@ -27,6 +29,9 @@ class RespondToRequest extends aAction
 
         /** @var GrantAggregateGrants $aggregateGrant */
         $aggregateGrant = $this->GetGrantResponderService();
+        if (!$aggregateGrant->canRespondToRequest($requestPsr))
+            throw new exInvalidRequest;
+        
         $responsePsr    = $aggregateGrant->respond($requestPsr, $responsePsr);
 
         $responsePsr = \Poirot\Http\parseResponseFromPsr($responsePsr);

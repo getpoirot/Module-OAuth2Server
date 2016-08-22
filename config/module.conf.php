@@ -10,23 +10,32 @@ return array(
                         \Poirot\OAuth2\Server\Grant\GrantClientCredentials::class,
                         'options' => array(
                             'repo_client' => array(
+                                // Clients as registered service
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Clients'),
+                            ),
+                            'repo_access_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/AccessToken'),
+                            ),
+                        ),
+                    ),
+                ),
+
+                array(
+                    \Poirot\Config\INIT_INS => array(
+                        \Poirot\OAuth2\Server\Grant\GrantPassword::class,
+                        'options' => array(
+                            'repo_client' => array(
                                 \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Clients'), // this is registered service
                             ),
-                            'repo_access_token' => new \Module\OAuth2\Model\Repo\Stateless\AccessTokens(
-                                new \Poirot\OAuth2\Crypt\Base64\Crypt()
+                            'repo_user' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users'), // this is registered service
                             ),
-                            // TODO with this config php exit on instancing initialized object without no error/exception
-                            //      on Container ServiceInstance->newService()
-                            /*'repo_access_token' => array(
-                                \Poirot\Config\INIT_INS => array(
-                                    \Module\OAuth2\Model\Repo\Stateless\AccessTokens::class,
-                                    'encryption' => array(
-                                        \Poirot\Config\INIT_INS => array(
-                                            \Poirot\OAuth2\Crypt\Base64\Crypt::class,
-                                        ),
-                                    ),
-                                ),
-                            ),*/
+                            'repo_access_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/AccessToken'),
+                            ),
+                            'repo_refresh_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/RefreshToken'),
+                            ),
                         ),
                     ),
                 ),
@@ -55,10 +64,6 @@ return array(
     Module\MongoDriver\Module::CONF_KEY => array(
 
         \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => array(
-            // Configuration of Repository Service.
-            // Usually Implemented with modules that implement mongo usage
-            // with specific key name as repo name.
-            // @see aServiceRepository bellow
             \Module\OAuth2\Services\Repository\ServiceRepoClients::class => array(
                 'collection' => array(
                     // query on which collection
@@ -68,6 +73,18 @@ return array(
                     // ensure indexes
                     'indexes' => array(
                         array( 'key' => array('_id' => 1, 'secret_key' => 1) ),
+                    )
+                ),
+            ),
+            \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => array(
+                'collection' => array(
+                    // query on which collection
+                    'name' => 'oauth.users',
+                    // which client to connect and query with
+                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    // ensure indexes
+                    'indexes' => array(
+                        array( 'key' => array('username' => 1, 'credential' => 1) ),
                     )
                 ),
             ),
