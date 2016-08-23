@@ -24,16 +24,16 @@ class Users extends aRepository
     // Implements iRepoUser:
     
     /**
-     * Find User By Identifier
+     * Find User By Identifier (username)
      *
-     * @param string|int $identifier
+     * @param string $identifier
      *
      * @return iEntityUser|false
      */
     function findByIdentifier($identifier)
     {
         $r = $this->_query()->findOne([
-            'username' => $identifier,
+            'identifier' => $identifier,
         ]);
 
         return $r;
@@ -42,7 +42,7 @@ class Users extends aRepository
     /**
      * Find User By Combination Of Username/Password (identifier/credential)
      *
-     * @param string|int $identifier
+     * @param string $identifier
      * @param string $credential
      *
      * @return iEntityUser|false
@@ -50,7 +50,7 @@ class Users extends aRepository
     function findByUserCredential($identifier, $credential)
     {
         $r = $this->_query()->findOne([
-            'username'   => $identifier,
+            'identifier' => $identifier,
             'credential' => md5($credential),
         ]);
 

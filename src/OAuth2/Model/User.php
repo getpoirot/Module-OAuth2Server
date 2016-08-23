@@ -20,9 +20,9 @@ class User extends aPersistable
         return $this->_id;
     }
 
-    function set_Id($identifier)
+    function set_Id($_id)
     {
-        $this->_id = $identifier;
+        $this->_id = $_id;
         return $this;
     }
 

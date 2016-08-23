@@ -33,15 +33,22 @@ class AccessTokens
      */
     function insert(iEntityAccessToken $token)
     {
-        $tokenArray = \Poirot\Std\cast($token)->toArray();
+        $tokenData = array(
+            ## this identifier give back when unserialize token
+            #- it can be the used as id on other persistence
+            'identifier'              => $token->getIdentifier(),
+            'client_identifier'       => $token->getClientIdentifier(),
+            'expiry_date_time'        => $token->getExpiryDateTime(),
+            'scopes'                  => $token->getScopes(),
+            'owner_identifier'        => $token->getOwnerIdentifier(),
+        );
 
         // Identifier will give back to user as token
-        $identifier = serialize($tokenArray);
+        $identifier = serialize($tokenData);
         $identifier = $this->encryption->encrypt($identifier);
 
-        $newToken = new AccessToken($tokenArray);
+        $newToken = new AccessToken($tokenData);
         $newToken->setIdentifier($identifier);
-
         return $newToken;
     }
 
@@ -54,10 +61,11 @@ class AccessTokens
      */
     function findByIdentifier($tokenIdentifier)
     {
-        $token = $this->encryption->decrypt($tokenIdentifier);
-        $token = unserialize($token);
-        
-        $token = new AccessToken($token);
+        $tokenData = $this->encryption->decrypt($tokenIdentifier);
+        $tokenData = unserialize($tokenData);
+
+        $token = new AccessToken($tokenData);
+        $token->setIdentifier($tokenIdentifier); // replace identifier to stateless one
         return $token;
     }
 
