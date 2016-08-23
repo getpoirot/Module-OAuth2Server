@@ -32,7 +32,7 @@ class Module implements iSapiModule
     , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
     const CONF_KEY = 'module.oauth2';
-    
+    const AUTHENTICATOR = 'module.oauth2.default_authenticator';
     
     /**
      * Register class autoload on Autoload

@@ -5,14 +5,14 @@ return array(
     'oauth'  => array(
         'route' => 'RouteSegment',
         'options' => array(
-            'criteria'    => '/oauth',
+            'criteria'    => '/auth',
             'match_whole' => false,
         ),
         'routes' => array(
             'authorize' => array(
                 'route' => 'RouteSegment',
                 'options' => array(
-                    'criteria'    => '/authorize',
+                    'criteria'    => '/',
                 ),
                 'params'  => array(
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Authorize',
