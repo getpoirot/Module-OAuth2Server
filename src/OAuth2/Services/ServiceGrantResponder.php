@@ -28,14 +28,13 @@ class ServiceGrantResponder
         $config = $sapi->config();
         $config = $config->get(\Module\OAuth2\Module::CONF_KEY);
 
-        $settings = null;
+        $grantsAggregate = new GrantAggregateGrants;
         if (is_array($config) && isset($config[self::CONF_KEY])) {
             $settings = $config[self::CONF_KEY];
             $settings = \Poirot\Config\instanceInitialized($settings);
+            $grantsAggregate->with($grantsAggregate::parseWith($settings));
         }
 
-        $grantsAggregate = new GrantAggregateGrants;
-        $grantsAggregate->with($grantsAggregate::parseWith($settings));
         return $grantsAggregate;
     }
 }

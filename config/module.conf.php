@@ -1,10 +1,27 @@
 <?php
 return array(
 
-    \Module\OAuth2\Module::CONF_KEY => array(
+    \Module\OAuth2\Module::CONF_KEY 
+    => array(
         \Module\OAuth2\Services\ServiceGrantResponder::CONF_KEY => array(
             ## Options given to GrantResponder Service
             'attached_grants' => array(
+                ## Grant Authorization Implicit:
+                array(
+                    \Poirot\Config\INIT_INS => array(
+                        \Poirot\OAuth2\Server\Grant\GrantImplicit::class,
+                        'options' => array(
+                            'retrieve_user_callback' => array(
+                                // Clients as registered service
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/actions/RetrieveAuthenticatedUser'), ),
+                            'repo_client' => array(
+                                // Clients as registered service
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Clients'), ),
+                            'repo_access_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/AccessToken'), ),
+                            ),
+                    ),
+                ),
                 ## Grant Client Credential:
                 array(
                     \Poirot\Config\INIT_INS => array(
@@ -48,39 +65,48 @@ return array(
     ),  ),  ),
     
     
-    Module\Authorization\Module::CONF_KEY => array(
+    Module\Authorization\Module::CONF_KEY 
+    => array(
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS => array(
             \Module\OAuth2\Module::AUTHENTICATOR => array(
                 'realm'      => \Poirot\AuthSystem\Authenticate\Identifier\aIdentifier::DEFAULT_REALM,
                 'identifier' => array(
                     \Poirot\Config\INIT_INS   => array(
-                        '\Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth',
+                        \Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
                         'options' => array(
                             'credential_adapter' => array(
                                 \Poirot\Config\INIT_INS => array(
-                                    'Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
+                                    \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
                                     'options' => array(
-                                        'pwd_file_path' => __DIR__.'/../data/users.pws', ),  ),  ),  ),  ),  ),
+                                        ## Users as registered service
+                                        'repo_users' => array(
+                                            \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users')
+                                        ), ),  ),  ),  ),  ),  ),
 
                 ## default adapter to authenticator::authenticate
                 'adapter' => array(
-                    \Poirot\Config\INIT_INS   => array(
-                        '\Poirot\AuthSystem\Authenticate\RepoIdentityCredential\IdentityCredentialDigestFile',
+                    \Poirot\Config\INIT_INS => array(
+                        \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
                         'options' => array(
-                            'pwd_file_path' => __DIR__.'/../data/users.pws',  ),  ),  ),  ),  ),
+                            ## Users as registered service
+                            'repo_users' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users')
+                            ), ),  ),  ), ),  ),
+
 
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => array(
             'oauth_routes' => array(
                 \Poirot\Config\INIT_INS => array(
                     \Module\Authorization\Guard\GuardRoute::class,
                     'options' => array(
-                        'authenticator' => \Module\Authorization\Module\AuthenticatorFacade::AUTHENTICATOR_DEFAULT,
+                        'authenticator' => \Module\OAuth2\Module::AUTHENTICATOR,
                         'routes_denied' => array(
                             'main/oauth/authorize',  ),  ),  ),  ),  ),
     ),
 
     
-    Module\MongoDriver\Module::CONF_KEY => array(
+    Module\MongoDriver\Module::CONF_KEY 
+    => array(
         \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => array(
             \Module\OAuth2\Services\Repository\ServiceRepoClients::class => array(
                 'collection' => array(

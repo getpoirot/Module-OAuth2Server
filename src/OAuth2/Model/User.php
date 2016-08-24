@@ -46,4 +46,14 @@ class User extends aPersistable
     {
         $this->identifier = (string) $identifier;
     }
+
+    /**
+     * Get Credential
+     *
+     * @return string
+     */
+    function getCredential()
+    {
+        return $this->credential;
+    }
 }

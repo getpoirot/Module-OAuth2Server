@@ -16,7 +16,10 @@ namespace Module\OAuth2
     function factoryBridgeInPsrServerRequest(HttpRequest $request)
     {
         $_server = PhpServer::_($request)->getServer();
-
+        $_get    = PhpServer::_($request)->getQuery();
+        $_post   = PhpServer::_($request)->getPost();
+        $cookie  = PhpServer::_($request)->getCookie();
+        
         $headers = array();
         /** @var iHeader $header */
         foreach ($request->headers() as $header)
@@ -32,9 +35,9 @@ namespace Module\OAuth2
         );
 
         $requestPsr = $requestPsr
-            ->withCookieParams($_COOKIE)
-            ->withQueryParams($_GET)
-            ->withParsedBody($_POST)
+            ->withCookieParams(\Poirot\Std\cast($cookie)->toArray())
+            ->withQueryParams(\Poirot\Std\cast($_get)->toArray())
+            ->withParsedBody(\Poirot\Std\cast($_post)->toArray())
         ;
         
         return $requestPsr;

@@ -3,10 +3,13 @@ namespace Module\OAuth2\Actions;
 
 use Module\Foundation\Actions\aAction;
 
+use Poirot\Http\HttpRequest;
+use Poirot\Http\HttpResponse;
+
 class Authorize extends aAction
 {
-    function __invoke()
+    function __invoke(HttpRequest $request = null, HttpResponse $response = null)
     {
-        kd('Authorize');
+        return $this->RespondToRequest($request, $response);
     }
 }

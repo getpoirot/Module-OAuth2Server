@@ -26,7 +26,6 @@ class RespondToRequest extends aAction
     {
         $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
         $responsePsr = new ResponseBridgeInPsr($response);
-
         /** @var GrantAggregateGrants $aggregateGrant */
         $aggregateGrant = $this->GetGrantResponderService();
         if (!$aggregateGrant->canRespondToRequest($requestPsr))
