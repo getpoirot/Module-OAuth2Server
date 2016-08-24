@@ -24,6 +24,7 @@ class RetrieveAuthenticatedUser extends aAction
             return false;
 
         $identity = $identifier->withIdentity();
+
         $user = new User($identity);
         if ($user->getIdentifier() === null)
             throw new \Exception(sprintf(

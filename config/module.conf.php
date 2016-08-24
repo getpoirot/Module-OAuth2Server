@@ -6,6 +6,27 @@ return array(
         \Module\OAuth2\Services\ServiceGrantResponder::CONF_KEY => array(
             ## Options given to GrantResponder Service
             'attached_grants' => array(
+                ## Grant Authorization Code:
+                array(
+                    \Poirot\Config\INIT_INS => array(
+                        \Poirot\OAuth2\Server\Grant\GrantAuthCode::class,
+                        'options' => array(
+                            'retrieve_user_callback' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/actions/RetrieveAuthenticatedUser'), ),
+                            'repo_client' => array(
+                                // Clients as registered service
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Clients'), ),
+                            'repo_user' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users'),  ),
+                            'repo_auth_code' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/AuthorizationCode'),  ),
+                            'repo_refresh_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/RefreshToken'),  ),
+                            'repo_access_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/AccessToken'),  ),
+                        ),
+                    ),
+                ),
                 ## Grant Authorization Implicit:
                 array(
                     \Poirot\Config\INIT_INS => array(
@@ -72,16 +93,34 @@ return array(
                 'realm'      => \Poirot\AuthSystem\Authenticate\Identifier\aIdentifier::DEFAULT_REALM,
                 'identifier' => array(
                     \Poirot\Config\INIT_INS   => array(
-                        \Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
+                        \Poirot\AuthSystem\Authenticate\Identifier\IdentifierWrapIdentityMap::class,
                         'options' => array(
-                            'credential_adapter' => array(
-                                \Poirot\Config\INIT_INS => array(
-                                    \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
+                            'identifier' => array(
+                                \Poirot\Config\INIT_INS   => array(
+                                    \Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
                                     'options' => array(
-                                        ## Users as registered service
-                                        'repo_users' => array(
+                                        'credential_adapter' => array(
+                                            \Poirot\Config\INIT_INS => array(
+                                                \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
+                                                'options' => array(
+                                                    ## Users as registered service
+                                                    'repo_users' => array(
+                                                        \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users')
+                                                    ), ),  ),  ),  ),  ),
+                            ),
+                            'identity' => array(
+                                \Poirot\Config\INIT_INS   => array(
+                                    \Module\OAuth2\Model\Authenticate\IdentityFulfillmentLazy::class,
+                                    'options' => array(
+                                        'provider' => array(
                                             \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users')
-                                        ), ),  ),  ),  ),  ),  ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
 
                 ## default adapter to authenticator::authenticate
                 'adapter' => array(

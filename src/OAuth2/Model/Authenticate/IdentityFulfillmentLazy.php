@@ -9,6 +9,7 @@ class IdentityFulfillmentLazy
     implements iEntityUser
 {
     protected $identifier;
+    protected $credential;
 
 
     /**
@@ -37,8 +38,13 @@ class IdentityFulfillmentLazy
      */
     function getIdentifier()
     {
+        if (!$this->_isDataLoaded())
+            // load data to represent all properties
+            $this->_loadData();
+        
         return $this->identifier;
     }
+
 
     /**
      * Get Credential
@@ -47,7 +53,17 @@ class IdentityFulfillmentLazy
      */
     function getCredential()
     {
+        if (!$this->_isDataLoaded())
+            // load data to represent all properties
+            $this->_loadData();
+        
         return $this->credential;
+    }
+
+    function setCredential($credential)
+    {
+        $this->credential = (string) $credential;
+        return $this;
     }
 
 

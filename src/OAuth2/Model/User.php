@@ -11,6 +11,7 @@ class User extends aPersistable
 {
     protected $_id;
     protected $identifier;
+    protected $credential;
 
 
     # proxy calls to work with mongo persist
@@ -55,5 +56,11 @@ class User extends aPersistable
     function getCredential()
     {
         return $this->credential;
+    }
+    
+    function setCredential($credential)
+    {
+        $this->credential = (string) $credential;
+        return $this;
     }
 }
