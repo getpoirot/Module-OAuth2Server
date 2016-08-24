@@ -24,7 +24,13 @@ class RetrieveAuthenticatedUser extends aAction
             return false;
 
         $identity = $identifier->withIdentity();
+        $user = new User($identity);
+        if ($user->getIdentifier() === null)
+            throw new \Exception(sprintf(
+                'Identifier (%s) With Identity (%s) not fulfilled OAuth Entity User on "identifier" property.'
+                , get_class($identifier), get_class($identity)
+            ));
 
-        return new User($identity);
+        return $user;
     }
 }

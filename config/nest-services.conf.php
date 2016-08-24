@@ -14,6 +14,10 @@ return [
                     ':class'  => \Module\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
                     'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                 ],
+                'AuthorizationCode' => [
+                    ':class'  => \Module\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
+                    'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                ],
             ],
         ],
     ],
