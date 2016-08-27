@@ -1,0 +1,11 @@
+<?php
+/**
+ * @var \Module\Foundation\HttpSapi\ViewModelRenderer $this
+ * @var \Poirot\OAuth2\Server\Exception\exOAuthServer $exception
+ */
+$exception = $exception->getPrevious();
+?>
+<section id="error" class="container">
+    <h1>OAuth Server Error !!</h1>
+    <h4><?php echo $exception->getErrorDescription(); ?></h4>
+</section>

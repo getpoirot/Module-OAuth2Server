@@ -8,30 +8,49 @@ use Poirot\Http\HttpResponse;
 
 use Poirot\Http\Psr\ResponseBridgeInPsr;
 
-use Poirot\OAuth2\Server\Grant\Exception\exInvalidRequest;
+use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
+/**
+ * @method GrantAggregateGrants GetGrantResponderService()
+ */
 class RespondToRequest extends aAction
 {
     /**
      * Respond To Access Token Requests
      *
-     * @param HttpRequest  $request  Injected service
+     * @param HttpRequest $request Injected service
      * @param HttpResponse $response Injected service
-     * 
      * @return HttpResponse
-     * @throws exInvalidRequest
+     *
+     * @throws static
      */
     function __invoke(HttpRequest $request = null, HttpResponse $response = null)
     {
-        $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
         $responsePsr = new ResponseBridgeInPsr($response);
-        /** @var GrantAggregateGrants $aggregateGrant */
+
+        $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
         $aggregateGrant = $this->GetGrantResponderService();
-        if (!$aggregateGrant->canRespondToRequest($requestPsr))
-            throw new exInvalidRequest;
         
-        $responsePsr    = $aggregateGrant->respond($requestPsr, $responsePsr);
+        try {
+            if (!$aggregateGrant->canRespondToRequest($requestPsr))
+                throw exOAuthServer::unsupportedGrantType();
+
+            $responsePsr    = $aggregateGrant->respond($requestPsr, $responsePsr);
+            
+        } catch (\Exception $e)
+        {
+            // Just Rise OAuth Exceptions Error
+            $responder = null;
+
+            $exception = $e;
+            if (!$e instanceof exOAuthServer) {
+                $responder = $aggregateGrant->lastGrantResponder()->newGrantResponse();
+                $exception = exOAuthServer::serverError($e->getMessage(), $responder);
+            }
+            
+            $responsePsr = $exception->buildResponse($responsePsr);
+        }
 
         $responsePsr = \Poirot\Http\parseResponseFromPsr($responsePsr);
         $response    = new HttpResponse($responsePsr);

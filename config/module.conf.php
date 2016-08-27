@@ -178,4 +178,13 @@ return array(
                 'db'   => 'kookoja',  ),  ),
 
     ),
+
+    // View Renderer Options
+    \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
+    => array(
+        \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => array(
+            // Display Authentication Exceptions Specific Template
+            \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth-server',
+        ),
+    ),
 );

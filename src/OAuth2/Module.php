@@ -161,6 +161,7 @@ class Module implements iSapiModule
             $resolver = $viewModelResolver->loader('Poirot\Loader\LoaderNamespaceStack');
             $resolver->with(array(
                 'main/oauth' => __DIR__. '/../../view/main/oauth',
+                'error/oauth-server' => __DIR__. '/../../view/error/oauth-server',
             ));
         }
     }
