@@ -36,7 +36,7 @@ class RespondToRequest extends aAction
             if (!$aggregateGrant->canRespondToRequest($requestPsr))
                 throw exOAuthServer::unsupportedGrantType();
 
-            $responsePsr    = $aggregateGrant->respond($requestPsr, $responsePsr);
+            $responsePsr    = $aggregateGrant->respond($responsePsr);
             
         } catch (\Exception $e)
         {
@@ -48,7 +48,7 @@ class RespondToRequest extends aAction
                 $responder = $aggregateGrant->lastGrantResponder()->newGrantResponse();
                 $exception = exOAuthServer::serverError($e->getMessage(), $responder);
             }
-            
+
             $responsePsr = $exception->buildResponse($responsePsr);
         }
 
