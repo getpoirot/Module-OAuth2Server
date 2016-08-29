@@ -56,6 +56,7 @@ class Client extends aPersistable
     function setIdentifier($identifier)
     {
         $this->identifier = (string) $identifier;
+        return $this;
     }
 
     /**
@@ -77,6 +78,7 @@ class Client extends aPersistable
     function setClientType($clientType)
     {
         $this->clientType = $clientType;
+        return $this;
     }
 
     /**
@@ -96,6 +98,7 @@ class Client extends aPersistable
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
@@ -115,6 +118,7 @@ class Client extends aPersistable
     public function setDescription($description)
     {
         $this->description = $description;
+        return $this;
     }
 
     /**
@@ -134,6 +138,7 @@ class Client extends aPersistable
     public function setImage($image)
     {
         $this->image = $image;
+        return $this;
     }
 
     /**
@@ -152,6 +157,7 @@ class Client extends aPersistable
     public function setSecretKey($secretKey)
     {
         $this->secretKey = $secretKey;
+        return $this;
     }
 
     /**
@@ -171,6 +177,7 @@ class Client extends aPersistable
     public function setOwnerIdentifier($ownerIdentifier)
     {
         $this->ownerIdentifier = $ownerIdentifier;
+        return $this;
     }
 
     /**
@@ -191,6 +198,7 @@ class Client extends aPersistable
     public function setScope($scope)
     {
         $this->scope = $scope;
+        return $this;
     }
 
     /**
@@ -209,6 +217,7 @@ class Client extends aPersistable
     public function setRedirectUri($redirectUri)
     {
         $this->redirectUri = $redirectUri;
+        return $this;
     }
 
     /**
@@ -228,6 +237,7 @@ class Client extends aPersistable
     public function setResidentClient($residentClient)
     {
         $this->residentClient = $residentClient;
+        return $this;
     }
 
 

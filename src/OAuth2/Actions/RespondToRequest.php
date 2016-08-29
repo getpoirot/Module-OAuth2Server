@@ -12,7 +12,7 @@ use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
 /**
- * @method GrantAggregateGrants GetGrantResponderService()
+ * @property GrantAggregateGrants GetGrantResponderService
  */
 class RespondToRequest extends aAction
 {
@@ -30,14 +30,14 @@ class RespondToRequest extends aAction
         $responsePsr = new ResponseBridgeInPsr($response);
 
         $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
-        $aggregateGrant = $this->GetGrantResponderService();
-        
+        $aggregateGrant = $this->grantResponder();
+
         try {
-            if (!$aggregateGrant->canRespondToRequest($requestPsr))
+            if (!$grant = $aggregateGrant->canRespondToRequest($requestPsr))
                 throw exOAuthServer::unsupportedGrantType();
 
-            $responsePsr    = $aggregateGrant->respond($responsePsr);
-            
+            $responsePsr    = $grant->respond($responsePsr);
+
         } catch (\Exception $e)
         {
             // Just Rise OAuth Exceptions Error
@@ -55,5 +55,13 @@ class RespondToRequest extends aAction
         $responsePsr = \Poirot\Http\parseResponseFromPsr($responsePsr);
         $response    = new HttpResponse($responsePsr);
         return $response;
+    }
+
+    /**
+     * @return GrantAggregateGrants
+     */
+    function grantResponder()
+    {
+        return $this->GetGrantResponderService;
     }
 }

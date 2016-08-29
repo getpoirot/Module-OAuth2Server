@@ -30,10 +30,24 @@ class Clients extends aRepository
      */
     function insert(iEntityClient $client)
     {
+        $clientInsert = new Client();
+        $clientInsert
+            ->setIdentifier($client->getIdentifier())
+            ->setClientType($client->getClientType())
+            ->setName($client->getName())
+            ->setDescription($client->getDescription())
+            ->setImage($client->getImage())
+            ->setSecretKey($client->getSecretKey())
+            ->setOwnerIdentifier($client->getOwnerIdentifier())
+            ->setScope($client->getScope())
+            ->setRedirectUri($client->getRedirectUri())
+            ->setResidentClient($client->isResidentClient())
+        ;
+        
         $r = $this->_query()->insertOne($client);
-        $client->setIdentifier($r->getInsertedId());
-
-        return $client;
+        
+        $clientInsert->setIdentifier($r->getInsertedId());
+        return $clientInsert;
     }
 
     /**

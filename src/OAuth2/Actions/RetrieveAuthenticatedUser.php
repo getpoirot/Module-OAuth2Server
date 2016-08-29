@@ -6,7 +6,6 @@ use Module\Foundation\Actions\aAction;
 
 use Module\OAuth2\Model\User;
 use Module\OAuth2\Module;
-use Poirot\OAuth2\Server\Grant\Exception\exInvalidRequest;
 
 
 class RetrieveAuthenticatedUser extends aAction
@@ -14,7 +13,6 @@ class RetrieveAuthenticatedUser extends aAction
     /**
      * Retrieve Authenticated User
      *
-     * @throws exInvalidRequest
      */
     function __invoke()
     {

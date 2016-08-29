@@ -157,6 +157,17 @@ return array(
                     'indexes' => array(
                         array( 'key' => array('_id' => 1, 'secret_key' => 1) ),  ),  ),  ),
 
+            \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class => array(
+                'collection' => array(
+                    // query on which collection
+                    'name' => 'oauth.users.approved_clients',
+                    // which client to connect and query with
+                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    // ensure indexes
+                    'indexes' => array(
+                    
+                    ),  ),  ),
+
             \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => array(
                 'collection' => array(
                     // query on which collection

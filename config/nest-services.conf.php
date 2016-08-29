@@ -18,6 +18,8 @@ return [
                     ':class'  => \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
                     'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                 ],
+                
+                \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class,
             ],
         ],
     ],
