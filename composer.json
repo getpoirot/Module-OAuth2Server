@@ -7,7 +7,8 @@
         }
     ]
     , "require": {
-        "poirot/oauth2": "dev-devel"
+        "poirot/skeleton": "dev-devel"
+        , "poirot/oauth2": "dev-devel"
         , "poirot/mod-driver_mongo": "dev-devel"
         , "poirot/mod-authorization": "dev-devel"
     }
