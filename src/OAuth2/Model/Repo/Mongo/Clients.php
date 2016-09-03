@@ -60,7 +60,7 @@ class Clients extends aRepository
     function findByIdentifier($clientID)
     {
         $r = $this->_query()->findOne([
-            '_id' => new \MongoDB\BSON\ObjectID($clientID),
+            'identifier' => $clientID,
         ]);
 
         return $r;
@@ -81,7 +81,7 @@ class Clients extends aRepository
     function findByIDSecretKey($clientID, $secretKey)
     {
         $r = $this->_query()->findOne([
-            '_id'        => new \MongoDB\BSON\ObjectID($clientID),
+            'identifier' => $clientID,
             'secret_key' => $secretKey,
         ]);
 

@@ -24,19 +24,6 @@ class Client extends aPersistable
     protected $residentClient = false;
 
 
-    # proxy calls to work with mongo persist
-
-    function get_Id()
-    {
-        return $this->getIdentifier();
-    }
-
-    function set_Id($identifier)
-    {
-        return $this->setIdentifier($identifier);
-    }
-
-
     // ..
 
     /**
