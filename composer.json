@@ -12,4 +12,9 @@
         , "poirot/mod-driver_mongo": "dev-devel"
         , "poirot/mod-authorization": "dev-devel"
     }
+    , "autoload"  : {
+        "psr-4": {
+            "Module\\OAuth2\\": "src/OAuth2/"
+        }
+    }
 }
