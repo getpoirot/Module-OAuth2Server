@@ -52,10 +52,6 @@ class Module implements iSapiModule
         $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
         
         require_once __DIR__ . '/_functions.php';
-        
-        
-        $nameSpaceLoader->addResource('Poirot\OAuth2', __DIR__. '/../../vendor/poirot/Poirot/OAuth2');
-        require_once __DIR__ . '/../../vendor/poirot/Poirot/OAuth2/_functions.php';
     }
 
     /**
