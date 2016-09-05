@@ -155,7 +155,7 @@ return array(
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => array(
-                        array( 'key' => array('_id' => 1, 'secret_key' => 1) ),  ),  ),  ),
+                        array( 'key' => array('identifier' => 1, 'secret_key' => 1) ),  ),  ),  ),
 
             \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class => array(
                 'collection' => array(
@@ -165,7 +165,8 @@ return array(
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => array(
-                    
+                        array( 'key' => array('user_identifier' => 1,  ) ),
+                        array( 'key' => array('user_identifier' => 1,  'clients_approved.client_identifier' => 1) ),
                     ),  ),  ),
 
             \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => array(
@@ -176,18 +177,7 @@ return array(
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => array(
-                        array( 'key' => array('username' => 1, 'credential' => 1) ),  ),  ),  ),  ),
-
-        'clients' => array( 'anar_production'  => array(
-                ## mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
-                #- anything that is a special URL character needs to be URL encoded.
-                ## This is particularly something to take into account for the password,
-                #- as that is likely to have characters such as % in it.
-                'host' => 'mongodb://91.98.28.230:27017',
-
-                ## Required Database Name To Client Connect To
-                'db'   => 'kookoja',  ),  ),
-
+                        array( 'key' => array('identifier' => 1, 'credential' => 1) ),  ),  ),  ),  ),
     ),
 
     // View Renderer Options
