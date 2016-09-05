@@ -143,7 +143,9 @@ return array(
                             'main/oauth/authorize',  ),  ),  ),  ),  ),
     ),
 
-    
+
+    // TODO mongo index fields as Entity::FIELD_CONST
+
     Module\MongoDriver\Module::CONF_KEY 
     => array(
         \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => array(
