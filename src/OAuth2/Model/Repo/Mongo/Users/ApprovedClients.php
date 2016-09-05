@@ -3,18 +3,18 @@ namespace Module\OAuth2\Model\Repo\Mongo\Users;
 
 use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
+use MongoDB\Model\BSONDocument;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
 
 
 /*
 {
-   "_id": ObjectId("57c411643587af19008b4567"),
-   "user": "naderi.payam@gmail.com",
+   "user_identifier": "naderi.payam@gmail.com",
    "clients_approved": [
      {
-         "client": ObjectId("57b96ddd3be2ba000f64d001"),
-       "name": "Anar Filter Service"
+         "client_identifier": "57b96ddd3be2ba000f64d001",
+         "name": "Anar Filter Service"
     }
   ]
 }
@@ -42,12 +42,7 @@ class ApprovedClients
      */
     function listClients(iEntityUser $user)
     {
-        /*$r = $this->_query()->findOne([
-            'identifier' => $identifier,
-            'credential' => md5($credential),
-        ]);
 
-        return $r;*/
     }
 
     /**
@@ -60,7 +55,22 @@ class ApprovedClients
      */
     function approveClient(iEntityUser $user, iEntityClient $client)
     {
-        // TODO: Implement approveClient() method.
+        $r = $this->_query()->findOneAndUpdate(
+            [
+                'user_identifier' => $user->getIdentifier(),
+            ]
+            , [
+                '$addToSet' => [
+                    'clients_approved' => new BSONDocument([
+                        'client_identifier' => $client->getIdentifier(),
+                        'name'              => $client->getName(),
+                    ]),
+                ]
+            ]
+            , [
+                'upsert' => true,
+            ]
+        );
     }
 
     /**
@@ -80,10 +90,20 @@ class ApprovedClients
      * @param iEntityUser $user
      * @param iEntityClient $client
      *
-     * @return iEntityClient|false
+     * @return boolean
      */
-    function hasApproved(iEntityUser $user, iEntityClient $client)
+    function isUserApprovedClient(iEntityUser $user, iEntityClient $client)
     {
-        // TODO: Implement hasApproved() method.
+        $userIdentifier   = $user->getIdentifier();
+        $clientIdentifier = $client->getIdentifier();
+        
+        $r = $this->_query()->findOne([
+            'user_identifier' => $userIdentifier,
+            'clients_approved' => [
+                '$elemMatch' => [ "client_identifier" => $clientIdentifier ]
+            ]
+        ]);
+        
+        return (boolean) $r;
     }
 }

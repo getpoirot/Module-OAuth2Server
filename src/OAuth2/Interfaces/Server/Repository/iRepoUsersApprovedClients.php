@@ -20,9 +20,9 @@ interface iRepoUsersApprovedClients
      * @param iEntityUser $user
      * @param iEntityClient $client
      * 
-     * @return iEntityClient|false
+     * @return boolean
      */
-    function hasApproved(iEntityUser $user, iEntityClient $client);
+    function isUserApprovedClient(iEntityUser $user, iEntityClient $client);
     
     /**
      * User Remove Client Approval

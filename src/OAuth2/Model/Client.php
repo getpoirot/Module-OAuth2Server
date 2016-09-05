@@ -223,7 +223,7 @@ class Client extends aPersistable
      */
     public function setResidentClient($residentClient)
     {
-        $this->residentClient = $residentClient;
+        $this->residentClient = (boolean) $residentClient;
         return $this;
     }
 
