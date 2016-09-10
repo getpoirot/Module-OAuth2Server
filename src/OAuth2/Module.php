@@ -108,11 +108,16 @@ class Module implements iSapiModule
     /**
      * Get Nested Module Services
      *
+     * it can be used to manipulate other registered services by modules
+     * with passed Container instance as argument.
+     *
      * priority not that serious
      *
-     * @return array|BuildContainer|\Traversable
+     * @param Container $moduleContainer
+     *
+     * @return null|array|BuildContainer|\Traversable
      */
-    function getServices()
+    function getServices(Container $moduleContainer = null)
     {
         $builder = new BuildContainerOfNestedServices;
         
