@@ -65,13 +65,16 @@ class Module implements iSapiModule
      */
     function initModuleManager(iModuleManager $moduleManager)
     {
+        // ( ! ) ORDER IS MANDATORY 
+        
+        if (!$moduleManager->hasLoaded('MongoDriver'))
+            // MongoDriver Module Is Required.
+            $moduleManager->loadModule('MongoDriver');
+
         if (!$moduleManager->hasLoaded('Authorization'))
             // Authorization Module Is Required.
             $moduleManager->loadModule('Authorization');
 
-        if (!$moduleManager->hasLoaded('MongoDriver'))
-            // MongoDriver Module Is Required.
-            $moduleManager->loadModule('MongoDriver');
     }
 
     /**
