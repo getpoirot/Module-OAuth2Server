@@ -3,6 +3,8 @@ namespace Module\OAuth2\Actions;
 
 use Module\Foundation\Actions\aAction;
 
+use MongoDB\BSON\ObjectID;
+use MongoDB\Model\BSONDocument;
 use Poirot\Http\HttpRequest;
 use Poirot\Http\HttpResponse;
 
