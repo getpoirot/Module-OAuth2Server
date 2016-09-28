@@ -83,6 +83,20 @@ return array(
                             'repo_refresh_token' => array(
                                 \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/RefreshToken'),  ),  ),  ),  ),
 
+                ## Grant Extension Validate Token:
+                array(
+                    \Poirot\Config\INIT_INS => array(
+                        \Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation::class,
+                        'options' => array(
+                            'repo_client' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Clients'),  ),
+                            'repo_user' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/Users'),  ),
+                            'repo_access_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/AccessToken'),  ),
+                            'repo_refresh_token' => array(
+                                \Poirot\Config\INIT_INS => array('/module/oauth2/services/repository/RefreshToken'),  ),  ),  ),  ),
+
     ),  ),  ),
     
     
