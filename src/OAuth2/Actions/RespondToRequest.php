@@ -3,8 +3,6 @@ namespace Module\OAuth2\Actions;
 
 use Module\Foundation\Actions\aAction;
 
-use MongoDB\BSON\ObjectID;
-use MongoDB\Model\BSONDocument;
 use Poirot\Http\HttpRequest;
 use Poirot\Http\HttpResponse;
 
@@ -12,6 +10,7 @@ use Poirot\Http\Psr\ResponseBridgeInPsr;
 
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
+
 
 /**
  * @property GrantAggregateGrants GetGrantResponderService
@@ -23,8 +22,8 @@ class RespondToRequest extends aAction
      *
      * @param HttpRequest $request Injected service
      * @param HttpResponse $response Injected service
-     * @return HttpResponse
      *
+     * @return HttpResponse
      * @throws static
      */
     function __invoke(HttpRequest $request = null, HttpResponse $response = null)
