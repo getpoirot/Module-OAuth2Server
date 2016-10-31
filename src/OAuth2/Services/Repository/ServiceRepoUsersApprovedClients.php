@@ -7,7 +7,7 @@ class ServiceRepoUsersApprovedClients
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = 'users.approved_clients';
+    protected $name = 'Users.ApprovedClients';
 
     
     /**

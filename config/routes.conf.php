@@ -1,32 +1,32 @@
 <?php
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 
-return array(
-    'oauth'  => array(
+return [
+    'oauth'  => [
         'route' => 'RouteSegment',
-        'options' => array(
+        'options' => [
             'criteria'    => '/auth',
             'match_whole' => false,
-        ),
-        'routes' => array(
-            'authorize' => array(
+        ],
+        'routes' => [
+            'authorize' => [
                 'route' => 'RouteSegment',
-                'options' => array(
+                'options' => [
                     'criteria'    => '/',
-                ),
-                'params'  => array(
+                ],
+                'params'  => [
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Authorize',
-                ),
-            ),
-            'token' => array(
+                ],
+            ],
+            'token' => [
                 'route' => 'RouteSegment',
-                'options' => array(
+                'options' => [
                     'criteria'    => '/token',
-                ),
-                'params'  => array(
+                ],
+                'params'  => [
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RespondToRequest',
-                ),
-            ),
-        ),
-    ),
-);
+                ],
+            ],
+        ],
+    ],
+];

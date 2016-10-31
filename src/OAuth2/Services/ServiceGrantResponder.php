@@ -31,7 +31,7 @@ class ServiceGrantResponder
         $grantsAggregate = new GrantAggregateGrants;
         if (is_array($config) && isset($config[self::CONF_KEY])) {
             $settings = $config[self::CONF_KEY];
-            $settings = \Poirot\Config\instanceInitialized($settings);
+            $settings = \Poirot\Ioc\newInitIns($settings);
             $grantsAggregate->with($grantsAggregate::parseWith($settings));
         }
 

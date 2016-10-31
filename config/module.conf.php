@@ -3,205 +3,205 @@ return array(
 
     \Module\OAuth2\Module::CONF_KEY 
     => array(
-        \Module\OAuth2\Services\ServiceGrantResponder::CONF_KEY => array(
+        \Module\OAuth2\Services\ServiceGrantResponder::CONF_KEY => [
             ## Options given to GrantResponder Service
-            'attached_grants' => array(
+            'attached_grants' => [
                 ## Grant Authorization Code:
-                array(
-                    \Poirot\Ioc\INST => array(
+                [
+                    \Poirot\Ioc\INST => [
                         \Poirot\OAuth2\Server\Grant\GrantAuthCode::class,
-                        'options' => array(
-                            'retrieve_user_callback' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/actions/RetrieveAuthenticatedUser'), ),
-                            'repo_client' => array(
+                        'options' => [
+                            'retrieve_user_callback' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/actions/RetrieveAuthenticatedUser'],],
+                            'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Clients'), ),
-                            'repo_user' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Users'),  ),
-                            'repo_auth_code' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/AuthorizationCode'),  ),
-                            'repo_refresh_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/RefreshToken'),  ),
-                            'repo_access_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/AccessToken'),  ),
-                        ),
-                    ),
-                ),
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                            'repo_user' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                            'repo_auth_code' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AuthorizationCode'],],
+                            'repo_refresh_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],
+                            'repo_access_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                        ],
+                    ],
+                ],
                 ## Grant Authorization Implicit:
-                array(
-                    \Poirot\Ioc\INST => array(
+                [
+                    \Poirot\Ioc\INST => [
                         \Poirot\OAuth2\Server\Grant\GrantImplicit::class,
-                        'options' => array(
-                            'retrieve_user_callback' => array(
+                        'options' => [
+                            'retrieve_user_callback' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => array('/module/oauth2/actions/RetrieveAuthenticatedUser'), ),
-                            'repo_client' => array(
+                                \Poirot\Ioc\INST => ['/module/oauth2/actions/RetrieveAuthenticatedUser'],],
+                            'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Clients'), ),
-                            'repo_access_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/AccessToken'), ),
-                            ),
-                    ),
-                ),
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                            'repo_access_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                        ],
+                    ],
+                ],
                 ## Grant Client Credential:
-                array(
-                    \Poirot\Ioc\INST => array(
+                [
+                    \Poirot\Ioc\INST => [
                         \Poirot\OAuth2\Server\Grant\GrantClientCredentials::class,
-                        'options' => array(
-                            'repo_client' => array(
+                        'options' => [
+                            'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Clients'), ),
-                            'repo_access_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/AccessToken'), ),  ),  ),  ),
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                            'repo_access_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],],],],
 
                 ## Grant Password:
-                array(
-                    \Poirot\Ioc\INST => array(
+                [
+                    \Poirot\Ioc\INST => [
                         \Poirot\OAuth2\Server\Grant\GrantPassword::class,
-                        'options' => array(
-                            'repo_client' => array(
+                        'options' => [
+                            'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Clients'),  ),
-                            'repo_user' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Users'),  ),
-                            'repo_access_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/AccessToken'),  ),
-                            'repo_refresh_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/RefreshToken'),  ),  ),  ),  ),
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                            'repo_user' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                            'repo_access_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                            'repo_refresh_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],],],],
 
                 ## Grant Refresh Token:
-                array(
-                    \Poirot\Ioc\INST => array(
+                [
+                    \Poirot\Ioc\INST => [
                         \Poirot\OAuth2\Server\Grant\GrantRefreshToken::class,
-                        'options' => array(
-                            'repo_client' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Clients'),  ),
-                            'repo_user' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Users'),  ),
-                            'repo_access_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/AccessToken'),  ),
-                            'repo_refresh_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/RefreshToken'),  ),  ),  ),  ),
+                        'options' => [
+                            'repo_client' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                            'repo_user' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                            'repo_access_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                            'repo_refresh_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],],],],
 
                 ## Grant Extension Validate Token:
-                array(
-                    \Poirot\Ioc\INST => array(
+                [
+                    \Poirot\Ioc\INST => [
                         \Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation::class,
-                        'options' => array(
-                            'repo_client' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Clients'),  ),
-                            'repo_user' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Users'),  ),
-                            'repo_access_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/AccessToken'),  ),
-                            'repo_refresh_token' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/RefreshToken'),  ),  ),  ),  ),
+                        'options' => [
+                            'repo_client' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                            'repo_user' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                            'repo_access_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                            'repo_refresh_token' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],],],],
 
-    ),  ),  ),
+            ],],  ),
     
     
     Module\Authorization\Module::CONF_KEY 
-    => array(
-        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS => array(
-            \Module\OAuth2\Module::AUTHENTICATOR => array(
+    => [
+        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS => [
+            \Module\OAuth2\Module::AUTHENTICATOR => [
                 'realm'      => \Poirot\AuthSystem\Authenticate\Identifier\aIdentifier::DEFAULT_REALM,
-                'identifier' => array(
-                    \Poirot\Ioc\INST   => array(
+                'identifier' => [
+                    \Poirot\Ioc\INST   => [
                         \Poirot\AuthSystem\Authenticate\Identifier\IdentifierWrapIdentityMap::class,
-                        'options' => array(
-                            'identifier' => array(
-                                \Poirot\Ioc\INST   => array(
+                        'options' => [
+                            'identifier' => [
+                                \Poirot\Ioc\INST   => [
                                     \Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
-                                    'options' => array(
-                                        'credential_adapter' => array(
-                                            \Poirot\Ioc\INST => array(
+                                    'options' => [
+                                        'credential_adapter' => [
+                                            \Poirot\Ioc\INST => [
                                                 \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
-                                                'options' => array(
+                                                'options' => [
                                                     ## Users as registered service
-                                                    'repo_users' => array(
-                                                        \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Users')
-                                                    ), ),  ),  ),  ),  ),
-                            ),
-                            'identity' => array(
-                                \Poirot\Ioc\INST   => array(
+                                                    'repo_users' => [
+                                                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users']
+                                                    ],],],],],],
+                            ],
+                            'identity' => [
+                                \Poirot\Ioc\INST   => [
                                     \Module\OAuth2\Model\Authenticate\IdentityFulfillmentLazy::class,
-                                    'options' => array(
-                                        'provider' => array(
-                                            \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Users')
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                                    'options' => [
+                                        'provider' => [
+                                            \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users']
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
 
                 ## default adapter to authenticator::authenticate
-                'adapter' => array(
-                    \Poirot\Ioc\INST => array(
+                'adapter' => [
+                    \Poirot\Ioc\INST => [
                         \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
-                        'options' => array(
+                        'options' => [
                             ## Users as registered service
-                            'repo_users' => array(
-                                \Poirot\Ioc\INST => array('/module/oauth2/services/repository/Users')
-                            ), ),  ),  ), ),  ),
+                            'repo_users' => [
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users']
+                            ],],],],],],
 
 
-        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => array(
-            'oauth_routes' => array(
-                \Poirot\Ioc\INST => array(
+        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => [
+            'oauth_routes' => [
+                \Poirot\Ioc\INST => [
                     \Module\Authorization\Guard\GuardRoute::class,
-                    'options' => array(
+                    'options' => [
                         'authenticator' => \Module\OAuth2\Module::AUTHENTICATOR,
-                        'routes_denied' => array(
-                            'main/oauth/authorize',  ),  ),  ),  ),  ),
-    ),
+                        'routes_denied' => [
+                            'main/oauth/authorize',],],],],],
+    ],
 
 
     // TODO mongo index fields as Entity::FIELD_CONST
 
     Module\MongoDriver\Module::CONF_KEY 
     => array(
-        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => array(
-            \Module\OAuth2\Services\Repository\ServiceRepoClients::class => array(
-                'collection' => array(
+        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => [
+            \Module\OAuth2\Services\Repository\ServiceRepoClients::class => [
+                'collection' => [
                     // query on which collection
                     'name' => 'oauth.clients',
                     // which client to connect and query with
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
-                    'indexes' => array(
-                        array( 'key' => array('identifier' => 1, 'secret_key' => 1) ),  ),  ),  ),
+                    'indexes' => [
+                        ['key' => ['identifier' => 1, 'secret_key' => 1]],],],],
 
-            \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class => array(
-                'collection' => array(
+            \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class => [
+                'collection' => [
                     // query on which collection
                     'name' => 'oauth.users.approved_clients',
                     // which client to connect and query with
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
-                    'indexes' => array(
-                        array( 'key' => array('user_identifier' => 1,  ) ),
-                        array( 'key' => array('user_identifier' => 1,  'clients_approved.client_identifier' => 1) ),
-                    ),  ),  ),
+                    'indexes' => [
+                        ['key' => ['user_identifier' => 1,]],
+                        ['key' => ['user_identifier' => 1,  'clients_approved.client_identifier' => 1]],
+                    ],],],
 
-            \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => array(
-                'collection' => array(
+            \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => [
+                'collection' => [
                     // query on which collection
                     'name' => 'oauth.users',
                     // which client to connect and query with
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
-                    'indexes' => array(
-                        array( 'key' => array('identifier' => 1, 'credential' => 1) ),  ),  ),  ),  ),
+                    'indexes' => [
+                        ['key' => ['identifier' => 1, 'credential' => 1]],],],],],
     ),
 
     // View Renderer Options
     \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
-    => array(
-        \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => array(
+    => [
+        \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => [
             // Display Authentication Exceptions Specific Template
             \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth-server',
-        ),
-    ),
+        ],
+    ],
 );
