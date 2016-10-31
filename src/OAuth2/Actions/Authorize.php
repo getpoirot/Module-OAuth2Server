@@ -49,7 +49,7 @@ class Authorize extends aAction
         // check whether to display approve page or not?
         if (!$approveNotRequire = $client->isResidentClient()) {
             /** @var iRepoUsersApprovedClients $RepoApprovedClients */
-            $RepoApprovedClients = $this->ModuleServices()->get('repository/users.approved_clients');
+            $RepoApprovedClients = $this->ModuleServices()->get('repository/Users.ApprovedClients');
             $User = $this->RetrieveAuthenticatedUser();
 
             //// also maybe client approve the client in the past
@@ -69,7 +69,7 @@ class Authorize extends aAction
 
             } elseif (MethodType::_($request)->isPost() && $_post->get('allow_access', null) !== null) {
                 // Allow Access The Client
-                $RepoApprovedClients = $this->ModuleServices()->get('repository/users.approved_clients');
+                $RepoApprovedClients = $this->ModuleServices()->get('repository/Users.ApprovedClients');
                 $User = $this->RetrieveAuthenticatedUser();
                 $RepoApprovedClients->approveClient($User, $client);
             } else {
