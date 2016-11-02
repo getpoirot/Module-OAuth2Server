@@ -5,11 +5,11 @@ use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Model\Client;
 
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
-use Poirot\OAuth2\Interfaces\Server\Repository\iRepoClient;
+use Poirot\OAuth2\Interfaces\Server\Repository\iRepoClients;
 
 
 class Clients extends aRepository
-    implements iRepoClient
+    implements iRepoClients
 {
     /**
      * Initialize Object

@@ -6,12 +6,12 @@ use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Model\User;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
-use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUser;
+use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers;
 use Poirot\Std\Interfaces\Struct\iData;
 
 
 class Users extends aRepository
-    implements iRepoUser
+    implements iRepoUsers
     , iProviderIdentityData
 {
     /**

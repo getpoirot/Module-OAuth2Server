@@ -1,8 +1,7 @@
 <?php
-return array(
-
+return [
     \Module\OAuth2\Module::CONF_KEY 
-    => array(
+    => [
         \Module\OAuth2\Services\ServiceGrantResponder::CONF_KEY => [
             ## Options given to GrantResponder Service
             'attached_grants' => [
@@ -97,7 +96,7 @@ return array(
                             'repo_refresh_token' => [
                                 \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],],],],
 
-            ],],  ),
+            ],],],
     
     
     Module\Authorization\Module::CONF_KEY 
@@ -161,7 +160,7 @@ return array(
     // TODO mongo index fields as Entity::FIELD_CONST
 
     Module\MongoDriver\Module::CONF_KEY 
-    => array(
+    => [
         \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => [
             \Module\OAuth2\Services\Repository\ServiceRepoClients::class => [
                 'collection' => [
@@ -194,14 +193,14 @@ return array(
                     // ensure indexes
                     'indexes' => [
                         ['key' => ['identifier' => 1, 'credential' => 1]],],],],],
-    ),
+    ],
 
     // View Renderer Options
-    \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
+    \Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
     => [
-        \Poirot\Application\Sapi\Server\Http\ViewRenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => [
+        \Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => [
             // Display Authentication Exceptions Specific Template
             \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth-server',
         ],
     ],
-);
+];

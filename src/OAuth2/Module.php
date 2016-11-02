@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2;
 
-use Module\OAuth2\Services\BuildContainerOfNestedServices;
+use Module\OAuth2\Services\BuildOAuthModuleServices;
 
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\ModuleManager\Interfaces\iModuleManager;
@@ -27,8 +27,8 @@ class Module implements iSapiModule
     , Sapi\Module\Feature\iFeatureModuleAutoload
     , Sapi\Module\Feature\iFeatureModuleInitModuleManager
     , Sapi\Module\Feature\iFeatureModuleMergeConfig
-    , Sapi\Module\Feature\iFeatureModuleNestServices
     , Sapi\Module\Feature\iFeatureModuleNestActions
+    , Sapi\Module\Feature\iFeatureModuleNestServices
     , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
     const CONF_KEY = 'module.oauth2';
@@ -91,7 +91,7 @@ class Module implements iSapiModule
      */
     function initConfig(iDataEntity $config)
     {
-        return include __DIR__.'/../../config/module.conf.php';
+        return \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server');
     }
 
     /**
@@ -105,7 +105,7 @@ class Module implements iSapiModule
      */
     function getActions()
     {
-        return include __DIR__.'/../../config/actions.conf.php';
+        return \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server_actions');
     }
 
     /**
@@ -122,17 +122,13 @@ class Module implements iSapiModule
      */
     function getServices(Container $moduleContainer = null)
     {
-        $builder = new BuildContainerOfNestedServices;
-        
-        $confFile = __DIR__.'/../../config/nest-services.conf.php';
-        if (file_exists($confFile)) {
-            $conf = include $confFile;
-            $builder->with($builder::parseWith($conf));
-        }
+        $conf = \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server_services');
+        $builder = new BuildOAuthModuleServices;
+        $builder->with($builder::parseWith($conf));
 
         return $builder;
     }
-    
+
     /**
      * Resolve to service with name
      *
@@ -153,7 +149,7 @@ class Module implements iSapiModule
     ) {
         # Register Http Routes:
         if ($router) {
-            $routes = include __DIR__.'/../../config/routes.conf.php';
+            $routes = include __DIR__ . '/../../config/mod-oauth2_server_routes.conf.php';
             $buildRoute = new BuildRouterStack();
             $buildRoute->setRoutes($routes);
             $buildRoute->build($router);

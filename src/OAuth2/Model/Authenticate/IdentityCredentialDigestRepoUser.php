@@ -7,7 +7,7 @@ use Poirot\AuthSystem\Authenticate\Identity\IdentityUsername;
 use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
 
 use Poirot\AuthSystem\Authenticate\RepoIdentityCredential\aIdentityCredentialAdapter;
-use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUser;
+use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers;
 
 /**
  * Authenticate Digest Credential From Repo Users
@@ -18,7 +18,7 @@ class IdentityCredentialDigestRepoUser
 {
     protected $username;
     protected $password;
-    /** @var iRepoUser */
+    /** @var iRepoUsers */
     protected $repoUsers;
 
 
@@ -113,11 +113,11 @@ class IdentityCredentialDigestRepoUser
     /**
      * Set Users Repository
      *
-     * @param iRepoUser $repoUser
+     * @param iRepoUsers $repoUser
      *
      * @return $this
      */
-    function setRepoUsers(iRepoUser $repoUser)
+    function setRepoUsers(iRepoUsers $repoUser)
     {
         $this->repoUsers = $repoUser;
         return $this;

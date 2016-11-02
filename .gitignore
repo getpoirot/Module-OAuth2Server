@@ -9,5 +9,8 @@
 build/
 nbproject
 
+*.local.conf.php
+
+
 composer.lock
 vendor/**
