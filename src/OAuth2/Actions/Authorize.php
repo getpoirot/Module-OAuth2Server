@@ -1,8 +1,6 @@
 <?php
 namespace Module\OAuth2\Actions;
 
-use Module\Foundation\Actions\aAction;
-
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\PhpServer;
@@ -10,20 +8,10 @@ use Poirot\Http\HttpRequest;
 use Poirot\Http\HttpResponse;
 use Poirot\Http\Psr\ResponseBridgeInPsr;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\aGrant;
-use Psr\Http\Message\ResponseInterface;
 
-/**
- * # Registered Module Action:
- *
- * @method ResponseInterface RespondToRequest(HttpRequest $request, HttpResponse $response)
- * @method iEntityUser       RetrieveAuthenticatedUser()
- *
- * @property RespondToRequest          RespondToRequest
- * @property RetrieveAuthenticatedUser RetrieveAuthenticatedUser
- */
+
 class Authorize extends aAction
 {
     function __invoke(HttpRequest $request = null, HttpResponse $response = null)

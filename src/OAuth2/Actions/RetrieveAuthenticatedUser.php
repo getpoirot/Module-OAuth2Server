@@ -2,7 +2,6 @@
 namespace Module\OAuth2\Actions;
 
 use Module\Authorization\Module\AuthenticatorFacade;
-use Module\Foundation\Actions\aAction;
 
 use Module\OAuth2\Model\User;
 use Module\OAuth2\Module;

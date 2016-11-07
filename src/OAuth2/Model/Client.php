@@ -39,6 +39,7 @@ class Client extends aPersistable
 
     /**
      * @param string $identifier
+     * @return $this
      */
     function setIdentifier($identifier)
     {
@@ -61,6 +62,7 @@ class Client extends aPersistable
 
     /**
      * @param mixed $clientType
+     * @return $this
      */
     function setClientType($clientType)
     {
@@ -81,6 +83,7 @@ class Client extends aPersistable
 
     /**
      * @param mixed $name
+     * @return $this
      */
     public function setName($name)
     {
@@ -101,6 +104,7 @@ class Client extends aPersistable
 
     /**
      * @param mixed $description
+     * @return $this
      */
     public function setDescription($description)
     {
@@ -121,6 +125,7 @@ class Client extends aPersistable
 
     /**
      * @param mixed $image
+     * @return $this
      */
     public function setImage($image)
     {
@@ -140,6 +145,7 @@ class Client extends aPersistable
 
     /**
      * @param mixed $secretKey
+     * @return $this
      */
     public function setSecretKey($secretKey)
     {
@@ -160,6 +166,7 @@ class Client extends aPersistable
 
     /**
      * @param mixed $ownerIdentifier
+     * @return $this
      */
     public function setOwnerIdentifier($ownerIdentifier)
     {
@@ -181,6 +188,7 @@ class Client extends aPersistable
 
     /**
      * @param array $scope
+     * @return $this
      */
     public function setScope($scope)
     {
@@ -200,6 +208,7 @@ class Client extends aPersistable
 
     /**
      * @param array $redirectUri
+     * @return $this
      */
     public function setRedirectUri($redirectUri)
     {
@@ -220,6 +229,7 @@ class Client extends aPersistable
 
     /**
      * @param boolean $residentClient
+     * @return $this
      */
     public function setResidentClient($residentClient)
     {
