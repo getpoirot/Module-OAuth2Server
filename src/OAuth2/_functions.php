@@ -2,18 +2,18 @@
 namespace Module\OAuth2
 {
     use Poirot\Http\HttpMessage\Request\Plugin\PhpServer;
-    use Poirot\Http\HttpRequest;
     use Poirot\Http\Interfaces\iHeader;
+    use Poirot\Http\Interfaces\iHttpRequest;
     use Poirot\Psr7\HttpServerRequest;
 
     /**
      * Factory New Psr7-ServerRequest From HttpRequest
      * 
-     * @param HttpRequest $request
+     * @param iHttpRequest $request
      * 
      * @return HttpServerRequest
      */
-    function factoryBridgeInPsrServerRequest(HttpRequest $request)
+    function factoryBridgeInPsrServerRequest(iHttpRequest $request)
     {
         $_server = PhpServer::_($request)->getServer();
         $_get    = PhpServer::_($request)->getQuery();

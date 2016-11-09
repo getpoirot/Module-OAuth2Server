@@ -1,4 +1,6 @@
 <?php
+use Module\OAuth2\Services\BuildOAuthModuleServices;
+
 return [
     \Module\OAuth2\Module::CONF_KEY 
     => [
@@ -14,15 +16,15 @@ return [
                                 \Poirot\Ioc\INST => ['/module/oauth2/actions/RetrieveAuthenticatedUser'],],
                             'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
                             'repo_user' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS],],
                             'repo_auth_code' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AuthorizationCode'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_AUTH_CODES],],
                             'repo_refresh_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],
                             'repo_access_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],
                         ],
                     ],
                 ],
@@ -36,9 +38,9 @@ return [
                                 \Poirot\Ioc\INST => ['/module/oauth2/actions/RetrieveAuthenticatedUser'],],
                             'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
                             'repo_access_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],
                         ],
                     ],
                 ],
@@ -49,9 +51,9 @@ return [
                         'options' => [
                             'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
                             'repo_access_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],],],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],],],],
 
                 ## Grant Password:
                 [
@@ -60,13 +62,13 @@ return [
                         'options' => [
                             'repo_client' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
                             'repo_user' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS],],
                             'repo_access_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],
                             'repo_refresh_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],],],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],],],],
 
                 ## Grant Refresh Token:
                 [
@@ -74,13 +76,13 @@ return [
                         \Poirot\OAuth2\Server\Grant\GrantRefreshToken::class,
                         'options' => [
                             'repo_client' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
                             'repo_user' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS],],
                             'repo_access_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],
                             'repo_refresh_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],],],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],],],],
 
                 ## Grant Extension Validate Token:
                 [
@@ -88,13 +90,13 @@ return [
                         \Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation::class,
                         'options' => [
                             'repo_client' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Clients'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
                             'repo_user' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS],],
                             'repo_access_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/AccessToken'],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],
                             'repo_refresh_token' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/RefreshToken'],],],],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],],],],
 
             ],],],
     
@@ -118,7 +120,7 @@ return [
                                                 'options' => [
                                                     ## Users as registered service
                                                     'repo_users' => [
-                                                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users']
+                                                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
                                                     ],],],],],],
                             ],
                             'identity' => [
@@ -126,7 +128,7 @@ return [
                                     \Module\OAuth2\Model\Authenticate\IdentityFulfillmentLazy::class,
                                     'options' => [
                                         'provider' => [
-                                            \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users']
+                                            \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
                                         ],
                                     ],
                                 ],
@@ -142,7 +144,7 @@ return [
                         'options' => [
                             ## Users as registered service
                             'repo_users' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/Users']
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
                             ],],],],],],
 
 

@@ -15,8 +15,9 @@ class RetrieveAuthenticatedUser extends aAction
      */
     function __invoke()
     {
+        // TODO better access in facade Module
         /** @var AuthenticatorFacade $authenticator */
-        $authenticator = $this->services()->get('/module/authorization');
+        $authenticator = $this->withModule('authorization')->IoC()->get('/module/authorization');
         if (!$identifier = $authenticator->authenticator(Module::AUTHENTICATOR)->hasAuthenticated())
             return false;
 

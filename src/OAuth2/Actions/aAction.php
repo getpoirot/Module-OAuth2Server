@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * @method iEntityUser       RetrieveAuthenticatedUser()
  *
  * @property RespondToRequest          RespondToRequest
- * @property RetrieveAuthenticatedUser RetrieveAuthenticatedUser
+ * @property AssertAuthToken RetrieveAuthenticatedUser
  */
 abstract class aAction extends \Module\Foundation\Actions\aAction
 { }

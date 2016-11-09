@@ -10,14 +10,15 @@ use Poirot\Http\Psr\ResponseBridgeInPsr;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\aGrant;
+use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
 
 class Authorize extends aAction
 {
     function __invoke(HttpRequest $request = null, HttpResponse $response = null)
     {
-        $respondToRequestAction = $this->RespondToRequest;
-        $aggregateGrant         = $respondToRequestAction->grantResponder();
+        /** @var GrantAggregateGrants $aggregateGrant */
+        $aggregateGrant = $this->IoC()->get('services/GrantResponder');
 
         $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
         /** @var aGrant $grant */
@@ -37,7 +38,7 @@ class Authorize extends aAction
         // check whether to display approve page or not?
         if (!$approveNotRequire = $client->isResidentClient()) {
             /** @var iRepoUsersApprovedClients $RepoApprovedClients */
-            $RepoApprovedClients = $this->ModuleServices()->get('repository/Users.ApprovedClients');
+            $RepoApprovedClients = $this->IoC()->get('services/repository/Users.ApprovedClients');
             $User = $this->RetrieveAuthenticatedUser();
 
             //// also maybe client approve the client in the past
@@ -57,7 +58,7 @@ class Authorize extends aAction
 
             } elseif (MethodType::_($request)->isPost() && $_post->get('allow_access', null) !== null) {
                 // Allow Access The Client
-                $RepoApprovedClients = $this->ModuleServices()->get('repository/Users.ApprovedClients');
+                $RepoApprovedClients = $this->IoC()->get('services/repository/Users.ApprovedClients');
                 $User = $this->RetrieveAuthenticatedUser();
                 $RepoApprovedClients->approveClient($User, $client);
             } else {
@@ -74,6 +75,7 @@ class Authorize extends aAction
         }
 
         // Client is resident or approved by user
-        return $respondToRequestAction($request, $response);
+        // !! Call Neighbor Namespace Action
+        return $this->RespondToRequest($request, $response);
     }
 }

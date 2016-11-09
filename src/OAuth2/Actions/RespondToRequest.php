@@ -29,7 +29,9 @@ class RespondToRequest extends aAction
         $responsePsr = new ResponseBridgeInPsr($response);
 
         $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
-        $aggregateGrant = $this->grantResponder();
+
+        /** @var GrantAggregateGrants $aggregateGrant */
+        $aggregateGrant = $this->IoC()->get('services/GrantResponder');
 
         try {
             if (!$grant = $aggregateGrant->canRespondToRequest($requestPsr))
@@ -54,13 +56,5 @@ class RespondToRequest extends aAction
         $responsePsr = \Poirot\Http\parseResponseFromPsr($responsePsr);
         $response    = new HttpResponse($responsePsr);
         return $response;
-    }
-
-    /**
-     * @return GrantAggregateGrants
-     */
-    function grantResponder()
-    {
-        return $this->GetGrantResponderService;
     }
 }
