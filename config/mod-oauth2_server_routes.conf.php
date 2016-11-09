@@ -36,8 +36,17 @@ return [
                             'criteria'    => '/register',
                             'match_whole' => false,
                         ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Register',
+                        'routes' => [
+                            // When POST something
+                            'post' => [
+                                'route'   => 'RouteMethod',
+                                'options' => [
+                                    'method' => 'POST',
+                                ],
+                                'params'  => [
+                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Register',
+                                ],
+                            ],
                         ],
                     ]
                 ],
