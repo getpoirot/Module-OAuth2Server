@@ -16,13 +16,34 @@ return [
         ),
     ),
     'oauth'  => [
-        /* prefixed uri
-         'route' => 'RouteSegment',
-            'options' => [
-                'criteria'    => '/auth',
-                'match_whole' => false,
-             ],*/
         'routes' => [
+
+            ## API
+            'api' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/api/v1',
+                    'match_whole' => false,
+                ],
+                'params'  => [
+                    // This Action Run First In Chains and Assert Validate Token
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/AssertAuthToken'
+                ],
+                'routes' => [
+                    'register' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/register',
+                            'match_whole' => false,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Register',
+                        ],
+                    ]
+                ],
+            ],
+
+            ##
             'register' => [
                 'route' => 'RouteSegment',
                 'options' => [
@@ -55,7 +76,7 @@ return [
             'token' => [
                 'route' => 'RouteSegment',
                 'options' => [
-                    'criteria'    => '/token',
+                    'criteria'    => '/auth/token',
                 ],
                 'params'  => [
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RespondToRequest',
