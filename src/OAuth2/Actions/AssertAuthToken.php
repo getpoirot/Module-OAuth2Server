@@ -3,6 +3,7 @@ namespace Module\OAuth2\Actions;
 
 
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Http\Psr\ServerRequestBridgeInPsr;
 use Poirot\OAuth2\Resource\Validation\AuthorizeByInternalServer;
 
 class AssertAuthToken extends aAction
@@ -16,7 +17,7 @@ class AssertAuthToken extends aAction
      */
     function __invoke($request = null)
     {
-        $requestPsr       = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
+        $requestPsr = new ServerRequestBridgeInPsr($request);
 
         // pass token as collector result chain to other action
         return array('token' => $this->_validator()->hasValidated($requestPsr));

@@ -7,6 +7,7 @@ use Poirot\Http\HttpMessage\Request\Plugin\PhpServer;
 use Poirot\Http\HttpRequest;
 use Poirot\Http\HttpResponse;
 use Poirot\Http\Psr\ResponseBridgeInPsr;
+use Poirot\Http\Psr\ServerRequestBridgeInPsr;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\aGrant;
@@ -20,7 +21,8 @@ class Authorize extends aAction
         /** @var GrantAggregateGrants $aggregateGrant */
         $aggregateGrant = $this->IoC()->get('services/GrantResponder');
 
-        $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
+        $requestPsr  = new ServerRequestBridgeInPsr($request);
+
         /** @var aGrant $grant */
         if (!$grant = $aggregateGrant->canRespondToRequest($requestPsr))
             throw exOAuthServer::unsupportedGrantType();

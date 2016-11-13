@@ -9,26 +9,9 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
 class User extends aPersistable
     implements iEntityUser
 {
-    protected $_id;
     protected $identifier;
     protected $credential;
 
-
-    # proxy calls to work with mongo persist
-
-    function get_Id()
-    {
-        return $this->_id;
-    }
-
-    function set_Id($_id)
-    {
-        $this->_id = $_id;
-        return $this;
-    }
-
-
-    // ..
 
     /**
      * Unique User Identifier (username)

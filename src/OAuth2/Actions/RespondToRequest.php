@@ -6,6 +6,7 @@ use Poirot\Http\HttpResponse;
 
 use Poirot\Http\Psr\ResponseBridgeInPsr;
 
+use Poirot\Http\Psr\ServerRequestBridgeInPsr;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
@@ -27,8 +28,7 @@ class RespondToRequest extends aAction
     function __invoke(HttpRequest $request = null, HttpResponse $response = null)
     {
         $responsePsr = new ResponseBridgeInPsr($response);
-
-        $requestPsr  = \Module\OAuth2\factoryBridgeInPsrServerRequest($request);
+        $requestPsr  = new ServerRequestBridgeInPsr($request);
 
         /** @var GrantAggregateGrants $aggregateGrant */
         $aggregateGrant = $this->IoC()->get('services/GrantResponder');

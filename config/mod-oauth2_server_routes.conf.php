@@ -2,7 +2,8 @@
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 
 return [
-    // Override Home Page Route
+    /// Override Home Page Route
+    //- Redirect to login page
     'home'  => array(
         'route'    => 'RouteSegment',
         'options' => array(
@@ -10,11 +11,21 @@ return [
             'match_whole' => true,
         ),
         'params'  => array(
-            ListenerDispatch::CONF_KEY => function() {
-                header('Location: '. \Module\Foundation\Actions\IOC::url('main/oauth/login'));
+            ListenerDispatch::CONF_KEY => function($response) {
+                // TODO preserve url query params
+                /** @var \Poirot\Http\HttpResponse $response */
+                $response->setStatusCode(302);
+                $response->headers()->insert(
+                    \Poirot\Http\Header\FactoryHttpHeader::of([
+                        'location' => (string) \Module\Foundation\Actions\IOC::url('main/oauth/login')
+                    ])
+                );
+
+                return $response;
             },
         ),
     ),
+
     'oauth'  => [
         'routes' => [
 
@@ -30,10 +41,10 @@ return [
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/AssertAuthToken'
                 ],
                 'routes' => [
-                    'register' => [
+                    'members' => [
                         'route' => 'RouteSegment',
                         'options' => [
-                            'criteria'    => '/register',
+                            'criteria'    => '/members',
                             'match_whole' => false,
                         ],
                         'routes' => [
@@ -44,7 +55,24 @@ return [
                                     'method' => 'POST',
                                 ],
                                 'params'  => [
-                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Register',
+                                    ListenerDispatch::CONF_KEY => [
+                                        '/module/foundation/actions/ParseRequestData',
+                                        function($request_data) {
+                                           kd($request_data);
+                                        },
+                                        '/module/oauth2/actions/Register',
+                                    ],
+                                ],
+                            ],
+                            'get' => [
+                                'route'   => 'RouteMethod',
+                                'options' => [
+                                    'method' => 'GET',
+                                ],
+                                'params'  => [
+                                    ListenerDispatch::CONF_KEY => function() {
+                                        kd('This is magic of poirot/.');
+                                    },
                                 ],
                             ],
                         ],
