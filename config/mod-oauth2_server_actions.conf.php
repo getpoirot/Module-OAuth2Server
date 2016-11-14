@@ -18,10 +18,6 @@ return [
         \Module\OAuth2\Actions\RespondToRequest::class
            => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RespondToRequest'],
 
-
-        \Module\OAuth2\Actions\AssertAuthToken::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'AssertAuthToken'],
-
         \Module\OAuth2\Actions\RetrieveAuthenticatedUser::class
            => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RetrieveAuthenticatedUser'],
     ],

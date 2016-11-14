@@ -51,7 +51,7 @@ class IdentityFulfillmentLazy
      *
      * @return string
      */
-    function getCredential()
+    function getPassword()
     {
         if (!$this->_isDataLoaded())
             // load data to represent all properties

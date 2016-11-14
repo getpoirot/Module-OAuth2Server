@@ -12,7 +12,8 @@ return [
         ),
         'params'  => array(
             ListenerDispatch::CONF_KEY => function($response) {
-                // TODO preserve url query params
+                // TODO preserve url query params with redirect
+                // TODO redirect plugin or ResponseRedirect
                 /** @var \Poirot\Http\HttpResponse $response */
                 $response->setStatusCode(302);
                 $response->headers()->insert(
@@ -38,7 +39,9 @@ return [
                 ],
                 'params'  => [
                     // This Action Run First In Chains and Assert Validate Token
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/AssertAuthToken'
+                    ListenerDispatch::CONF_KEY => function ($request = null) {
+                        return array('token' => \Module\OAuth2\assertAuthToken($request));
+                    }
                 ],
                 'routes' => [
                     'members' => [
@@ -56,10 +59,6 @@ return [
                                 ],
                                 'params'  => [
                                     ListenerDispatch::CONF_KEY => [
-                                        '/module/foundation/actions/ParseRequestData',
-                                        function($request_data) {
-                                           kd($request_data);
-                                        },
                                         '/module/oauth2/actions/Register',
                                     ],
                                 ],

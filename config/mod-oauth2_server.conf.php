@@ -194,7 +194,9 @@ return [
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => [
-                        ['key' => ['identifier' => 1, 'credential' => 1]],],],],],
+                        [ 'key' => ['date_created_mongo'=>1, ] ],
+                        [ 'key' => ['identifiers.type'=>1, 'identifiers.value'=>1, 'identifiers.validated'=>1, ] ],
+                    ],],],],
     ],
 
     // View Renderer Options

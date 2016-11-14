@@ -11,10 +11,15 @@
         , "poirot/oauth2": "dev-devel"
         , "poirot/mod-driver_mongo": "dev-devel"
         , "poirot/mod-authorization": "dev-devel"
+
+        , "wixel/gump": "dev-master"
     }
     , "autoload"  : {
         "psr-4": {
             "Module\\OAuth2\\": "src/OAuth2/"
         }
+        , "files" : [
+            "_functions.php"
+        ]
     }
 }

@@ -1,12 +1,11 @@
 <?php
 namespace Module\OAuth2\Model;
 
-use Module\MongoDriver\Model\aPersistable;
-
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
+use Poirot\Std\Struct\DataOptionsOpen;
 
 
-class Client extends aPersistable
+class Client extends DataOptionsOpen
     implements iEntityClient
 {
     const CLIENT_TYPE_CONFIDENTIAL = 'confidential';

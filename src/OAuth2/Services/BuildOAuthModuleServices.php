@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Services;
 
+use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
 
 use Poirot\Ioc\Container\BuildContainer;
@@ -38,7 +39,7 @@ class BuildOAuthModuleServices
                       => \Poirot\OAuth2\Interfaces\Server\Repository\iRepoClients::class,
 
                     self::SERVICE_NAME_USERS
-                      => \Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers::class,
+                      => iRepoUsers::class,
 
                     self::SERVICE_NAME_USERS_APPROVED_CLIENTS
                       => iRepoUsersApprovedClients::class,

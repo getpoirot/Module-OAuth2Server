@@ -1,8 +1,7 @@
 <?php
-namespace Module\OAuth2\Model\Repo\Mongo;
+namespace Module\OAuth2\Model\Mongo;
 
 use Module\MongoDriver\Model\Repository\aRepository;
-use Module\OAuth2\Model\Client;
 
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoClients;

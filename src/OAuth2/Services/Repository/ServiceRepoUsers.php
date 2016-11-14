@@ -2,12 +2,13 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
+use Module\OAuth2\Services\BuildOAuthModuleServices;
 
 class ServiceRepoUsers
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = 'users';
+    protected $name = BuildOAuthModuleServices::SERVICE_NAME_USERS;
 
     
     /**
@@ -17,6 +18,6 @@ class ServiceRepoUsers
      */
     function getRepoClassName()
     {
-        return \Module\OAuth2\Model\Repo\Mongo\Users::class;
+        return \Module\OAuth2\Model\Mongo\Users::class;
     }
 }

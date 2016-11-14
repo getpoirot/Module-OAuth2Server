@@ -56,7 +56,7 @@ class IdentityCredentialDigestRepoUser
                 $identity->setA1($a1);
             }
         } else {
-            $user = $this->repoUsers->findByUserCredential($username, $password);
+            $user = $this->repoUsers->findByUserPass($username, $password);
             if ($user) {
                 $identity = new IdentityUsername();
                 $identity->setUsername($username);
