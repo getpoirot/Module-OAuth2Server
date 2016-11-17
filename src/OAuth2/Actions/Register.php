@@ -16,9 +16,18 @@ class Register extends aAction
 {
     function __invoke(iHttpRequest $request = null)
     {
+        if (!$request instanceof iHttpRequest)
+            throw new \InvalidArgumentException(sprintf(
+                'Request Http Must Instance of iHttpRequest; given: (%s).'
+                , \Poirot\Std\flatten($request)
+            ));
+
+
         if (MethodType::_($request)->isPost()) {
             return $this->_persistRegistration($request);
         }
+
+        return null;
     }
 
     protected function _persistRegistration(iHttpRequest $request)
@@ -27,22 +36,22 @@ class Register extends aAction
         $post = ParseRequestBody::_($request)->parseData();
         $post = $this->_assertValidData($post);
 
-
         # Map Given Data Of API Protocol and Map To Entity Model:
         $contacts   = [];
         $contacts[] = ['type' => 'email', 'value' => $post['username']];
-        (!isset($post['mobile'])) ?:
+        if (isset($post['mobile'])) {
             $contacts[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']] ];
+        }
 
         $entity = new \Module\OAuth2\Model\User;
         $entity
             ->setFullName($post['full_name'])
             ->setIdentifier($post['username'])
-            ->setPassword($post['credential'])
+            ->setPassword(md5($post['credential']))
             ->setIdentifiers($contacts)
-            ->setGrants([
+            /*->setGrants([
                 ['type' => 'password', 'value' => $post['credential']]
-            ])
+            ])*/
         ;
 
 
@@ -83,7 +92,6 @@ class Register extends aAction
      */
     protected function _assertValidData(array $post)
     {
-        // TODO validate data
         return $post;
     }
 }
