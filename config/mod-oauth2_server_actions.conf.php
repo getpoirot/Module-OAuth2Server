@@ -9,6 +9,9 @@ return [
         \Module\OAuth2\Actions\Login::class
         => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Login'],
 
+        \Module\OAuth2\Actions\RegisterController::class
+        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterController'],
+
         \Module\OAuth2\Actions\Register::class
         => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Register'],
 
