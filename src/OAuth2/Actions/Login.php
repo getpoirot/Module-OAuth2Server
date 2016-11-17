@@ -5,6 +5,6 @@ class Login extends aAction
 {
     function __invoke()
     {
-
+        return array();
     }
 }

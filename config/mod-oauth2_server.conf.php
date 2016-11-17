@@ -202,6 +202,14 @@ return [
     // View Renderer Options
     \Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
     => [
+        \Poirot\Application\Sapi\Server\Http\Service\ServiceViewModelResolver::CONF_KEY => array(
+            'Poirot\Loader\LoaderNamespaceStack' => array(
+                // Use Default Theme Folder To Achieve Views
+                'main/oauth' => __DIR__. '/../view/main/oauth',
+                'error/oauth-server' => __DIR__. '/../view/error/oauth-server',
+            ),
+        ),
+
         \Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => [
             // Display Authentication Exceptions Specific Template
             \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth-server',

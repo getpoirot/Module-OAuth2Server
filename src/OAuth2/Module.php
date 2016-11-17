@@ -15,7 +15,6 @@ use Poirot\Loader\Autoloader\LoaderAutoloadAggregate;
 use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
 use Poirot\Loader\Interfaces\iLoaderAutoload;
 use Poirot\Loader\LoaderAggregate;
-use Poirot\Loader\LoaderNamespaceStack;
 
 use Poirot\Router\BuildRouterStack;
 use Poirot\Router\Interfaces\iRouterStack;
@@ -153,16 +152,6 @@ class Module implements iSapiModule
             $buildRoute = new BuildRouterStack();
             $buildRoute->setRoutes($routes);
             $buildRoute->build($router);
-        }
-
-        # ViewScripts To View Resolver:
-        if ($viewModelResolver) {
-            /** @var LoaderNamespaceStack $resolver */
-            $resolver = $viewModelResolver->loader('Poirot\Loader\LoaderNamespaceStack');
-            $resolver->with(array(
-                'main/oauth' => __DIR__. '/../../view/main/oauth',
-                'error/oauth-server' => __DIR__. '/../../view/error/oauth-server',
-            ));
         }
     }
 }
