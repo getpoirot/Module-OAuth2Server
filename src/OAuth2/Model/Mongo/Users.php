@@ -5,6 +5,7 @@ use Module\MongoDriver\Model\Repository\aRepository;
 
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
 use Poirot\Std\Interfaces\Struct\iData;
@@ -46,8 +47,32 @@ class Users extends aRepository
 
         $r = $this->_query()->insertOne($e);
 
-        $e->setIdentifier($r->getInsertedId());
+        // TODO return iEntityUser interface now data returned contains Specific Mongo Object Model
+        //$e->set_Id($r->getInsertedId());
         return $e;
+    }
+
+    /**
+     * Delete Entity By Identifier
+     *
+     * @param string  $identifier
+     * @param boolean $validated  Validated Only?
+     *
+     * @return int Deleted Count
+     */
+    function deleteByIdentifier($identifier, $validated)
+    {
+        $r = $this->_query()->deleteMany([
+            'identifiers' => [
+                '$elemMatch' => [
+                    'type'      => 'email',
+                    'value'     => $identifier,
+                    'validated' => (boolean) $validated,
+                ]
+            ]
+        ]);
+
+        return $r->getDeletedCount();
     }
 
     /**
@@ -57,7 +82,7 @@ class Users extends aRepository
      *
      * @return boolean
      */
-    function isExistsIdentifiers(array $identifiers)
+    function isIdentifiersRegistered(array $identifiers)
     {
         $or = [];
         /** @var iEntityUserIdentifierObject $arg */
@@ -76,6 +101,43 @@ class Users extends aRepository
 
         return (boolean) $r;
     }
+
+    /**
+     * Find Match With Exact Identifiers?
+     *
+     * @param array   $identifiers
+     * @param boolean $allValidated
+     *
+     * @return iEntityUser|false
+     */
+    function findOneByIdentifiers(array $identifiers, $allValidated = null)
+    {
+        $match = [];
+
+        /** @var iEntityUserIdentifierObject $arg */
+        foreach ($identifiers as $arg) {
+            $match[] = [
+                '$match' => ['identifiers' => [
+                    '$elemMatch' => [
+                        // iEntityUserIdentifierObject()
+                        'type'      => $arg->getType(),
+                        'value'     => $arg->getValue(),
+                        'validated' => ($allValidated !== null) ? $allValidated : $arg->isValidated()
+                    ],
+                ],],
+            ];
+        }
+
+
+        /** @var \MongoDB\Driver\Cursor $r */
+        $cursor = $this->_query()->aggregate($match);
+
+        $r = false;
+        foreach ($cursor as $r)
+            break;
+
+        return $r;
+    }
     
     /**
      * Find User By Identifier (username)
@@ -84,20 +146,14 @@ class Users extends aRepository
      *
      * @return iEntityUser|false
      */
-    function findByIdentifier($identifier)
+    function findOneByIdentifier($identifier)
     {
-        $r = $this->_query()->findOne([
-            'identifiers' => [
-                '$elemMatch' => [
-                    // iEntityUserIdentifierObject()
-                    'validated' => true,
-                    'type'      => 'email',
-                    'value'     => $identifier,
-                ],
-            ],
-        ]);
+        $id = new UserIdentifierObject;
+        $id->setValidated(true);
+        $id->setType('email');
+        $id->setValue($identifier);
 
-        return $r;
+        return $this->findOneByIdentifiers([$id]);
     }
 
     /**
@@ -108,7 +164,7 @@ class Users extends aRepository
      *
      * @return iEntityUser|false
      */
-    function findByUserPass($userIdentifier, $credential)
+    function findOneByUserPass($userIdentifier, $credential)
     {
         /** @var \MongoDB\Driver\Cursor $r */
         $cursor = $this->_query()->aggregate([
@@ -154,7 +210,7 @@ class Users extends aRepository
      * @return iData
      * @throws \Exception
      */
-    function findMatchBy($property, $value)
+    function findOneMatchBy($property, $value)
     {
         if ($property !== 'identifier')
             throw new \Exception(sprintf(
@@ -162,6 +218,6 @@ class Users extends aRepository
                 , \Poirot\Std\flatten($value)
             ));
         
-        return $this->findByIdentifier($value);
+        return $this->findOneByIdentifier($value);
     }
 }

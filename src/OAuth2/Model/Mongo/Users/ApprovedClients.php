@@ -1,5 +1,5 @@
 <?php
-namespace Module\OAuth2\Model\Repo\Mongo\Users;
+namespace Module\OAuth2\Model\Mongo\Users;
 
 use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;

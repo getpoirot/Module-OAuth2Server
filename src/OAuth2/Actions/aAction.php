@@ -12,8 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  * @method ResponseInterface RespondToRequest(HttpRequest $request, HttpResponse $response)
  * @method iEntityUser       RetrieveAuthenticatedUser()
  *
- * @property RespondToRequest          RespondToRequest
- * @property AssertAuthToken RetrieveAuthenticatedUser
  */
-abstract class aAction extends \Module\Foundation\Actions\aAction
+abstract class aAction
+    extends \Module\Foundation\Actions\aAction
 { }

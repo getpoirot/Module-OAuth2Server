@@ -1,18 +1,20 @@
 <?php
-namespace Module\OAuth2\Actions;
+namespace Module\OAuth2\Actions\Users;
 
-use Module\Foundation\Actions\aAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
+use Module\OAuth2\Actions\aAction;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
-class RegisterController extends aAction
+class RegisterPage extends aAction
 {
     function __invoke(iHttpRequest $request = null)
     {
+        # Persist Registration Request:
         if (MethodType::_($request)->isPost()) {
-            try {
+            try
+            {
                 $this->register($request);
 
                 // redirect to itself (matchedRoute)
@@ -23,6 +25,8 @@ class RegisterController extends aAction
             }
         }
 
-        return []; // display template output
+        # Display Output:
+
+        return [];
     }
 }

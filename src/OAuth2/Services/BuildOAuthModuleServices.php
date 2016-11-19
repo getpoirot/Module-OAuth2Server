@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Services;
 
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
 
 use Poirot\Ioc\Container\BuildContainer;
@@ -14,10 +15,12 @@ class BuildOAuthModuleServices
 {
     const SERVICE_NAME_CLIENTS                = 'Clients';
     const SERVICE_NAME_USERS                  = 'Users';
-    const SERVICE_NAME_USERS_APPROVED_CLIENTS = 'Users.ApprovedClients';
     const SERVICE_NAME_ACCESS_TOKENS          = 'AccessTokens';
     const SERVICE_NAME_REFRESH_TOKENS         = 'RefreshTokens';
     const SERVICE_NAME_AUTH_CODES             = 'AuthCodes';
+
+    const SERVICE_NAME_USERS_APPROVED_CLIENTS = 'Users.ApprovedClients';
+    const SERVICE_NAME_VALIDATION_CODES       = 'ValidationCodes';
 
 
     protected $implementations
@@ -41,9 +44,6 @@ class BuildOAuthModuleServices
                     self::SERVICE_NAME_USERS
                       => iRepoUsers::class,
 
-                    self::SERVICE_NAME_USERS_APPROVED_CLIENTS
-                      => iRepoUsersApprovedClients::class,
-
                     self::SERVICE_NAME_ACCESS_TOKENS
                       => \Poirot\OAuth2\Interfaces\Server\Repository\iRepoAccessTokens::class,
 
@@ -52,6 +52,13 @@ class BuildOAuthModuleServices
 
                     self::SERVICE_NAME_AUTH_CODES
                       => \Poirot\OAuth2\Interfaces\Server\Repository\iRepoAuthCodes::class,
+
+
+                    self::SERVICE_NAME_USERS_APPROVED_CLIENTS
+                    => iRepoUsersApprovedClients::class,
+
+                    self::SERVICE_NAME_VALIDATION_CODES
+                    => iRepoValidationCodes::class,
                 ],
             ],
         ];

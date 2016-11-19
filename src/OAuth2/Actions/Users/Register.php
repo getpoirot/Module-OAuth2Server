@@ -1,11 +1,13 @@
 <?php
-namespace Module\OAuth2\Actions;
+namespace Module\OAuth2\Actions\Users;
 
-use Module\Foundation\Actions\aAction;
+use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iEntityUser;
+use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Mongo\User;
 use Module\OAuth2\Model\Mongo\Users;
+use Module\OAuth2\Model\ValidationCode;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestBody;
@@ -47,11 +49,8 @@ class Register extends aAction
         $entity
             ->setFullName($post['full_name'])
             ->setIdentifier($post['username'])
-            ->setPassword(md5($post['credential']))
+            ->setPassword(md5($post['credential'])) // give grant password
             ->setIdentifiers($contacts)
-            /*->setGrants([
-                ['type' => 'password', 'value' => $post['credential']]
-            ])*/
         ;
 
 
@@ -61,16 +60,56 @@ class Register extends aAction
 
         ## validate existence identifier
         #- email or mobile not given before
-        if ($repoUsers->isExistsIdentifiers($entity->getIdentifiers()))
+        if ($repoUsers->isIdentifiersRegistered($entity->getIdentifiers()))
             throw new exIdentifierExists('Identifier Is Given To Another User.', 400);
 
-        /** @var User|iEntityUser $r */
-        $r = $repoUsers->insert($entity);
 
+        ## do not persist duplicated data for none validated users
+        if ($user = $repoUsers->findOneByIdentifiers($entity->getIdentifiers(), false))
+            // delete old one and lets registration follow
+            $repoUsers->deleteByIdentifier($user->getIdentifier(), false);
+
+        /** @var User|iEntityUser $user */
+        $user = $repoUsers->insert($entity);
+        $code = $this->_insertValidationCode($user->getIdentifier());
 
         return array(
-            ListenerDispatch::RESULT_DISPATCH => $r
+            ListenerDispatch::RESULT_DISPATCH => array(
+                'url_validation' => (string) $this->withModule('foundation')->url(
+                    'main/oauth/validate'
+                    , array('validation_code' => $code)
+                ),
+            )
         );
+    }
+
+    /**
+     * Generate And Insert Validation Code For User
+     *
+     * @param string $userIdentifier
+     *
+     * @return string
+     */
+    protected function _insertValidationCode($userIdentifier)
+    {
+        /** @var iRepoValidationCodes $repoValidationCodes */
+        $repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
+
+        $validationCode = new ValidationCode();
+        $validationCode
+            ->setUserIdentifier($userIdentifier)
+            ->setAuthCodes(array(
+                'email'  => \Module\OAuth2\generateCode(
+                    10,
+                    \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER
+                ),
+                'mobile' => \Module\OAuth2\generateCode(4, \Module\OAuth2\GENERATE_CODE_NUMBERS),
+            ))
+        ;
+        $v    = $repoValidationCodes->insert($validationCode);
+        $code = $v->getValidationCode();
+
+        return $code;
     }
 
     /**
@@ -92,6 +131,10 @@ class Register extends aAction
      */
     protected function _assertValidData(array $post)
     {
+        # Validate Data:
+
+        # Sanitize Data:
+
         return $post;
     }
 }

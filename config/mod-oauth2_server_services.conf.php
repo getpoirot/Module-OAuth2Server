@@ -24,9 +24,6 @@ return [
                     BuildOAuthModuleServices::SERVICE_NAME_USERS
                        => \Module\OAuth2\Services\Repository\ServiceRepoUsers::class,
 
-                    BuildOAuthModuleServices::SERVICE_NAME_USERS_APPROVED_CLIENTS
-                       => \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class,
-
                     BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS => [
                         \Poirot\Ioc\Container\BuildContainer::INST
                            => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokens::class,
@@ -47,6 +44,13 @@ return [
                         // options:
                         'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                     ],
+
+
+                    BuildOAuthModuleServices::SERVICE_NAME_USERS_APPROVED_CLIENTS
+                    => \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class,
+
+                    BuildOAuthModuleServices::SERVICE_NAME_VALIDATION_CODES
+                    => \Module\OAuth2\Services\Repository\ServiceRepoValidationCodes::class,
                 ],
         ],
     ],

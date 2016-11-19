@@ -41,7 +41,7 @@ class IdentityCredentialDigestRepoUser
         
         if ($password === null) {
             // Digest authenticate
-            $user = $this->repoUsers->findByIdentifier($username);
+            $user = $this->repoUsers->findOneByIdentifier($username);
             if ($user) {
                 # Digest Identity
                 $username = $user->getIdentifier();
@@ -56,7 +56,7 @@ class IdentityCredentialDigestRepoUser
                 $identity->setA1($a1);
             }
         } else {
-            $user = $this->repoUsers->findByUserPass($username, $password);
+            $user = $this->repoUsers->findOneByUserPass($username, $password);
             if ($user) {
                 $identity = new IdentityUsername();
                 $identity->setUsername($username);

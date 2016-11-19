@@ -18,11 +18,31 @@ interface iRepoUsers
     function insert(iEntityUser $user);
 
     /**
+     * Delete Entity By Identifier
+     *
+     * @param string  $identifier
+     * @param boolean $validated  Validated Only?
+     *
+     * @return int Deleted Count
+     */
+    function deleteByIdentifier($identifier, $validated);
+
+    /**
      * Is Identifier Existed?
      *
      * @param []iEntityUserIdentifierObject $identifier
      *
      * @return boolean
      */
-    function isExistsIdentifiers(array $identifiers);
+    function isIdentifiersRegistered(array $identifiers);
+
+    /**
+     * Find Match With Exact Identifiers?
+     *
+     * @param array   $identifiers
+     * @param boolean $allValidated
+     *
+     * @return iEntityUser|false
+     */
+    function findOneByIdentifiers(array $identifiers, $allValidated = null);
 }

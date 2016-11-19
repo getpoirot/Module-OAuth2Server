@@ -59,7 +59,7 @@ return [
                                 ],
                                 'params'  => [
                                     ListenerDispatch::CONF_KEY => [
-                                        '/module/oauth2/actions/Register',
+                                        '/module/oauth2/actions/users/Register',
                                     ],
                                 ],
                             ],
@@ -84,22 +84,35 @@ return [
                 'route' => 'RouteSegment',
                 'options' => [
                     'criteria'    => '/register',
-                    'match_whole' => false,
+                    'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RegisterController',
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/RegisterController',
                 ],
             ],
             'login' => [
                 'route' => 'RouteSegment',
                 'options' => [
                     'criteria'    => '/login',
-                    'match_whole' => false,
+                    'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Login',
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/Login',
                 ],
             ],
+            'validate' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    // also "validation_code" exists in params and pass through actions as argument
+                    'criteria'    => '/members/validate/:validation_code{\w+}',
+                    'match_whole' => true,
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
+                ],
+            ],
+
+            ##
             'authorize' => [
                 'route' => 'RouteSegment',
                 'options' => [
@@ -118,6 +131,7 @@ return [
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RespondToRequest',
                 ],
             ],
+
         ],
     ],
 ];

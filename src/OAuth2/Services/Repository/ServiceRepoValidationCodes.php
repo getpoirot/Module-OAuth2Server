@@ -2,12 +2,13 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
+use Module\OAuth2\Services\BuildOAuthModuleServices;
 
-class ServiceRepoUsersApprovedClients
+class ServiceRepoValidationCodes
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = 'Users.ApprovedClients';
+    protected $name = BuildOAuthModuleServices::SERVICE_NAME_VALIDATION_CODES;
 
     
     /**
@@ -17,6 +18,6 @@ class ServiceRepoUsersApprovedClients
      */
     function getRepoClassName()
     {
-        return \Module\OAuth2\Model\Mongo\Users\ApprovedClients::class;
+        return \Module\OAuth2\Model\Mongo\ValidationCodes::class;
     }
 }

@@ -1,14 +1,12 @@
 <?php
 namespace Module\OAuth2\Model\Mongo;
 
-use Module\OAuth2\Interfaces\Model\iEntityUser;
 use MongoDB\BSON\Persistable;
 use MongoDB\BSON\UTCDatetime;
 
-
-class User extends \Module\OAuth2\Model\User
-    implements iEntityUser
-    , Persistable
+class ValidationCode
+    extends \Module\OAuth2\Model\ValidationCode
+    implements Persistable
 {
     use tPersistable;
 
@@ -19,9 +17,9 @@ class User extends \Module\OAuth2\Model\User
      *
      * @return $this
      */
-    function setDateCreatedMongo(UTCDatetime $date)
+    function setExpirationDateMongo(UTCDatetime $date)
     {
-        $this->setDateCreated($date->toDateTime());
+        $this->setExpirationDateTime($date->toDateTime());
         return $this;
     }
 
@@ -31,22 +29,22 @@ class User extends \Module\OAuth2\Model\User
      *
      * @return UTCDatetime
      */
-    function getDateCreatedMongo()
+    function getExpirationDateMongo()
     {
-        $dateTime = $this->getDateCreated();
+        $dateTime = $this->getExpirationDateTime();
         return new UTCDatetime($dateTime->getTimestamp() * 1000);
     }
 
     /**
      * @override Ignore from persistence
      *
-     * Get Created Date
-     * @ignore disable when serialized and persist
+     * Expiration DateTime
+     * @ignore
      *
      * @return \DateTime
      */
-    function getDateCreated()
+    function getExpirationDateTime()
     {
-        return parent::getDateCreated();
+        return parent::getExpirationDateTime();
     }
 }

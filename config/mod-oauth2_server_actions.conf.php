@@ -4,24 +4,32 @@
  * @see \Poirot\Ioc\Container\BuildContainer
  */
 return [
+
+    'nested' => [
+        'Users' => [
+            'services' => [
+                // this class will registered as service by given name; exp. Login as Service
+                \Module\OAuth2\Actions\Users\Login::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Login'],
+
+                \Module\OAuth2\Actions\Users\RegisterPage::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterPage'],
+
+                \Module\OAuth2\Actions\Users\Register::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Register'],
+
+                \Module\OAuth2\Actions\Users\ValidatePage::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidatePage'],
+
+                \Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RetrieveAuthenticatedUser'],
+            ], ], ],
+
     'services' => [
-        // this class will registered as service by given name; exp. Authorize
-        \Module\OAuth2\Actions\Login::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Login'],
-
-        \Module\OAuth2\Actions\RegisterController::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterController'],
-
-        \Module\OAuth2\Actions\Register::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Register'],
-
         \Module\OAuth2\Actions\Authorize::class
            => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Authorize'],
 
         \Module\OAuth2\Actions\RespondToRequest::class
            => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RespondToRequest'],
-
-        \Module\OAuth2\Actions\RetrieveAuthenticatedUser::class
-           => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RetrieveAuthenticatedUser'],
     ],
 ];

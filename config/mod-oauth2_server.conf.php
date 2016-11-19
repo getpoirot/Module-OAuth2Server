@@ -13,7 +13,7 @@ return [
                         \Poirot\OAuth2\Server\Grant\GrantAuthCode::class,
                         'options' => [
                             'retrieve_user_callback' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/actions/RetrieveAuthenticatedUser'],],
+                                \Poirot\Ioc\INST => [\Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class],],
                             'repo_client' => [
                                 // Clients as registered service
                                 \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
@@ -35,7 +35,7 @@ return [
                         'options' => [
                             'retrieve_user_callback' => [
                                 // Clients as registered service
-                                \Poirot\Ioc\INST => ['/module/oauth2/actions/RetrieveAuthenticatedUser'],],
+                                \Poirot\Ioc\INST => [\Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class],],
                             'repo_client' => [
                                 // Clients as registered service
                                 \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
@@ -184,6 +184,16 @@ return [
                     'indexes' => [
                         ['key' => ['user_identifier' => 1,]],
                         ['key' => ['user_identifier' => 1,  'clients_approved.client_identifier' => 1]],
+                    ],],],
+
+            \Module\OAuth2\Services\Repository\ServiceRepoValidationCodes::class => [
+                'collection' => [
+                    // query on which collection
+                    'name' => 'oauth.users.validation_codes',
+                    // which client to connect and query with
+                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    // ensure indexes
+                    'indexes' => [
                     ],],],
 
             \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => [
