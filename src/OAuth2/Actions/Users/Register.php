@@ -8,9 +8,10 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Mongo\User;
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Model\ValidationCode;
+use Module\OAuth2\Model\ValidationCodeAuthObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
-use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestBody;
+use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
@@ -35,7 +36,7 @@ class Register extends aAction
     protected function _persistRegistration(iHttpRequest $request)
     {
         # Validate Sent Data:
-        $post = ParseRequestBody::_($request)->parseData();
+        $post = ParseRequestData::_($request)->parseBody();
         $post = $this->_assertValidData($post);
 
         # Map Given Data Of API Protocol and Map To Entity Model:
@@ -71,7 +72,7 @@ class Register extends aAction
 
         /** @var User|iEntityUser $user */
         $user = $repoUsers->insert($entity);
-        $code = $this->_insertValidationCode($user->getIdentifier());
+        $code = $this->_giveUserValidationCode($user->getIdentifier());
 
         return array(
             ListenerDispatch::RESULT_DISPATCH => array(
@@ -84,26 +85,28 @@ class Register extends aAction
     }
 
     /**
-     * Generate And Insert Validation Code For User
+     * Generate And Persist Validation Code For User
      *
      * @param string $userIdentifier
      *
      * @return string
      */
-    protected function _insertValidationCode($userIdentifier)
+    protected function _giveUserValidationCode($userIdentifier)
     {
         /** @var iRepoValidationCodes $repoValidationCodes */
         $repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
 
+        if ($r = $repoValidationCodes->findOneByUserIdentifier($userIdentifier))
+            // User has active validation code before!!
+            return $r->getValidationCode();
+
         $validationCode = new ValidationCode();
+
         $validationCode
             ->setUserIdentifier($userIdentifier)
             ->setAuthCodes(array(
-                'email'  => \Module\OAuth2\generateCode(
-                    10,
-                    \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER
-                ),
-                'mobile' => \Module\OAuth2\generateCode(4, \Module\OAuth2\GENERATE_CODE_NUMBERS),
+                new ValidationCodeAuthObject('email', 10, \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER),
+                new ValidationCodeAuthObject('mobile', 4, \Module\OAuth2\GENERATE_CODE_NUMBERS),
             ))
         ;
         $v    = $repoValidationCodes->insert($validationCode);

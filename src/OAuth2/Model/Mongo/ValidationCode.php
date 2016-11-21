@@ -17,9 +17,9 @@ class ValidationCode
      *
      * @return $this
      */
-    function setExpirationDateMongo(UTCDatetime $date)
+    function setDateMongoExpiration(UTCDatetime $date)
     {
-        $this->setExpirationDateTime($date->toDateTime());
+        $this->setDateTimeExpiration($date->toDateTime());
         return $this;
     }
 
@@ -29,9 +29,9 @@ class ValidationCode
      *
      * @return UTCDatetime
      */
-    function getExpirationDateMongo()
+    function getDateMongoExpiration()
     {
-        $dateTime = $this->getExpirationDateTime();
+        $dateTime = $this->getDateTimeExpiration();
         return new UTCDatetime($dateTime->getTimestamp() * 1000);
     }
 
@@ -43,8 +43,8 @@ class ValidationCode
      *
      * @return \DateTime
      */
-    function getExpirationDateTime()
+    function getDateTimeExpiration()
     {
-        return parent::getExpirationDateTime();
+        return parent::getDateTimeExpiration();
     }
 }

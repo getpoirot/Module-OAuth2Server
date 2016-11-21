@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Model;
 
 use Module\OAuth2\Interfaces\Model\iEntityValidationCode;
+use Module\OAuth2\Interfaces\Model\iEntityValidationCodeAuthObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
 
@@ -69,8 +70,7 @@ class ValidationCode extends DataOptionsOpen
      * Set Authorization codes
      *
      * $authCodes: [
-     *  'email' => '#1234code',
-     *  'cell'  => '@2345code',
+     *  iEntityValidationCodeAuthObject,
      *
      * @param array|\Traversable $authCodes
      *
@@ -78,20 +78,35 @@ class ValidationCode extends DataOptionsOpen
      */
     function setAuthCodes($authCodes)
     {
-        if ($authCodes instanceof \Traversable)
-            $authCodes = \Poirot\Std\cast($authCodes)->toArray(null, true);
+        $this->authCodes = [];
+        foreach ($authCodes as $code) {
+            if (!$code instanceof iEntityValidationCodeAuthObject)
+                // Usually constructed from bson unseriallized objects
+                $code = new ValidationCodeAuthObject($code);
 
-        if (array_values($authCodes) === $authCodes)
-            throw new \InvalidArgumentException('Map Provided For Auth Codes Must be an Associative Array.');
+            $this->addAuthCode($code);
+        }
 
-        $this->authCodes = $authCodes;
+        return $this;
+    }
+
+    /**
+     * Add Authorization Code
+     *
+     * @param iEntityValidationCodeAuthObject $authCode
+     *
+     * @return $this
+     */
+    function addAuthCode(iEntityValidationCodeAuthObject $authCode)
+    {
+        $this->authCodes[] = $authCode;
         return $this;
     }
 
     /**
      * Get Authorization Codes
      *
-     * @return array
+     * @return []iEntityValidationCodeAuthObject
      */
     function getAuthCodes()
     {
@@ -105,7 +120,7 @@ class ValidationCode extends DataOptionsOpen
      *
      * @return $this
      */
-    function setExpirationDateTime(\DateTime $dateTime)
+    function setDateTimeExpiration(\DateTime $dateTime)
     {
         $this->expirationDateTime = $dateTime;
         return $this;
@@ -116,12 +131,12 @@ class ValidationCode extends DataOptionsOpen
      *
      * @return \DateTime
      */
-    function getExpirationDateTime()
+    function getDateTimeExpiration()
     {
         if (!$this->expirationDateTime) {
             $dt = new \DateTime();
             $dt->add(new \DateInterval('P1D'));
-            $this->setExpirationDateTime($dt);
+            $this->setDateTimeExpiration($dt);
         }
 
         return $this->expirationDateTime;

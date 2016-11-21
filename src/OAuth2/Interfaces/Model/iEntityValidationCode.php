@@ -38,9 +38,11 @@ interface iEntityValidationCode
     /**
      * Set Authorization codes
      *
+     * !! empty argument [] will clear all given
+     *    authorization codes
+     *
      * $authCodes: [
-     *  'email' => '#1234code',
-     *  'cell'  => '@2345code',
+     *  iEntityValidationCodeAuthObject,
      *
      * @param array|\Traversable $authCodes
      *
@@ -49,9 +51,18 @@ interface iEntityValidationCode
     function setAuthCodes($authCodes);
 
     /**
+     * Add Authorization Code
+     *
+     * @param iEntityValidationCodeAuthObject $authCode
+     *
+     * @return $this
+     */
+    function addAuthCode(iEntityValidationCodeAuthObject $authCode);
+
+    /**
      * Get Authorization Codes
      *
-     * @return array
+     * @return []iEntityValidationCodeAuthObject
      */
     function getAuthCodes();
 
@@ -62,12 +73,12 @@ interface iEntityValidationCode
      *
      * @return $this
      */
-    function setExpirationDateTime(\DateTime $dateTime);
+    function setDateTimeExpiration(\DateTime $dateTime);
 
     /**
      * Expiration DateTime
      *
      * @return \DateTime
      */
-    function getExpirationDateTime();
+    function getDateTimeExpiration();
 }
