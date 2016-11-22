@@ -7,7 +7,9 @@ use Module\OAuth2\Interfaces\Model\iEntityValidationCode;
 use Module\OAuth2\Interfaces\Model\iEntityValidationCodeAuthObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 
+use Module\OAuth2\Model\Mongo\Users;
 use Poirot\Application\Exception\exRouteNotMatch;
+use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
@@ -28,7 +30,6 @@ class ValidatePage extends aAction
         # Handle Params Sent With Request Message If Has!!!
         $this->_handleValidate($vc, $request);
 
-
         # Prepare Output Values:
 
         /** @var iEntityValidationCodeAuthObject $ac */
@@ -38,21 +39,14 @@ class ValidatePage extends aAction
             $vAuthCodes[$ac->getType()] = $isValid;
         }
 
-        # All Is Validated?
-        if ($isAllValidated) {
-            // TODO Response From Ajax Calls
-
-            ## Delete Validation Entity From Repo
-            $repoValidationCodes->deleteByValidationCode($validation_code);
-
-            ## Sign-in User, Then Redirect To Login Page
-            // TODO sign-in user
-            $urlLogin = $this->withModule('foundation')->url('main/oauth/login');
-            return new ResponseRedirect($urlLogin);
-        }
+        # All Is Validated? Handle Login
+        if ($isAllValidated)
+            if ($r = $this->_handleLogin($vc, $request))
+                return $r;
 
         return [
-            'verified' => $vAuthCodes,
+            'is_validated'  => (boolean) $isAllValidated,
+            'verifications' => $vAuthCodes,
         ];
     }
 
@@ -88,7 +82,10 @@ class ValidatePage extends aAction
                     // Mark As Validated; So Display Latest Status When Code Execution Follows.
                     $ac->setValidated();
 
-                    // TODO Validate User Collection Identifier
+                    ## Validate User Collection Identifier
+                    /** @var Users $repoUsers */
+                    $repoUsers = $this->IoC()->get('services/repository/Users');
+                    $repoUsers->updateIdentifierAsValidated($validationCode->getUserIdentifier(), $ac->getType());
                 }
             }
         }
@@ -98,6 +95,10 @@ class ValidatePage extends aAction
 
     // ..
 
+    /**
+     * Retrieve Repo Validation Codes From IOC
+     * @return mixed|iRepoValidationCodes
+     */
     protected function _getRepoValidationCode()
     {
         if (!$this->repoValidationCodes)
@@ -105,4 +106,33 @@ class ValidatePage extends aAction
 
         return $this->repoValidationCodes;
     }
+
+    /**
+     * Handle Login When Verification is Complete
+     *
+     * @param iEntityValidationCode $validationCode
+     * @param iHttpRequest          $request
+     * @return ResponseRedirect|null
+     */
+    protected function _handleLogin(iEntityValidationCode $validationCode, iHttpRequest $request)
+    {
+        if (!MethodType::_($request)->isPost())
+            // Nothing To Do !!!
+            return null;
+
+        $reqParams = ParseRequestData::_($request)->parseBody();
+        if (!isset($reqParams['login']) || $reqParams['login'] !== 'login')
+            // It's not login button!!
+            return null;
+
+        ## Delete Validation Entity From Repo
+        $this->repoValidationCodes->deleteByValidationCode($validationCode->getValidationCode());
+
+        ## Sign-in User, Then Redirect To Login Page
+        // TODO sign-in user
+
+        $urlLogin = $this->withModule('foundation')->url('main/oauth/login');
+        return new ResponseRedirect($urlLogin);
+    }
+
 }

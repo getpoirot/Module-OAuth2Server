@@ -16,7 +16,6 @@ class RetrieveAuthenticatedUser extends aAction
      */
     function __invoke()
     {
-        // TODO better access in facade Module
         /** @var AuthenticatorFacade $authenticator */
         $authenticator = $this->withModule('authorization')->Facade();
         if (!$identifier = $authenticator->authenticator(Module::AUTHENTICATOR)->hasAuthenticated())
@@ -25,7 +24,7 @@ class RetrieveAuthenticatedUser extends aAction
         $identity = $identifier->withIdentity();
 
         $user = new User($identity);
-        if ($user->getIdentifier() === null)
+        if ($user->getUID() === null)
             throw new \Exception(sprintf(
                 'Identifier (%s) With Identity (%s) not fulfilled OAuth Entity User on "identifier" property.'
                 , get_class($identifier), get_class($identity)

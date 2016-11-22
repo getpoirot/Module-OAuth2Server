@@ -38,13 +38,14 @@ class IdentityCredentialDigestRepoUser
 
 
         $identity = false;
-        
+
         if ($password === null) {
+            // TODO Implement not completed
             // Digest authenticate
-            $user = $this->repoUsers->findOneByIdentifier($username);
+            $user = $this->repoUsers->findOneByUID($username);
             if ($user) {
                 # Digest Identity
-                $username = $user->getIdentifier();
+                $username = $user->getUsername();
                 $realm    = $user->getRealm();
                 if ($realm !== $this->getRealm())
                     return false;

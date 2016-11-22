@@ -5,6 +5,7 @@ use Module\MongoDriver\Model\Repository\aRepository;
 
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Model\User as BaseUser;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
@@ -37,39 +38,44 @@ class Users extends aRepository
     function insert(\Module\OAuth2\Interfaces\Model\iEntityUser $user)
     {
         $e = new User; // use object model persist
-        $e->setIdentifier($user->getIdentifier())
+        $e
+            ->setUID($user->getUID())
             ->setFullName($user->getFullName())
             ->setIdentifiers($user->getIdentifiers())
             ->setGrants($user->getGrants())
+            ->setUsername($user->getUsername())
             ->setPassword($user->getPassword())
             ->setDateCreated( $user->getDateCreated() )
         ;
 
         $r = $this->_query()->insertOne($e);
 
-        // TODO return iEntityUser interface now data returned contains Specific Mongo Object Model
-        //$e->set_Id($r->getInsertedId());
-        return $e;
+        $u = new BaseUser; // Don`t contains specific Repo Entity Model Fields such as date specific
+        $u
+            ->setUID($e->getUID())
+            ->setFullName($e->getFullName())
+            ->setIdentifiers($e->getIdentifiers())
+            ->setGrants($e->getGrants())
+            ->setUsername($user->getUsername())
+            ->setPassword($e->getPassword())
+            ->setDateCreated($e->getDateCreated())
+        ;
+
+        return $u;
     }
 
     /**
      * Delete Entity By Identifier
      *
-     * @param string  $identifier
+     * @param string  $uid
      * @param boolean $validated  Validated Only?
      *
      * @return int Deleted Count
      */
-    function deleteByIdentifier($identifier, $validated)
+    function deleteByUID($uid, $validated)
     {
         $r = $this->_query()->deleteMany([
-            'identifiers' => [
-                '$elemMatch' => [
-                    'type'      => 'email',
-                    'value'     => $identifier,
-                    'validated' => (boolean) $validated,
-                ]
-            ]
+            'uid' => $uid
         ]);
 
         return $r->getDeletedCount();
@@ -142,29 +148,28 @@ class Users extends aRepository
     /**
      * Find User By Identifier (username)
      *
-     * @param string $identifier
+     * @param string $uid
      *
      * @return iEntityUser|false
      */
-    function findOneByIdentifier($identifier)
+    function findOneByUID($uid)
     {
-        $id = new UserIdentifierObject;
-        $id->setValidated(true);
-        $id->setType('email');
-        $id->setValue($identifier);
+        $r = $this->_query()->findOne([
+            'uid' => (string) $uid,
+        ]);
 
-        return $this->findOneByIdentifiers([$id]);
+        return $r ? $r : false;
     }
 
     /**
      * Find User By Combination Of Username/Password (identifier/credential)
      *
-     * @param string $userIdentifier
+     * @param string $username
      * @param string $credential
      *
      * @return iEntityUser|false
      */
-    function findOneByUserPass($userIdentifier, $credential)
+    function findOneByUserPass($username, $credential)
     {
         /** @var \MongoDB\Driver\Cursor $r */
         $cursor = $this->_query()->aggregate([
@@ -173,7 +178,7 @@ class Users extends aRepository
                     '$elemMatch' => [
                         // iEntityUserIdentifierObject()
                         'validated' => true,
-                        'value'     => $userIdentifier,
+                        'value'     => $username,
                     ],
                 ],],
             ],
@@ -197,6 +202,35 @@ class Users extends aRepository
 
         return $r;
     }
+
+    /**
+     * Update Identifier Type Of Given User to Validated
+     *
+     * @param string $uid User Identifier
+     * @param string $identifierType
+     *
+     * @return int Affected Rows
+     */
+    function updateIdentifierAsValidated($uid, $identifierType)
+    {
+        $r = $this->_query()->updateMany(
+            [
+                'uid' => $uid,
+                'identifiers' => [
+                    '$elemMatch' => [
+                        'type'  => $identifierType,
+                    ],
+                ]
+            ],
+            [
+                '$set' => [
+                    'identifiers.$.validated' => true,
+                ]
+            ]
+        );
+
+        return $r->getModifiedCount();
+    }
     
     
     // Implement iProviderIdentityData:
@@ -204,20 +238,28 @@ class Users extends aRepository
     /**
      * Finds a user by the given user Identity.
      *
-     * @param string $property ie. 'user_name'
-     * @param mixed $value ie. 'payam@mail.com'
+     * @param string $property ie. 'username'
+     * @param mixed  $value    ie. 'payam@mail.com'
      *
      * @return iData
      * @throws \Exception
      */
     function findOneMatchBy($property, $value)
     {
-        if ($property !== 'identifier')
-            throw new \Exception(sprintf(
-                'Data only provide with "identifier" property; given: (%s).'
-                , \Poirot\Std\flatten($value)
-            ));
-        
-        return $this->findOneByIdentifier($value);
+        switch ($property) {
+            case 'uid':
+                return $this->findOneByUID($value);
+            case 'username':
+                $userIdentifier = new UserIdentifierObject(['type' => 'email', 'value' => $value, 'validated' => true]);
+                $user = $this->findOneByIdentifiers( [$userIdentifier] );
+                // TODO return iData interface
+                return $user;
+
+            default:
+                throw new \Exception(sprintf(
+                    'Provide Data with (%s) property not Implemented; value given: (%s).'
+                    , $property, \Poirot\Std\flatten($value)
+                ));
+        }
     }
 }

@@ -4,11 +4,12 @@ namespace Module\OAuth2\Model\Authenticate;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
 
+
 class IdentityFulfillmentLazy
     extends \Poirot\AuthSystem\Authenticate\Identity\IdentityFulfillmentLazy
     implements iEntityUser
 {
-    protected $identifier;
+    protected $uid;
     protected $credential;
 
 
@@ -19,32 +20,31 @@ class IdentityFulfillmentLazy
      */
     function __construct(iProviderIdentityData $provider)
     {
-        // Use "identifier" property to retrieve data from Provider
-        parent::__construct($provider, 'identifier');
-    }
-    
-    /**
-     * @param string $identifier
-     */
-    function setIdentifier($identifier)
-    {
-        $this->identifier = (string) $identifier;
+        // Use "uid" property to retrieve data from Provider
+        parent::__construct($provider, 'uid');
     }
 
     /**
-     * Unique User Identifier (username)
+     * @param string $uid
+     * @return $this
+     */
+    function setUID($uid)
+    {
+        $this->uid = $uid;
+        return $this;
+    }
+
+    /**
+     * Unique User Identifier
+     *
+     * !! Identifier Must Be Unique
      *
      * @return string|int
      */
-    function getIdentifier()
+    function getUID()
     {
-        if (!$this->_isDataLoaded())
-            // load data to represent all properties
-            $this->_loadData();
-        
-        return $this->identifier;
+        return $this->uid;
     }
-
 
     /**
      * Get Credential
@@ -60,23 +60,15 @@ class IdentityFulfillmentLazy
         return $this->credential;
     }
 
-    function setCredential($credential)
-    {
-        $this->credential = (string) $credential;
-        return $this;
-    }
-
-
     // Map Data Setter:
 
     /**
-     * Proxy Map For Digest Authentication
-     * @param $username
-     * @return $this
+     * Username Unique
+     *
+     * @return string
      */
-    function setUsername($username)
+    function getUsername()
     {
-        $this->setIdentifier($username);
-        return $this;
+        // TODO: Implement getUsername() method.
     }
 }

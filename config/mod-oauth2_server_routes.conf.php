@@ -87,7 +87,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/RegisterController',
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/RegisterPage',
                 ],
             ],
             'login' => [

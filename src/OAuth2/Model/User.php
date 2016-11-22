@@ -10,6 +10,7 @@ use Poirot\Std\Struct\DataOptionsOpen;
 class User extends DataOptionsOpen
     implements iEntityUser
 {
+    protected $identifier;
     protected $fullname;
     protected $contacts = array(
         # iEntityUserContactObject
@@ -21,13 +22,39 @@ class User extends DataOptionsOpen
     protected $date_created;
 
 
+
     /**
      * Unique User Identifier (username)
+     *
+     * @return string|int
+     */
+    function getUID()
+    {
+        if (!$this->identifier)
+            // TODO UUID
+            $this->identifier = uniqid();
+
+        return $this->identifier;
+    }
+
+    /**
+     * Set Identifier
+     * @param string $identifier
+     * @return $this
+     */
+    function setUID($identifier)
+    {
+        $this->identifier = $identifier;
+        return $this;
+    }
+
+    /**
+     * Get Username
      * @ignore identifier is presented by contacts (email)
      *
      * @return string|int
      */
-    function getIdentifier()
+    function getUsername()
     {
         /** @var UserIdentifierObject $c */
         foreach ($this->getIdentifiers() as $c)
@@ -38,11 +65,11 @@ class User extends DataOptionsOpen
     }
 
     /**
-     * Set Identifier
+     * Set Username
      * @param string $identifier
      * @return $this
      */
-    function setIdentifier($identifier)
+    function setUsername($identifier)
     {
         /** @var UserIdentifierObject $c */
         foreach ($this->getIdentifiers() as $i => $c)

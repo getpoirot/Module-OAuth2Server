@@ -20,12 +20,12 @@ interface iRepoUsers
     /**
      * Delete Entity By Identifier
      *
-     * @param string  $identifier
+     * @param string  $uid
      * @param boolean $validated  Validated Only?
      *
      * @return int Deleted Count
      */
-    function deleteByIdentifier($identifier, $validated);
+    function deleteByUID($uid, $validated);
 
     /**
      * Is Identifier Existed?
@@ -45,4 +45,14 @@ interface iRepoUsers
      * @return iEntityUser|false
      */
     function findOneByIdentifiers(array $identifiers, $allValidated = null);
+
+    /**
+     * Update Identifier Type Of Given User to Validated
+     *
+     * @param string $uid User Identifier
+     * @param string $identifierType
+     *
+     * @return int Affected Rows
+     */
+    function updateIdentifierAsValidated($uid, $identifierType);
 }

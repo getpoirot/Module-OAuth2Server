@@ -57,7 +57,7 @@ class ApprovedClients
     {
         $r = $this->_query()->findOneAndUpdate(
             [
-                'user_identifier' => $user->getIdentifier(),
+                'user_identifier' => $user->getUID(),
             ]
             , [
                 '$addToSet' => [
@@ -94,7 +94,7 @@ class ApprovedClients
      */
     function isUserApprovedClient(iEntityUser $user, iEntityClient $client)
     {
-        $userIdentifier   = $user->getIdentifier();
+        $userIdentifier   = $user->getUID();
         $clientIdentifier = $client->getIdentifier();
         
         $r = $this->_query()->findOne([

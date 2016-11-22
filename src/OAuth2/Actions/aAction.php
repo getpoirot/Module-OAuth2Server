@@ -15,4 +15,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 abstract class aAction
     extends \Module\Foundation\Actions\aAction
-{ }
+{
+
+}

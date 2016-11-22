@@ -112,6 +112,7 @@ return [
                         'options' => [
                             'identifier' => [
                                 \Poirot\Ioc\INST   => [
+                                    // Match Identifier With Username Fulfillment Identity By HttpBasicAuth
                                     \Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
                                     'options' => [
                                         'credential_adapter' => [
@@ -123,13 +124,15 @@ return [
                                                         \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
                                                     ],],],],],],
                             ],
+                            // Override Data Into Replacement Identity
                             'identity' => [
                                 \Poirot\Ioc\INST   => [
-                                    \Module\OAuth2\Model\Authenticate\IdentityFulfillmentLazy::class,
+                                    \Poirot\AuthSystem\Authenticate\Identity\IdentityFulfillmentLazy::class,
                                     'options' => [
                                         'provider' => [
                                             \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
                                         ],
+                                        'fulfillmentProp' => 'username' // fulfilled by IdentifierHttpBasicAuth
                                     ],
                                 ],
                             ],

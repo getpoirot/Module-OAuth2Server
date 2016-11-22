@@ -40,18 +40,19 @@ class Register extends aAction
         $post = $this->_assertValidData($post);
 
         # Map Given Data Of API Protocol and Map To Entity Model:
-        $contacts   = [];
-        $contacts[] = ['type' => 'email', 'value' => $post['username']];
+        $identifiers   = [];
+        $identifiers[] = ['type' => 'email', 'value' => $post['username']];
         if (isset($post['mobile'])) {
-            $contacts[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']] ];
+            $identifiers[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']] ];
         }
 
         $entity = new \Module\OAuth2\Model\User;
         $entity
             ->setFullName($post['full_name'])
-            ->setIdentifier($post['username'])
-            ->setPassword(md5($post['credential'])) // give grant password
-            ->setIdentifiers($contacts)
+            # ->setIdentifier() // Allow Entity/Persistence Storage Choose Identifier
+            ->setUsername($post['username'])
+            ->setPassword(md5($post['credential'])) // Add Grant Password
+            ->setIdentifiers($identifiers)
         ;
 
 
@@ -64,15 +65,16 @@ class Register extends aAction
         if ($repoUsers->isIdentifiersRegistered($entity->getIdentifiers()))
             throw new exIdentifierExists('Identifier Is Given To Another User.', 400);
 
-
         ## do not persist duplicated data for none validated users
-        if ($user = $repoUsers->findOneByIdentifiers($entity->getIdentifiers(), false))
+        if ($user = $repoUsers->findOneByIdentifiers($entity->getIdentifiers(), false)) {
             // delete old one and lets registration follow
-            $repoUsers->deleteByIdentifier($user->getIdentifier(), false);
+            $repoUsers->deleteByUID($user->getUID(), false);
+            $entity->setUID($user->getUID()); // don't change UID; continue with old validations
+        }
 
         /** @var User|iEntityUser $user */
         $user = $repoUsers->insert($entity);
-        $code = $this->_giveUserValidationCode($user->getIdentifier());
+        $code = $this->_giveUserValidationCode($user->getUID());
 
         return array(
             ListenerDispatch::RESULT_DISPATCH => array(
@@ -87,23 +89,23 @@ class Register extends aAction
     /**
      * Generate And Persist Validation Code For User
      *
-     * @param string $userIdentifier
+     * @param string $uid
      *
      * @return string
      */
-    protected function _giveUserValidationCode($userIdentifier)
+    protected function _giveUserValidationCode($uid)
     {
         /** @var iRepoValidationCodes $repoValidationCodes */
         $repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
 
-        if ($r = $repoValidationCodes->findOneByUserIdentifier($userIdentifier))
+        if ($r = $repoValidationCodes->findOneByUserIdentifier($uid))
             // User has active validation code before!!
             return $r->getValidationCode();
 
         $validationCode = new ValidationCode();
 
         $validationCode
-            ->setUserIdentifier($userIdentifier)
+            ->setUserIdentifier($uid)
             ->setAuthCodes(array(
                 new ValidationCodeAuthObject('email', 10, \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER),
                 new ValidationCodeAuthObject('mobile', 4, \Module\OAuth2\GENERATE_CODE_NUMBERS),
