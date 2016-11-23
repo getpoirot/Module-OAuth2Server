@@ -13,6 +13,10 @@
 use Module\OAuth2\Services\BuildOAuthModuleServices;
 
 return [
+    'services' => [
+        BuildOAuthModuleServices::SERVICE_NAME_AUTHENTICATOR
+            => \Module\OAuth2\Services\ServiceAuthenticatorDefault::class
+    ],
     'nested' => [
         'repository' => [
             // Define Default Services

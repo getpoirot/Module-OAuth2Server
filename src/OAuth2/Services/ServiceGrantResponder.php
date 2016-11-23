@@ -6,6 +6,7 @@ use Poirot\Ioc\Container\Service\aServiceContainer;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 use Poirot\Std\Struct\DataEntity;
 
+
 class ServiceGrantResponder 
     extends aServiceContainer
 {

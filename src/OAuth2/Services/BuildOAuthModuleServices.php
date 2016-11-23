@@ -5,6 +5,7 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
 
+use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
 use Poirot\Ioc\Container\BuildContainer;
 
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
@@ -13,6 +14,8 @@ use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 class BuildOAuthModuleServices
     extends BuildContainer
 {
+    const SERVICE_NAME_AUTHENTICATOR          = 'Authenticator';
+
     const SERVICE_NAME_CLIENTS                = 'Clients';
     const SERVICE_NAME_USERS                  = 'Users';
     const SERVICE_NAME_ACCESS_TOKENS          = 'AccessTokens';
@@ -26,6 +29,7 @@ class BuildOAuthModuleServices
     protected $implementations
         = [
             'GrantResponder' => GrantAggregateGrants::class,
+            'Authenticator'  => iAuthenticator::class
         ];
 
     protected $services

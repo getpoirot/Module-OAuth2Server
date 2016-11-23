@@ -105,50 +105,8 @@ return [
     => [
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS => [
             \Module\OAuth2\Module::AUTHENTICATOR => [
-                'realm'      => \Poirot\AuthSystem\Authenticate\Identifier\aIdentifier::DEFAULT_REALM,
-                'identifier' => [
-                    \Poirot\Ioc\INST   => [
-                        \Poirot\AuthSystem\Authenticate\Identifier\IdentifierWrapIdentityMap::class,
-                        'options' => [
-                            'identifier' => [
-                                \Poirot\Ioc\INST   => [
-                                    // Match Identifier With Username Fulfillment Identity By HttpBasicAuth
-                                    \Poirot\AuthSystem\Authenticate\Identifier\IdentifierHttpBasicAuth::class,
-                                    'options' => [
-                                        'credential_adapter' => [
-                                            \Poirot\Ioc\INST => [
-                                                \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
-                                                'options' => [
-                                                    ## Users as registered service
-                                                    'repo_users' => [
-                                                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
-                                                    ],],],],],],
-                            ],
-                            // Override Data Into Replacement Identity
-                            'identity' => [
-                                \Poirot\Ioc\INST   => [
-                                    \Poirot\AuthSystem\Authenticate\Identity\IdentityFulfillmentLazy::class,
-                                    'options' => [
-                                        'provider' => [
-                                            \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
-                                        ],
-                                        'fulfillmentProp' => 'username' // fulfilled by IdentifierHttpBasicAuth
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-
-                ## default adapter to authenticator::authenticate
-                'adapter' => [
-                    \Poirot\Ioc\INST => [
-                        \Module\OAuth2\Model\Authenticate\IdentityCredentialDigestRepoUser::class,
-                        'options' => [
-                            ## Users as registered service
-                            'repo_users' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS]
-                            ],],],],],],
+                \Poirot\Ioc\INST => ['/module/oauth2/services/'.BuildOAuthModuleServices::SERVICE_NAME_AUTHENTICATOR],
+                ],],
 
 
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => [
@@ -218,14 +176,14 @@ return [
         \Poirot\Application\Sapi\Server\Http\Service\ServiceViewModelResolver::CONF_KEY => array(
             'Poirot\Loader\LoaderNamespaceStack' => array(
                 // Use Default Theme Folder To Achieve Views
-                'main/oauth' => __DIR__. '/../view/main/oauth',
-                'error/oauth-server' => __DIR__. '/../view/error/oauth-server',
+                'main/oauth/' => __DIR__. '/../view/main/oauth',
+                'error/oauth/' => __DIR__ . '/../view/error/oauth', // Looks for Errors In This Folder
             ),
         ),
 
         \Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => [
             // Display Authentication Exceptions Specific Template
-            \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth-server',
+            \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth/oauth-server',
         ],
     ],
 ];
