@@ -9,6 +9,7 @@ use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
 use Poirot\AuthSystem\Authenticate\RepoIdentityCredential\aIdentityCredentialAdapter;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers;
 
+
 /**
  * Authenticate Digest Credential From Repo Users
  *
@@ -31,8 +32,8 @@ class IdentityCredentialDigestRepoUser
      */
     protected function doFindIdentityMatch(array $credentials)
     {
-        $username = $this->getUsername();
-        $password = $this->getPassword();
+        $username = $credentials['username'];
+        $password = $credentials['password'];
         if (!isset($username))
             throw new exMissingCredential('Adapter Credential not contains Username.');
 
