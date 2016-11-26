@@ -14,6 +14,8 @@ class ValidationCode extends DataOptionsOpen
     protected $authCodes = [];
     protected $expirationDateTime;
 
+    protected $continueFollowRedirection;
+
 
     /**
      * Set User Identifier That Validation Belong To
@@ -140,5 +142,30 @@ class ValidationCode extends DataOptionsOpen
         }
 
         return $this->expirationDateTime;
+    }
+
+    /**
+     * Set Continue Follow Redirection
+     * !! Implement By OAuth Registration
+     *
+     * @param string $url
+     *
+     * @return $this
+     */
+    function setContinueFollowRedirection($url)
+    {
+        $this->continueFollowRedirection = (string) $url;
+        return $this;
+    }
+
+    /**
+     * Get Continue Follow Redirection
+     * !! Implement By OAuth Registration
+     *
+     * @return string|null
+     */
+    function getContinueFollowRedirection()
+    {
+        return $this->continueFollowRedirection;
     }
 }

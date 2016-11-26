@@ -116,7 +116,7 @@ class Users extends aRepository
      *
      * @return iEntityUser|false
      */
-    function findOneByIdentifiers(array $identifiers, $allValidated = null)
+    function findOneMatchByIdentifiers(array $identifiers, $allValidated = null)
     {
         $match = [];
 
@@ -251,7 +251,7 @@ class Users extends aRepository
                 return $this->findOneByUID($value);
             case 'username':
                 $userIdentifier = new UserIdentifierObject(['type' => 'email', 'value' => $value, 'validated' => true]);
-                $user = $this->findOneByIdentifiers( [$userIdentifier] );
+                $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;
 

@@ -44,7 +44,7 @@ interface iRepoUsers
      *
      * @return iEntityUser|false
      */
-    function findOneByIdentifiers(array $identifiers, $allValidated = null);
+    function findOneMatchByIdentifiers(array $identifiers, $allValidated = null);
 
     /**
      * Update Identifier Type Of Given User to Validated

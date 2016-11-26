@@ -14,7 +14,7 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers;
  * Authenticate Digest Credential From Repo Users
  *
  */
-class IdentityCredentialDigestRepoUser
+class RepoIdentityCredentialDigest
     extends aIdentityCredentialAdapter
 {
     protected $username;

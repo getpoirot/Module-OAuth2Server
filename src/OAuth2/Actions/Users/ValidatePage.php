@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
+use Module\Authorization\Module\AuthenticatorFacade;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iEntityValidationCode;
@@ -8,7 +9,9 @@ use Module\OAuth2\Interfaces\Model\iEntityValidationCodeAuthObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 
 use Module\OAuth2\Model\Mongo\Users;
+use Module\OAuth2\Module;
 use Poirot\Application\Exception\exRouteNotMatch;
+use Poirot\AuthSystem\Authenticate\Identity\IdentityUsername;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
@@ -125,14 +128,30 @@ class ValidatePage extends aAction
             // It's not login button!!
             return null;
 
+
+        ## Sign-in User, Then Redirect To Login Page
+        /** @var Users $repoUsers */
+        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $user      = $repoUsers->findOneByUID($validationCode->getUserIdentifier());
+        $user      = __(new IdentityUsername())->setUsername($user->getUsername());
+
+        /** @var AuthenticatorFacade $authenticator */
+        $authenticator = $this->withModule('authorization')->Facade();
+        $identifier    = $authenticator->authenticator(Module::AUTHENTICATOR)->authenticate($user);
+        $identifier->signIn();
+
+
+        ## Continue Follow:
+        $continue = ($validationCode->getContinueFollowRedirection())
+            ? $validationCode->getContinueFollowRedirection()
+            : (string) $this->withModule('foundation')->url('main/oauth/login')
+        ;
+
+
         ## Delete Validation Entity From Repo
         $this->repoValidationCodes->deleteByValidationCode($validationCode->getValidationCode());
 
-        ## Sign-in User, Then Redirect To Login Page
-        // TODO sign-in user
-
-        $urlLogin = $this->withModule('foundation')->url('main/oauth/login');
-        return new ResponseRedirect($urlLogin);
+        return new ResponseRedirect($continue);
     }
 
 }

@@ -81,4 +81,22 @@ interface iEntityValidationCode
      * @return \DateTime
      */
     function getDateTimeExpiration();
+
+    /**
+     * Set Continue Follow Redirection
+     * !! Implement By OAuth Registration
+     *
+     * @param string $url
+     *
+     * @return $this
+     */
+    function setContinueFollowRedirection($url);
+
+    /**
+     * Get Continue Follow Redirection
+     * !! Implement By OAuth Registration
+     *
+     * @return string|null
+     */
+    function getContinueFollowRedirection();
 }

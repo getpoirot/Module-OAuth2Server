@@ -41,6 +41,7 @@ class ValidationCodes extends aRepository
             ->setValidationCode($validationCode->getValidationCode())
             ->setAuthCodes($validationCode->getAuthCodes())
             ->setDateTimeExpiration($validationCode->getDateTimeExpiration())
+            ->setContinueFollowRedirection($validationCode->getContinueFollowRedirection())
         ;
 
         $r = $this->_query()->insertOne($e);

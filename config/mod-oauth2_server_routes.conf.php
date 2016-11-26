@@ -79,6 +79,36 @@ return [
                 ],
             ],
 
+            'me' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/me',
+                    'match_whole' => false,
+                ],
+                'routes' => [
+                    'profile' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => function() { return []; },
+                        ],
+                    ],
+                    'logout' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/logout',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LogoutPage',
+                        ],
+                    ]
+                ],
+            ],
+
             ##
             'register' => [
                 'route' => 'RouteSegment',
@@ -97,7 +127,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/Login',
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LoginPage',
                 ],
             ],
             'validate' => [

@@ -9,8 +9,11 @@ return [
         'Users' => [
             'services' => [
                 // this class will registered as service by given name; exp. Login as Service
-                \Module\OAuth2\Actions\Users\Login::class
-                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Login'],
+                \Module\OAuth2\Actions\Users\LoginPage::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'LoginPage'],
+
+                \Module\OAuth2\Actions\Users\LogoutPage::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'LogoutPage'],
 
                 \Module\OAuth2\Actions\Users\RegisterPage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterPage'],

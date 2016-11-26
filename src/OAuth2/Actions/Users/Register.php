@@ -66,7 +66,7 @@ class Register extends aAction
             throw new exIdentifierExists('Identifier Is Given To Another User.', 400);
 
         ## do not persist duplicated data for none validated users
-        if ($user = $repoUsers->findOneByIdentifiers($entity->getIdentifiers(), false)) {
+        if ($user = $repoUsers->findOneMatchByIdentifiers($entity->getIdentifiers(), false)) {
             // delete old one and lets registration follow
             $repoUsers->deleteByUID($user->getUID(), false);
             $entity->setUID($user->getUID()); // don't change UID; continue with old validations
@@ -74,7 +74,7 @@ class Register extends aAction
 
         /** @var User|iEntityUser $user */
         $user = $repoUsers->insert($entity);
-        $code = $this->_giveUserValidationCode($user->getUID());
+        $code = $this->_giveUserValidationCode($user->getUID(), $request);
 
         return array(
             ListenerDispatch::RESULT_DISPATCH => array(
@@ -89,12 +89,17 @@ class Register extends aAction
     /**
      * Generate And Persist Validation Code For User
      *
-     * @param string $uid
+     * @param string       $uid
+     * @param iHttpRequest $request
      *
      * @return string
      */
-    protected function _giveUserValidationCode($uid)
+    protected function _giveUserValidationCode($uid, iHttpRequest $request)
     {
+        // Continue Used to OAuth Registration Follow!!!
+        $queryParams = ParseRequestData::_($request)->parseQueryParams();
+        $continue    = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
+
         /** @var iRepoValidationCodes $repoValidationCodes */
         $repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
 
@@ -103,14 +108,15 @@ class Register extends aAction
             return $r->getValidationCode();
 
         $validationCode = new ValidationCode();
-
         $validationCode
             ->setUserIdentifier($uid)
             ->setAuthCodes(array(
                 new ValidationCodeAuthObject('email', 10, \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER),
                 new ValidationCodeAuthObject('mobile', 4, \Module\OAuth2\GENERATE_CODE_NUMBERS),
             ))
+            ->setContinueFollowRedirection($continue) // used by oauth registration follow
         ;
+
         $v    = $repoValidationCodes->insert($validationCode);
         $code = $v->getValidationCode();
 
