@@ -35,6 +35,7 @@ class ServiceAuthenticatorDefault
 
         $authenticator = new Authenticator(
             __(new IdentifierWrapIdentityMap(
+                // TODO using cookie+session identifier to recognize user and feature to remember me!!
                 __(new IdentifierSession)->setIssuerException(function(exAuthentication $e) use ($request) {
                     $loginUrl = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login'); // ensure routes loaded
                     $loginUrl .= '?continue='.urlencode($request->getTarget());
