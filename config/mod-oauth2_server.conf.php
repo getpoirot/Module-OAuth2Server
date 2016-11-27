@@ -117,7 +117,7 @@ return [
                         'authenticator' => \Module\OAuth2\Module::AUTHENTICATOR,
                         'routes_denied' => [
                             'main/oauth/authorize',
-                            'main/oauth/me',
+                            'main/oauth/me/*',
                         ],],],],],
     ],
 

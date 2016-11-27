@@ -21,6 +21,9 @@ return [
                 \Module\OAuth2\Actions\Users\Register::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Register'],
 
+                \Module\OAuth2\Actions\Users\GetUserInfo::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'GetUserInfo'],
+
                 \Module\OAuth2\Actions\Users\ValidatePage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidatePage'],
 

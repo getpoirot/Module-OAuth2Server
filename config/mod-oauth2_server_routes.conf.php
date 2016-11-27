@@ -40,10 +40,30 @@ return [
                 'params'  => [
                     // This Action Run First In Chains and Assert Validate Token
                     ListenerDispatch::CONF_KEY => function ($request = null) {
-                        return array('token' => \Module\OAuth2\assertAuthToken($request));
+                        $token = \Module\OAuth2\assertAuthToken($request);
+                        return ['token' => $token];
                     }
                 ],
                 'routes' => [
+                    'me' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/me',
+                            'match_whole' => false,
+                        ],
+                        'routes' => [
+                            'profile' => [
+                                'route' => 'RouteSegment',
+                                'options' => [
+                                    'criteria'    => '/profile',
+                                    'match_whole' => true,
+                                ],
+                                'params'  => [
+                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/GetUserInfo',
+                                ],
+                            ],
+                        ],
+                    ],
                     'members' => [
                         'route' => 'RouteSegment',
                         'options' => [
@@ -51,6 +71,16 @@ return [
                             'match_whole' => false,
                         ],
                         'routes' => [
+                            'profile' => [
+                                'route' => 'RouteSegment',
+                                'options' => [
+                                    'criteria'    => '/profile/:uid{\w+}',
+                                    'match_whole' => true,
+                                ],
+                                'params'  => [
+                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/GetUserInfo',
+                                ],
+                            ],
                             // When POST something
                             'post' => [
                                 'route'   => 'RouteMethod',
@@ -61,17 +91,6 @@ return [
                                     ListenerDispatch::CONF_KEY => [
                                         '/module/oauth2/actions/users/Register',
                                     ],
-                                ],
-                            ],
-                            'get' => [
-                                'route'   => 'RouteMethod',
-                                'options' => [
-                                    'method' => 'GET',
-                                ],
-                                'params'  => [
-                                    ListenerDispatch::CONF_KEY => function() {
-                                        kd('This is magic of poirot/.');
-                                    },
                                 ],
                             ],
                         ],
