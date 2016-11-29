@@ -4,10 +4,10 @@ namespace Module\OAuth2\Actions\Users;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iEntityUser;
+use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Mongo\User;
 use Module\OAuth2\Model\Mongo\Users;
-use Module\OAuth2\Model\ValidationCode;
 use Module\OAuth2\Model\ValidationCodeAuthObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
@@ -15,7 +15,8 @@ use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
-class Register extends aAction
+class Register
+    extends aAction
 {
     function __invoke(iHttpRequest $request = null)
     {
@@ -41,9 +42,9 @@ class Register extends aAction
 
         # Map Given Data Of API Protocol and Map To Entity Model:
         $identifiers   = [];
-        $identifiers[] = ['type' => 'email', 'value' => $post['username']];
+        $identifiers[] = ['type' => 'email', 'value' => $post['username'], 'validated' => false];
         if (isset($post['mobile'])) {
-            $identifiers[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']] ];
+            $identifiers[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']], 'validated' => false ];
         }
 
         $entity = new \Module\OAuth2\Model\User;
@@ -74,7 +75,7 @@ class Register extends aAction
 
         /** @var User|iEntityUser $user */
         $user = $repoUsers->insert($entity);
-        $code = $this->_giveUserValidationCode($user->getUID(), $request);
+        $code = $this->_giveUserValidationCode($user, $request);
 
         return array(
             ListenerDispatch::RESULT_DISPATCH => array(
@@ -89,12 +90,13 @@ class Register extends aAction
     /**
      * Generate And Persist Validation Code For User
      *
-     * @param string       $uid
+     * @param iEntityUser  $user
      * @param iHttpRequest $request
      *
-     * @return string
+     * @return string Validation code
+     * @throws \Exception
      */
-    protected function _giveUserValidationCode($uid, iHttpRequest $request)
+    protected function _giveUserValidationCode(iEntityUser $user, iHttpRequest $request)
     {
         // Continue Used to OAuth Registration Follow!!!
         $queryParams = ParseRequestData::_($request)->parseQueryParams();
@@ -103,23 +105,19 @@ class Register extends aAction
         /** @var iRepoValidationCodes $repoValidationCodes */
         $repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
 
-        if ($r = $repoValidationCodes->findOneByUserIdentifier($uid))
+        if ($r = $repoValidationCodes->findOneByUserIdentifier($user->getUID()))
             // User has active validation code before!!
             return $r->getValidationCode();
 
-        $validationCode = new ValidationCode;
-        $validationCode
-            ->setUserIdentifier($uid)
-            ->setAuthCodes(array(
-                new ValidationCodeAuthObject('email', 10, \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER),
-                new ValidationCodeAuthObject('mobile', 4, \Module\OAuth2\GENERATE_CODE_NUMBERS),
-            ))
-            ->setContinueFollowRedirection($continue) // used by oauth registration follow
-        ;
 
-        $v    = $repoValidationCodes->insert($validationCode);
-        $code = $v->getValidationCode();
+        # Create Auth Codes for each Identifier:
+        $authCodes = [];
+        $identifiers = $user->getIdentifiers();
+        /** @var iEntityUserIdentifierObject $ident */
+        foreach ($identifiers as $ident)
+            $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
 
+        $code = $this->ValidationGenerator($user->getUID(), $authCodes, $continue);
         return $code;
     }
 

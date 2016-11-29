@@ -17,7 +17,8 @@ use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
-class ValidatePage extends aAction
+class ValidatePage
+    extends aAction
 {
     /** @var iRepoValidationCodes $repoValidationCodes */
     protected $repoValidationCodes;
@@ -75,7 +76,7 @@ class ValidatePage extends aAction
                     // This Auth Code is Validated.
                     continue;
 
-                if ($ac->getType() == $requestAuthType && $ac->getValue() == $requestAuthCode) {
+                if ($ac->getType() == $requestAuthType && $ac->getCode() == $requestAuthCode) {
                     // Given Code Match; Update To Validated!!!
                     $this->_getRepoValidationCode()->updateAuthCodeAsValidated(
                         $validationCode->getValidationCode()
@@ -88,7 +89,12 @@ class ValidatePage extends aAction
                     ## Validate User Collection Identifier
                     /** @var Users $repoUsers */
                     $repoUsers = $this->IoC()->get('services/repository/Users');
-                    $repoUsers->updateIdentifierAsValidated($validationCode->getUserIdentifier(), $ac->getType());
+                    $repoUsers->setUserIdentifier(
+                        $validationCode->getUserIdentifier()
+                        , $ac->getType()
+                        , $ac->getValue()
+                        , true
+                    );
                 }
             }
         }

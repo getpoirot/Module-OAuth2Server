@@ -30,6 +30,19 @@ interface iEntityValidationCodeAuthObject
     function getValue();
 
     /**
+     * Set Auth Code Bind With This Value Type
+     * @param string $authCode
+     * @return $this
+     */
+    function setCode($authCode);
+
+    /**
+     * Get Auth Code Bind With This Value Type
+     * @return string
+     */
+    function getCode();
+
+    /**
      * Set Validated
      * @param bool $validated
      * @return $this

@@ -62,7 +62,7 @@ interface iEntityUser
     /**
      * Get Contacts
      *
-     * @return []iEntityUserContactObject
+     * @return []iEntityUserIdentifierObject
      */
     function getIdentifiers();
 

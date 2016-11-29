@@ -45,7 +45,21 @@ interface iRepoUsers
      *
      * @return int Affected Rows
      */
-    function updateIdentifierAsValidated($uid, $identifierType);
+    function updateUserIdentifierAsValidated($uid, $identifierType);
+
+    /**
+     * Set Identifier Type Of Given User
+     *
+     * !! delete and add new identifier
+     *
+     * @param string $uid User Identifier
+     * @param string $identifierType
+     * @param mixed  $value
+     * @param bool   $validated
+     *
+     * @return int Affected Rows
+     */
+    function setUserIdentifier($uid, $identifierType, $value, $validated = false);
 
     /**
      * Update Specific Grant Type By Given Value

@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Model;
 
+use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\iEntityValidationCodeAuthObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
@@ -10,6 +11,7 @@ class ValidationCodeAuthObject
     implements iEntityValidationCodeAuthObject
 {
     protected $type;
+    protected $authCode;
     protected $value;
     protected $is_validated;
 
@@ -17,31 +19,6 @@ class ValidationCodeAuthObject
     protected $_valueType;
 
 
-    /**
-     * ValidationCodeAuthObject constructor.
-     *
-     * @param string| array|\Traversable $type
-     * @param int                        $codeLength
-     * @param int                        $codeType
-     * @param bool                       $validated
-     */
-    function __construct($type
-        , $codeLength = 10
-        , $codeType = \Module\OAuth2\GENERATE_CODE_STRINGS | \Module\OAuth2\GENERATE_CODE_NUMBERS
-        , $validated = false
-    ) {
-        if (is_array($type) || $type instanceof \Traversable)
-            // Options Given As First Argument
-            return parent::__construct($type);
-
-        $this->setType($type);
-        $this->setValidated($validated);
-
-        $this->_valueLength = (int) $codeLength;
-        $this->_valueType   = $codeType;
-
-        return parent::__construct();
-    }
 
     /**
      * Set Type
@@ -65,12 +42,12 @@ class ValidationCodeAuthObject
 
     /**
      * Set Value
-     * @param mixed $value
+     * @param mixed $authCode
      * @return $this
      */
-    function setValue($value)
+    function setValue($authCode)
     {
-        $this->value = (string) $value;
+        $this->value = $authCode;
         return $this;
     }
 
@@ -80,13 +57,18 @@ class ValidationCodeAuthObject
      */
     function getValue()
     {
-        if (!$this->value)
-            $this->setValue(\Module\OAuth2\generateCode(
-                $this->_valueLength,
-                $this->_valueType
-            ));
-
         return $this->value;
+    }
+
+    function setCode($authCode)
+    {
+        $this->authCode = (string) $authCode;
+        return $this;
+    }
+
+    function getCode()
+    {
+        return $this->authCode;
     }
 
     /**
@@ -108,5 +90,51 @@ class ValidationCodeAuthObject
     function isValidated()
     {
         return $this->is_validated;
+    }
+
+
+    // ..
+
+    static function newByIdentifier(iEntityUserIdentifierObject $ident)
+    {
+        switch ($ident->getType()) {
+            case 'email':
+                return ValidationCodeAuthObject::newEmailAuthCode($ident->getValue());
+            case 'mobile':
+                return ValidationCodeAuthObject::newMobileAuthCode($ident->getValue());
+            default:
+                throw new \Exception(sprintf(
+                    'Unknown Identifier (%s); Auth Code Cant Be Generated.'
+                    , $ident->getType()
+                ));
+        }
+    }
+
+    static function newEmailAuthCode($value, $validated = false)
+    {
+        $self = new self;
+        $self->setType('email');
+        $self->setCode(\Module\OAuth2\generateCode(
+            10,
+            \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER
+        ));
+        $self->setValue($value);
+        $self->setValidated($validated);
+
+        return $self;
+    }
+
+    static function newMobileAuthCode($value, $validated = false)
+    {
+        $self = new self;
+        $self->setType('mobile');
+        $self->setCode(\Module\OAuth2\generateCode(
+            4,
+            \Module\OAuth2\GENERATE_CODE_NUMBERS
+        ));
+        $self->setValue($value);
+        $self->setValidated($validated);
+
+        return $self;
     }
 }

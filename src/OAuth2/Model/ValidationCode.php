@@ -6,7 +6,8 @@ use Module\OAuth2\Interfaces\Model\iEntityValidationCodeAuthObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
 
-class ValidationCode extends DataOptionsOpen
+class ValidationCode
+    extends DataOptionsOpen
     implements iEntityValidationCode
 {
     protected $userIdentifier;

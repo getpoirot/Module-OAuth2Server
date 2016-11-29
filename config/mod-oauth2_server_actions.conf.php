@@ -27,8 +27,14 @@ return [
                 \Module\OAuth2\Actions\Users\ChangePassword::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ChangePassword'],
 
+                \Module\OAuth2\Actions\Users\ChangeIdentity::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ChangeIdentity'],
+
                 \Module\OAuth2\Actions\Users\ValidatePage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidatePage'],
+
+                \Module\OAuth2\Actions\Users\ValidationGenerator::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidationGenerator'],
 
                 \Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RetrieveAuthenticatedUser'],

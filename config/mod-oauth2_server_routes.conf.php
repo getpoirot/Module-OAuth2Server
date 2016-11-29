@@ -54,6 +54,7 @@ return [
                     ],
                 ],
                 'routes' => [
+                    ## ME
                     'me' => [
                         'route' => 'RouteSegment',
                         'options' => [
@@ -62,7 +63,7 @@ return [
                         ],
                         // TODO only tokens that has owner identifier
                         'routes' => [
-                            // Profile:
+                            ##Profile:
                             'profile' => [
                                 'route' => 'RouteSegment',
                                 'options' => [
@@ -73,7 +74,7 @@ return [
                                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/GetUserInfo',
                                 ],
                             ],
-                            // Identifiers:
+                            ## Identifiers:
                             'identifiers' => [
                                 'route' => 'RouteSegment',
                                 'options' => [
@@ -105,9 +106,11 @@ return [
                                             'match_whole' => true,
                                         ],
                                         'params'  => [
-                                            ListenerDispatch::CONF_KEY => function(){
-                                                print_r('change identity');die;
-                                            },
+                                            ListenerDispatch::CONF_KEY => [
+                                                \Module\OAuth2\Actions\Users\ChangeIdentity::getParsedRequestDataClosure(),
+                                                \Module\OAuth2\Actions\Users\ChangeIdentity::getParsedUIDFromTokenClosure(),
+                                                '/module/oauth2/actions/users/ChangeIdentity',
+                                            ]
                                         ],
                                     ],
                                     // Confirm Identity Validation:

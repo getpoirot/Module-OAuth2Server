@@ -194,7 +194,7 @@ class Users extends aRepository
      *
      * @return int Affected Rows
      */
-    function updateIdentifierAsValidated($uid, $identifierType)
+    function updateUserIdentifierAsValidated($uid, $identifierType)
     {
         $r = $this->_query()->updateMany(
             [
@@ -208,6 +208,51 @@ class Users extends aRepository
             [
                 '$set' => [
                     'identifiers.$.validated' => true,
+                ]
+            ]
+        );
+
+        return $r->getModifiedCount();
+    }
+
+    /**
+     * Set Identifier Type Of Given User
+     *
+     * !! delete and add new identifier
+     *
+     * @param string $uid User Identifier
+     * @param string $identifierType
+     * @param mixed  $value
+     * @param bool   $validated
+     *
+     * @return int Affected Rows
+     */
+    function setUserIdentifier($uid, $identifierType, $value, $validated = false)
+    {
+        $r = $this->_query()->updateMany(
+            [
+                'uid' => $uid,
+            ],
+            [
+                '$pull' => [
+                    'identifiers' => [
+                        'type' => $identifierType,
+                    ],
+                ]
+            ]
+        );
+
+        $r = $this->_query()->updateMany(
+            [
+                'uid' => $uid,
+            ],
+            [
+                '$addToSet' => [
+                    'identifiers' => [
+                        'type'      => $identifierType,
+                        'value'     => $value,
+                        'validated' => $validated,
+                    ],
                 ]
             ]
         );
