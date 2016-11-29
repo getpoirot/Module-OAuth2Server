@@ -4,6 +4,7 @@ namespace Module\OAuth2\Model;
 use Module\OAuth2\Interfaces\Model\iEntityUserGrantObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
+
 class UserGrantObject extends DataOptionsOpen
     implements iEntityUserGrantObject
 {

@@ -107,7 +107,7 @@ class Register extends aAction
             // User has active validation code before!!
             return $r->getValidationCode();
 
-        $validationCode = new ValidationCode();
+        $validationCode = new ValidationCode;
         $validationCode
             ->setUserIdentifier($uid)
             ->setAuthCodes(array(
