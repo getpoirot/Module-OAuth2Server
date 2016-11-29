@@ -65,23 +65,6 @@ class Users extends aRepository
     }
 
     /**
-     * Delete Entity By Identifier
-     *
-     * @param string  $uid
-     * @param boolean $validated  Validated Only?
-     *
-     * @return int Deleted Count
-     */
-    function deleteByUID($uid, $validated)
-    {
-        $r = $this->_query()->deleteMany([
-            'uid' => $uid
-        ]);
-
-        return $r->getDeletedCount();
-    }
-
-    /**
      * Is Identifier Existed?
      *
      * @param []iEntityUserIdentifierObject $identifier
@@ -231,7 +214,60 @@ class Users extends aRepository
 
         return $r->getModifiedCount();
     }
-    
+
+    /**
+     * Update Specific Grant Type By Given Value
+     *
+     * !! used to change password or specific credential of user
+     *
+     * @param string $uid
+     * @param string $grantType
+     * @param string $grantValue
+     *
+     * @return int Affected Rows
+     */
+    function updateGrantTypeValue($uid, $grantType, $grantValue)
+    {
+        if ($grantType == 'password')
+            // All Passwords Stored As MD5Sum
+            $grantValue = md5($grantValue);
+
+        $r = $this->_query()->updateMany(
+            [
+                'uid' => $uid,
+                'grants' => [
+                    '$elemMatch' => [
+                        'type'  => $grantType,
+                    ],
+                ]
+            ],
+            [
+                '$set' => [
+                    'grants.$.value' => $grantValue,
+                ]
+            ]
+        );
+
+        return $r->getModifiedCount();
+    }
+
+    /**
+     * Delete Entity By Identifier
+     *
+     * @param string  $uid
+     * @param boolean $validated  Validated Only?
+     *
+     * @return int Deleted Count
+     */
+    function deleteByUID($uid, $validated)
+    {
+        $r = $this->_query()->deleteMany([
+            'uid' => $uid
+        ]);
+
+        return $r->getDeletedCount();
+    }
+
     
     // Implement iProviderIdentityData:
 

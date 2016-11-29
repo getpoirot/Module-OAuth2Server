@@ -24,6 +24,9 @@ return [
                 \Module\OAuth2\Actions\Users\GetUserInfo::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'GetUserInfo'],
 
+                \Module\OAuth2\Actions\Users\ChangePassword::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ChangePassword'],
+
                 \Module\OAuth2\Actions\Users\ValidatePage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidatePage'],
 

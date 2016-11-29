@@ -5,6 +5,7 @@ use Module\OAuth2\Interfaces\Model\iEntityUser;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser as BaseEntityUser;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers as BaseRepoUsers;
 
+
 interface iRepoUsers
     extends BaseRepoUsers
 {
@@ -16,16 +17,6 @@ interface iRepoUsers
      * @return BaseEntityUser
      */
     function insert(iEntityUser $user);
-
-    /**
-     * Delete Entity By Identifier
-     *
-     * @param string  $uid
-     * @param boolean $validated  Validated Only?
-     *
-     * @return int Deleted Count
-     */
-    function deleteByUID($uid, $validated);
 
     /**
      * Is Identifier Existed?
@@ -55,4 +46,27 @@ interface iRepoUsers
      * @return int Affected Rows
      */
     function updateIdentifierAsValidated($uid, $identifierType);
+
+    /**
+     * Update Specific Grant Type By Given Value
+     *
+     * !! used to change password or specific credential of user
+     *
+     * @param string $uid
+     * @param string $grantType
+     * @param string $grantValue
+     *
+     * @return int Affected Rows
+     */
+    function updateGrantTypeValue($uid, $grantType, $grantValue);
+
+    /**
+     * Delete Entity By Identifier
+     *
+     * @param string  $uid
+     * @param boolean $validated  Validated Only?
+     *
+     * @return int Deleted Count
+     */
+    function deleteByUID($uid, $validated);
 }

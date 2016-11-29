@@ -39,10 +39,19 @@ return [
                 ],
                 'params'  => [
                     // This Action Run First In Chains and Assert Validate Token
-                    ListenerDispatch::CONF_KEY => function ($request = null) {
-                        $token = \Module\OAuth2\assertAuthToken($request);
-                        return ['token' => $token];
-                    }
+                    //! define array allow actions on matched routes chained after this action
+                    /*
+                     * [
+                     *    [0] => Callable Defined HERE
+                     *    [1] => routes defined callable
+                     *     ...
+                     */
+                    ListenerDispatch::CONF_KEY => [
+                        function ($request = null) {
+                            $token = \Module\OAuth2\assertAuthToken($request);
+                            return ['token' => $token];
+                        }
+                    ],
                 ],
                 'routes' => [
                     'me' => [
@@ -51,7 +60,9 @@ return [
                             'criteria'    => '/me',
                             'match_whole' => false,
                         ],
+                        // TODO only tokens that has owner identifier
                         'routes' => [
+                            // Profile:
                             'profile' => [
                                 'route' => 'RouteSegment',
                                 'options' => [
@@ -60,6 +71,53 @@ return [
                                 ],
                                 'params'  => [
                                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/GetUserInfo',
+                                ],
+                            ],
+                            // Identifiers:
+                            'identifiers' => [
+                                'route' => 'RouteSegment',
+                                'options' => [
+                                    'criteria'    => '/identifiers',
+                                    'match_whole' => false,
+                                ],
+                                'routes' => [
+                                    // Change Password:
+                                    'change_pass' => [
+                                        'route' => 'RouteSegment',
+                                        'options' => [
+                                            'criteria'    => '/change_pass',
+                                            'match_whole' => true,
+                                        ],
+                                        'params'  => [
+                                            ListenerDispatch::CONF_KEY => [
+                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedRequestDataClosure(),
+                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedUIDFromTokenClosure(),
+                                                '/module/oauth2/actions/users/ChangePassword',
+                                            ],
+                                        ],
+                                    ],
+                                    // Identifiers:
+                                    // Change Identity (email, mobile, ..):
+                                    'change' => [
+                                        'route' => 'RouteSegment',
+                                        'options' => [
+                                            'criteria'    => '/change',
+                                            'match_whole' => true,
+                                        ],
+                                        'params'  => [
+                                            ListenerDispatch::CONF_KEY => function(){
+                                                print_r('change identity');die;
+                                            },
+                                        ],
+                                    ],
+                                    // Confirm Identity Validation:
+                                    'confirm' => [
+                                        'route' => 'RouteSegment',
+                                        'options' => [
+                                            'criteria'    => '/change/confirm/:validation_code{\w+}',
+                                            'match_whole' => true,
+                                        ],
+                                    ],
                                 ],
                             ],
                         ],
