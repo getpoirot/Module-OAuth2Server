@@ -120,6 +120,10 @@ return [
                                             'criteria'    => '/change/confirm/:validation_code{\w+}',
                                             'match_whole' => true,
                                         ],
+                                        'params'  => [
+                                            // TODO separate Page with API func.
+                                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage'
+                                        ],
                                     ],
                                 ],
                             ],

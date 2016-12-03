@@ -16,7 +16,7 @@ use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
-
+// TODO implement commit/rollback; maybe momento design pattern or something is useful here
 class ValidatePage
     extends aAction
 {
