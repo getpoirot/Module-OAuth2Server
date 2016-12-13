@@ -112,8 +112,13 @@ class ChangeIdentity
 
         # Sanitize Data:
         $identifiers = [];
-        foreach ($post as $k => $v)
+        foreach ($post as $k => $v) {
+            if ($k != 'email' && $k != 'mobile' )
+                // Only Email and Mobile is Available as Identifiers.
+                continue;
+
             $identifiers[] = new UserIdentifierObject(['type'=>$k, 'value'=>$v, 'validated'=>false]);
+        }
 
         return ['identifiers' => $identifiers];
     }
