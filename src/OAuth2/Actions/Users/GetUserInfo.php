@@ -28,7 +28,7 @@ class GetUserInfo extends aAction
         $repoUsers = $this->IoC()->get('services/repository/Users');
         /** @var iEntityUser $u */
         if ( ($uid == null) || !($u = $repoUsers->findOneByUID($uid)) )
-            throw new exRouteNotMatch;
+            throw new exRouteNotMatch('User not Found.');
 
         $userInfo = [
             'username'     => $u->getUsername(),
