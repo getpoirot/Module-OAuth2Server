@@ -13,8 +13,11 @@ use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
+
 class LoginPage extends aAction
 {
+    const FLASH_MESSAGE_ID = 'message.login';
+
     function __invoke(iHttpRequest $request = null)
     {
         if (!$request instanceof iHttpRequest)
@@ -45,9 +48,9 @@ class LoginPage extends aAction
             } catch (exAuthentication $e) {
                 ## Invalid Credential !!!
 
-                // TODO set flash message
-                // ...
-                print_r($e->getMessage());die;
+                $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
+                    ->error('Authentication failed.');
+                ;
             }
 
             // redirect to itself (matchedRoute)
