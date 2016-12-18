@@ -49,7 +49,7 @@ class LoginPage extends aAction
                 ## Invalid Credential !!!
 
                 $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
-                    ->error('Authentication failed.');
+                    ->error('نام کاربری و یا کلمه عبور اشتباه است.');
                 ;
             }
 
