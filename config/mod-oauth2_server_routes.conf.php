@@ -11,18 +11,12 @@ return [
             'match_whole' => true,
         ),
         'params'  => array(
-            ListenerDispatch::CONF_KEY => function($response) {
+            ListenerDispatch::CONF_KEY => function() {
                 // TODO preserve url query params with redirect
-                // TODO redirect plugin or ResponseRedirect
-                /** @var \Poirot\Http\HttpResponse $response */
-                $response->setStatusCode(302);
-                $response->headers()->insert(
-                    \Poirot\Http\Header\FactoryHttpHeader::of([
-                        'location' => (string) \Module\Foundation\Actions\IOC::url('main/oauth/login')
-                    ])
-                );
 
-                return $response;
+                return new \Module\Foundation\HttpSapi\Response\ResponseRedirect(
+                    \Module\Foundation\Actions\IOC::url('main/oauth/login')
+                );
             },
         ),
     ),
