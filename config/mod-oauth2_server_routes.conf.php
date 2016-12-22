@@ -180,16 +180,7 @@ return [
                             ListenerDispatch::CONF_KEY => function() { return []; },
                         ],
                     ],
-                    'logout' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            'criteria'    => '/logout',
-                            'match_whole' => true,
-                        ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LogoutPage',
-                        ],
-                    ]
+
                 ],
             ],
 
@@ -212,6 +203,16 @@ return [
                 ],
                 'params'  => [
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LoginPage',
+                ],
+            ],
+            'logout' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/logout',
+                    'match_whole' => true,
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LogoutPage',
                 ],
             ],
             'validate' => [
