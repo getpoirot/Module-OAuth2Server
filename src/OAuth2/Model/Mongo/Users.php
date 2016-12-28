@@ -161,7 +161,7 @@ class Users extends aRepository
                     '$elemMatch' => [
                         // iEntityUserIdentifierObject()
                         'validated' => true,
-                        'value'     => $username,
+                        'value'     => $username, // match with any element item if array
                     ],
                 ],],
             ],

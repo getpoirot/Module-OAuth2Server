@@ -41,7 +41,7 @@ class RepoUserPassCredential
         $user = $this->repoUsers->findOneByUserPass($username, $password);
         if ($user) {
             $identity = new IdentityUsername();
-            $identity->setUsername($username);
+            $identity->setUsername($user->getUsername());
         }
 
         return $identity;
