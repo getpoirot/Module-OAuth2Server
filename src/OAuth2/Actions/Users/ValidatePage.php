@@ -11,6 +11,7 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Module;
 use Poirot\Application\Exception\exRouteNotMatch;
+use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\AuthSystem\Authenticate\Identity\IdentityUsername;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
@@ -141,7 +142,9 @@ class ValidatePage
         /** @var Users $repoUsers */
         $repoUsers = $this->IoC()->get('services/repository/Users');
         $user      = $repoUsers->findOneByUID($validationCode->getUserIdentifier());
-        $user      = __(new IdentityUsername())->setUsername($user->getUsername());
+        // Identity From Credential Authenticator
+        /** @see RepoUserPassCredential::doFindIdentityMatch */
+        $user      = __( new IdentityOpen() )->setUID($user->getUID());
 
         /** @var AuthenticatorFacade $authenticator */
         $authenticator = $this->withModule('authorization')->Facade();
