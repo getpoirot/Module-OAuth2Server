@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Services;
 
 use Module\OAuth2\Model\Authenticate\RepoUserPassCredential;
+use Module\OAuth2\Model\Mongo\Users;
 use Poirot\AuthSystem\Authenticate\Authenticator;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 use Poirot\AuthSystem\Authenticate\Identifier\aIdentifier;
@@ -41,7 +42,8 @@ class ServiceAuthenticatorDefault
                     $loginUrl .= '?continue='.urlencode($request->getTarget());
                     header('Location: '.$loginUrl);
                 })
-                , new IdentityFulfillmentLazy($repoUsers, 'username')
+                /** @see Users::findOneMatchBy */
+                , new IdentityFulfillmentLazy($repoUsers, 'uid')
             ))->setRealm(aIdentifier::DEFAULT_REALM)
             , $credentialAdapter // Identity Username --------^
         );

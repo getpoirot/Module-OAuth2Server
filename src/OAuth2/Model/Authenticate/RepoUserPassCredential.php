@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Model\Authenticate;
 
 use Poirot\AuthSystem\Authenticate\Exceptions\exMissingCredential;
-use Poirot\AuthSystem\Authenticate\Identity\IdentityUsername;
+use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\AuthSystem\Authenticate\Interfaces\iIdentity;
 
 use Poirot\AuthSystem\Authenticate\RepoIdentityCredential\aIdentityCredentialAdapter;
@@ -36,12 +36,12 @@ class RepoUserPassCredential
         if (!isset($username))
             throw new exMissingCredential('Adapter Credential not contains Username.');
 
-
         $identity = false;
         $user = $this->repoUsers->findOneByUserPass($username, $password);
+
         if ($user) {
-            $identity = new IdentityUsername();
-            $identity->setUsername($user->getUsername());
+            $identity = new IdentityOpen;
+            $identity->setUID($user->getUID());
         }
 
         return $identity;
