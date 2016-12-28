@@ -1,0 +1,6 @@
+<?php
+namespace Module\OAuth2\Exception;
+
+class exRegistration
+    extends \RuntimeException
+{ }

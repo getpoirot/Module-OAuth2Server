@@ -1,11 +1,15 @@
 <?php
 namespace Module\OAuth2\Actions;
 
+use Module\OAuth2\Actions\Events\EventHeap;
 use Module\OAuth2\Actions\Users\ValidationGenerator;
+use Poirot\Events\Interfaces\iEvent;
+use Poirot\Events\Interfaces\Respec\iEventProvider;
 use Poirot\Http\HttpRequest;
 use Poirot\Http\HttpResponse;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
 use Psr\Http\Message\ResponseInterface;
+
 
 /**
  * # Registered Module Action:
@@ -17,6 +21,22 @@ use Psr\Http\Message\ResponseInterface;
  */
 abstract class aAction
     extends \Module\Foundation\Actions\aAction
+    implements iEventProvider
 {
+    /** @var EventHeap */
+    protected $events;
 
+
+    /**
+     * Get Events
+     *
+     * @return iEvent
+     */
+    function event()
+    {
+        if (!$this->events)
+            $this->events = new EventHeap;
+
+        return $this->events;
+    }
 }

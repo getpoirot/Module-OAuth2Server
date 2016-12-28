@@ -18,6 +18,7 @@ use Poirot\Http\Interfaces\iHttpRequest;
 class Register
     extends aAction
 {
+    // TODO Register user as action with params not request object
     function __invoke(iHttpRequest $request = null)
     {
         if (!$request instanceof iHttpRequest)
@@ -140,9 +141,10 @@ class Register
      */
     protected function _assertValidData(array $post)
     {
-        # Validate Data:
-
         # Sanitize Data:
+        $post['mobile']['number'] = preg_replace('/\s+/', '', $post['mobile']['number']);
+
+        # Validate Data:
 
         return $post;
     }
