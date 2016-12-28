@@ -12,7 +12,7 @@ class User extends DataOptionsOpen
 {
     protected $identifier;
     protected $fullname;
-    protected $contacts = array(
+    protected $identifiers = array(
         # iEntityUserContactObject
     );
     protected $grants = array(
@@ -74,7 +74,7 @@ class User extends DataOptionsOpen
         /** @var UserIdentifierObject $c */
         foreach ($this->getIdentifiers() as $i => $c)
             if ($c->getType() == 'email')
-                unset($this->contacts[$i]);
+                unset($this->identifiers[$i]);
 
         $co = new UserIdentifierObject();
         $co->setType('email')->setValue($identifier);
@@ -152,7 +152,7 @@ class User extends DataOptionsOpen
     function setIdentifiers(array $identifiers)
     {
         // clear previous contacts
-        $this->contacts = array();
+        $this->identifiers = array();
 
         foreach ($identifiers as $c) {
             if (!$c instanceof iEntityUserIdentifierObject)
@@ -171,7 +171,7 @@ class User extends DataOptionsOpen
      */
     function getIdentifiers()
     {
-        return array_values($this->contacts);
+        return array_values($this->identifiers);
     }
 
     /**
@@ -183,7 +183,7 @@ class User extends DataOptionsOpen
      */
     function addIdentifier(iEntityUserIdentifierObject $identifier)
     {
-        $this->contacts[] = $identifier;
+        $this->identifiers[] = $identifier;
         return $this;
     }
 
