@@ -61,7 +61,7 @@ class LoginPage extends aAction
         # Display Output Login Page:
 
         return array(
-
+            'message' => 'Please Login!'
         );
     }
 
