@@ -9,55 +9,25 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Mongo\User;
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Model\ValidationCodeAuthObject;
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
-use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
-use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
-use Poirot\Http\Interfaces\iHttpRequest;
 
 
 class Register
     extends aAction
 {
-    // TODO Register user as action with params not request object
-    function __invoke(iHttpRequest $request = null)
+    function __invoke()
     {
-        if (!$request instanceof iHttpRequest)
-            throw new \InvalidArgumentException(sprintf(
-                'Request Http Must Instance of iHttpRequest; given: (%s).'
-                , \Poirot\Std\flatten($request)
-            ));
-
-
-        if (MethodType::_($request)->isPost()) {
-            return $this->_persistRegistration($request);
-        }
-
-        return null;
+        return $this;
     }
 
-    protected function _persistRegistration(iHttpRequest $request)
+    /**
+     * Persist User (Register)
+     *
+     * @param iEntityUser $entity
+     *
+     * @return iEntityUser
+     */
+    function persistUser(iEntityUser $entity)
     {
-        # Validate Sent Data:
-        $post = ParseRequestData::_($request)->parseBody();
-        $post = $this->_assertValidData($post);
-
-        # Map Given Data Of API Protocol and Map To Entity Model:
-        $identifiers   = [];
-        $identifiers[] = ['type' => 'email', 'value' => $post['username'], 'validated' => false];
-        if (isset($post['mobile'])) {
-            $identifiers[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']], 'validated' => false ];
-        }
-
-        $entity = new \Module\OAuth2\Model\User;
-        $entity
-            ->setFullName($post['full_name'])
-            # ->setIdentifier() // Allow Entity/Persistence Storage Choose Identifier
-            ->setUsername($post['username'])
-            ->setPassword(md5($post['credential'])) // Add Grant Password
-            ->setIdentifiers($identifiers)
-        ;
-
-
         # Persist Data:
         /** @var Users $repoUsers */
         $repoUsers = $this->IoC()->get('services/repository/Users');
@@ -76,33 +46,20 @@ class Register
 
         /** @var User|iEntityUser $user */
         $user = $repoUsers->insert($entity);
-        $code = $this->_giveUserValidationCode($user, $request);
-
-        return array(
-            ListenerDispatch::RESULT_DISPATCH => array(
-                'url_validation' => (string) $this->withModule('foundation')->url(
-                    'main/oauth/validate'
-                    , array('validation_code' => $code)
-                ),
-            )
-        );
+        return $user;
     }
 
     /**
      * Generate And Persist Validation Code For User
      *
      * @param iEntityUser  $user
-     * @param iHttpRequest $request
+     * @param string|null  $continue Continue used by oauth partners registration follows
      *
      * @return string Validation code
      * @throws \Exception
      */
-    protected function _giveUserValidationCode(iEntityUser $user, iHttpRequest $request)
+    function giveUserValidationCode(iEntityUser $user, $continue = null)
     {
-        // Continue Used to OAuth Registration Follow!!!
-        $queryParams = ParseRequestData::_($request)->parseQueryParams();
-        $continue    = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
-
         /** @var iRepoValidationCodes $repoValidationCodes */
         $repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
 
@@ -120,32 +77,5 @@ class Register
 
         $code = $this->ValidationGenerator($user->getUID(), $authCodes, $continue);
         return $code;
-    }
-
-    /**
-     * Assert Validated Registration Post Data
-     *
-     * Array (
-     *   [full_name] => Payam Naderi
-     *   [username] => naderi.payam@gmail.com
-     *   [credential] => e10adc3949ba59abbe56e057f20f883e
-     *   [mobile] => Array (
-     *     [country] => +98
-     *     [number] => 9355497674
-     *   )
-     * )
-     *
-     * @param array $post
-     *
-     * @return array
-     */
-    protected function _assertValidData(array $post)
-    {
-        # Sanitize Data:
-        $post['mobile']['number'] = preg_replace('/\s+/', '', $post['mobile']['number']);
-
-        # Validate Data:
-
-        return $post;
     }
 }

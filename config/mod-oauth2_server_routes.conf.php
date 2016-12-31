@@ -148,7 +148,7 @@ return [
                                 ],
                                 'params'  => [
                                     ListenerDispatch::CONF_KEY => [
-                                        '/module/oauth2/actions/users/Register',
+                                        '/module/oauth2/actions/users/RegisterRequest',
                                     ],
                                 ],
                             ],

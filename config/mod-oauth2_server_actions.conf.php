@@ -18,6 +18,9 @@ return [
                 \Module\OAuth2\Actions\Users\RegisterPage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterPage'],
 
+                \Module\OAuth2\Actions\Users\RegisterRequest::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterRequest'],
+
                 \Module\OAuth2\Actions\Users\Register::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Register'],
 

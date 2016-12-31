@@ -9,7 +9,8 @@ use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
-class RegisterPage extends aAction
+class RegisterPage
+    extends aAction
 {
     const FLASH_MESSAGE_ID = 'message.register';
 
@@ -20,7 +21,7 @@ class RegisterPage extends aAction
             try
             {
                 /** @var $r [ url_validation => (string) ] */
-                $r = $this->register($request);
+                $r = $this->RegisterRequest($request);
 
             }
             catch (exRegistration $e) {
