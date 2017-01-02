@@ -76,14 +76,13 @@ class User extends DataOptionsOpen
             if ($c->getType() == 'username')
                 unset($this->identifiers[$i]);
 
-        $co = new UserIdentifierObject();
+        $co = new UserIdentifierObject;
         $co ->setType('username')
             ->setValue($identifier)
             ->setValidated(true) // given username is always has no validation
         ;
 
         $this->addIdentifier($co);
-
         return $this;
     }
 

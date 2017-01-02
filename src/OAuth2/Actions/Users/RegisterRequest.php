@@ -72,12 +72,13 @@ class RegisterRequest
         if (isset($post['mobile']))
             $identifiers[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']], 'validated' => false ];
 
+
         $entity = new \Module\OAuth2\Model\User;
         $entity
             ->setFullName($post['fullname'])
+            ->setIdentifiers($identifiers)
             ->setUsername($this->_attainUsernameFromFullname($post['fullname']))
             ->setPassword($post['credential']) // Add Grant Password
-            ->setIdentifiers($identifiers)
         ;
 
         return $entity;
@@ -107,7 +108,7 @@ class RegisterRequest
     {
         # Sanitize Data:
         if (isset($post['mobile']) && is_array($post['mobile']))
-            $post['mobile']['number'] = ltrim('0', preg_replace('/\s+/', '', $post['mobile']['number']));
+            $post['mobile']['number'] = ltrim(preg_replace('/\s+/', '', $post['mobile']['number']), '0');
 
         # Validate Data:
         if (!$allowNoEmail && !isset($post['email']))

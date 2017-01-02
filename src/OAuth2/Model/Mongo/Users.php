@@ -1,10 +1,12 @@
 <?php
 namespace Module\OAuth2\Model\Mongo;
 
+use Cocur\Slugify\Slugify;
 use Module\MongoDriver\Model\Repository\aRepository;
 
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Lib\NamesGenerator;
 use Module\OAuth2\Model\User as BaseUser;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
@@ -37,8 +39,19 @@ class Users extends aRepository
      */
     function attainNextUsername($fullname = null)
     {
-        $username = new Slugify(['rulesets'=>['default', 'arabic'], 'separator'=>'.', 'lowercase'=>true]);
-        
+        $username = (string) new NamesGenerator($fullname);
+
+        $i        = null;
+        do {
+            $username .= (string) $i;
+            $identifier = new UserIdentifierObject;
+            $identifier->setType('username');
+            $identifier->setValue($username);
+
+            $goNext = $this->isIdentifiersRegistered(array($identifier));
+            $i++;
+        } while ($goNext);
+
         return $username;
     }
 
