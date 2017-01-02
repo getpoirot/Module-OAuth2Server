@@ -99,8 +99,10 @@ return [
                                 \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],],],],
 
             ],],],
-    
-    
+
+
+    # Authorization:
+
     Module\Authorization\Module::CONF_KEY 
     => [
         \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS => [
@@ -122,7 +124,7 @@ return [
     ],
 
 
-    // TODO mongo index fields as Entity::FIELD_CONST
+    # Mongo Driver:
 
     Module\MongoDriver\Module::CONF_KEY 
     => [
@@ -157,6 +159,9 @@ return [
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => [
+                        [ 'key' => ['validation_code' => 1, ] ],
+                        [ 'key' => ['user_identifier' => 1, ] ],
+                        [ 'key' => ['date_mongo_expiration' => 1, ], 'expireAfterSeconds'=> 0],
                     ],],],
 
             \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => [
@@ -172,7 +177,9 @@ return [
                     ],],],],
     ],
 
-    // View Renderer Options
+
+    # View Renderer:
+
     \Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
     => [
         \Poirot\Application\Sapi\Server\Http\Service\ServiceViewModelResolver::CONF_KEY => array(
