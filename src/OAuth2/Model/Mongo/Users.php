@@ -29,6 +29,20 @@ class Users extends aRepository
     // Implements iRepoUser:
 
     /**
+     * Attain Next Username From Given Fullname
+     *
+     * @param string $fullname
+     *
+     * @return string
+     */
+    function attainNextUsername($fullname = null)
+    {
+        $username = new Slugify(['rulesets'=>['default', 'arabic'], 'separator'=>'.', 'lowercase'=>true]);
+        
+        return $username;
+    }
+
+    /**
      * Insert User Entity
      *
      * @param \Module\OAuth2\Interfaces\Model\iEntityUser $user
@@ -44,7 +58,7 @@ class Users extends aRepository
             ->setIdentifiers($user->getIdentifiers())
             ->setGrants($user->getGrants())
             ->setUsername($user->getUsername())
-            ->setPassword($user->getPassword())
+            ->setPassword(md5($user->getPassword()))
             ->setDateCreated( $user->getDateCreated() )
         ;
 

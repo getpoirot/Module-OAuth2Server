@@ -10,6 +10,15 @@ interface iRepoUsers
     extends BaseRepoUsers
 {
     /**
+     * Attain Next Username From Given Fullname
+     *
+     * @param string $fullname
+     *
+     * @return string
+     */
+    function attainNextUsername($fullname = null);
+
+    /**
      * Insert User Entity
      *
      * @param iEntityUser $user

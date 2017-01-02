@@ -58,7 +58,7 @@ class User extends DataOptionsOpen
     {
         /** @var UserIdentifierObject $c */
         foreach ($this->getIdentifiers() as $c)
-            if ($c->getType() == 'email')
+            if ($c->getType() == 'username')
                 return $c->getValue();
 
         return null;
@@ -73,11 +73,15 @@ class User extends DataOptionsOpen
     {
         /** @var UserIdentifierObject $c */
         foreach ($this->getIdentifiers() as $i => $c)
-            if ($c->getType() == 'email')
+            if ($c->getType() == 'username')
                 unset($this->identifiers[$i]);
 
         $co = new UserIdentifierObject();
-        $co->setType('email')->setValue($identifier);
+        $co ->setType('username')
+            ->setValue($identifier)
+            ->setValidated(true) // given username is always has no validation
+        ;
+
         $this->addIdentifier($co);
 
         return $this;
