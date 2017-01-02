@@ -14,7 +14,6 @@
         , "poirot/sms-clients": "dev-devel"
 
         , "wixel/gump": "dev-master"
-        , "cocur/slugify": "dev-master"
     }
     , "autoload"  : {
         "psr-4": {
@@ -24,7 +23,4 @@
             "_functions.php"
         ]
     }
-    ,"repositories": [
-        { "type": "git" ,"url": "https://github.com/E1101/slugify.git" }
-    ]
 }
