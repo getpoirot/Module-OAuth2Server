@@ -72,8 +72,10 @@ class Register
         $authCodes = [];
         $identifiers = $user->getIdentifiers();
         /** @var iEntityUserIdentifierObject $ident */
-        foreach ($identifiers as $ident)
+        foreach ($identifiers as $ident) {
+            if ($ident->isValidated()) continue; // validated identifiers don't need auth code such as username
             $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
+        }
 
         $code = $this->ValidationGenerator($user->getUID(), $authCodes, $continue);
         return $code;

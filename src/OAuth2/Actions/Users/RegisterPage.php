@@ -2,7 +2,6 @@
 namespace Module\OAuth2\Actions\Users;
 
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
-use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exRegistration;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
@@ -10,7 +9,7 @@ use Poirot\Http\Interfaces\iHttpRequest;
 
 
 class RegisterPage
-    extends aAction
+    extends RegisterRequest
 {
     const FLASH_MESSAGE_ID = 'message.register';
 
@@ -21,8 +20,7 @@ class RegisterPage
             try
             {
                 /** @var $r [ url_validation => (string) ] */
-                $r = $this->RegisterRequest($request);
-
+                $r = $this->handleRegisterRequest($request, false);
             }
             catch (exRegistration $e) {
                 $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
