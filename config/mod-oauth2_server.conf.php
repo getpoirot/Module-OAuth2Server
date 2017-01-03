@@ -63,6 +63,11 @@ return [
                     'repo_refresh_token' => [
                         \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],
 
+
+                    ## TTL
+                    'ttl_auth_code'     => new \DateInterval('PT5M'),
+                    'ttl_refresh_token' => new \DateInterval('P1M'),
+                    'ttl_access_token'  => new \DateInterval('PT1H'),
                 ],
 
                 // or
