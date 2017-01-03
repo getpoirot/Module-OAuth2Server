@@ -16,11 +16,15 @@ class RegisterPage
     function __invoke(iHttpRequest $request = null)
     {
         # Persist Registration Request:
-        if (MethodType::_($request)->isPost()) {
+        if (MethodType::_($request)->isPost())
+        {
+            $r = (string) $this->withModule('foundation')->url();
+
             try
             {
                 /** @var $r [ url_validation => (string) ] */
                 $r = $this->handleRegisterRequest($request, false);
+                $r = $r['url_validation'];
             }
             catch (exRegistration $e) {
                 $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
@@ -34,7 +38,7 @@ class RegisterPage
             }
 
             // redirect to validation page
-            return new ResponseRedirect( $r[ListenerDispatch::RESULT_DISPATCH]['url_validation'] );
+            return new ResponseRedirect( $r );
         }
 
         # Display Output:
