@@ -1,0 +1,68 @@
+<?php
+use Module\OAuth2\Services\BuildOAuthModuleServices;
+
+return [
+    \Module\OAuth2\Module::CONF_KEY 
+    => [
+        \Module\OAuth2\Services\ServiceGrantResponder::CONF_KEY => [
+            ## Options given to GrantResponder Service
+            'options_override' => [
+                'default' => [
+                    ## Options used by all grant types
+                    'repo_client' => [
+                        // Clients as registered service
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
+                    'repo_access_token' => [
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],
+
+                    ## Options used by [extension, refresh_token, password, authorization_code]
+                    'repo_user' => [
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS],],
+                    'repo_refresh_token' => [
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],
+
+
+                    ## TTL
+                    'ttl_auth_code'     => new \DateInterval('PT5M'),
+                    'ttl_refresh_token' => new \DateInterval('P1M'),
+                    'ttl_access_token'  => new \DateInterval('PT1H'),
+                ],
+
+                // or
+                //- 'classGrantName' => $options
+            ],
+        ],],
+
+
+    Module\MongoDriver\Module::CONF_KEY
+    => [
+        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => [
+            \Module\OAuth2\Services\Repository\ServiceRepoAccessTokens::class => [
+                'collection' => [
+                    // query on which collection
+                    'name' => 'oauth.token_access',
+                    // which client to connect and query with
+                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    // ensure indexes
+                    'indexes' => [
+                        ['key' => ['identifier' => 1],],
+                        // db.database_name.collection_name.createIndex({"date_mongo_expiration": 1}, {expireAfterSeconds: 0});
+                        ['key' => ['date_mongo_expiration' => 1], 'expireAfterSeconds' => 0 ],
+                    ],],],
+
+            \Module\OAuth2\Services\Repository\ServiceRepoRefreshTokens::class => [
+                'collection' => [
+                    // query on which collection
+                    'name' => 'oauth.token_refresh',
+                    // which client to connect and query with
+                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    // ensure indexes
+                    'indexes' => [
+                        ['key' => ['identifier' => 1],],
+                        // db.database_name.collection_name.createIndex({"date_mongo_expiration": 1}, {expireAfterSeconds: 0});
+                        ['key' => ['date_mongo_expiration' => 1], 'expireAfterSeconds' => 0 ],
+                    ],],],
+
+        ],
+    ],
+];

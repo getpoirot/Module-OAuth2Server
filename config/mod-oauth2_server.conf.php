@@ -136,7 +136,8 @@ return [
                     'indexes' => [
                         [ 'key' => ['validation_code' => 1, ] ],
                         [ 'key' => ['user_identifier' => 1, ] ],
-                        [ 'key' => ['date_mongo_expiration' => 1, ], 'expireAfterSeconds'=> 0],
+                        // db.oauth.users.validation_codes.createIndex({"date_mongo_expiration": 1}, {expireAfterSeconds: 0});
+                        [ 'key' => ['date_mongo_expiration' => 1 ], 'expireAfterSeconds'=> 0],
                     ],],],
 
             \Module\OAuth2\Services\Repository\ServiceRepoUsers::class => [

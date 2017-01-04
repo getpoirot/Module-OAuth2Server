@@ -4,11 +4,12 @@ namespace Module\OAuth2\Model\Mongo;
 use MongoDB\BSON\Persistable;
 use MongoDB\BSON\UTCDatetime;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
+use Poirot\OAuth2\Interfaces\Server\Repository\iEntityRefreshToken;
 
 
-class AccessToken
-    extends \Poirot\OAuth2\Model\AccessToken
-    implements iEntityAccessToken
+class RefreshToken
+    extends \Poirot\OAuth2\Model\RefreshToken
+    implements iEntityRefreshToken
     , Persistable
 {
     use tPersistable;
