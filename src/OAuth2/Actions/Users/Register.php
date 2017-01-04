@@ -34,8 +34,11 @@ class Register
 
         ## validate existence identifier
         #- email or mobile not given before
-        if ($repoUsers->isIdentifiersRegistered($entity->getIdentifiers()))
-            throw new exIdentifierExists('Identifier Is Given To Another User.', 400);
+        if ($repoUsers->isIdentifiersRegistered($entity->getIdentifiers())) {
+            throw new exIdentifierExists(
+                sprintf('Identifier Is Given To Another User.')
+                , 400);
+        }
 
         ## do not persist duplicated data for none validated users
         if ($user = $repoUsers->findOneMatchByIdentifiers($entity->getIdentifiers(), false)) {

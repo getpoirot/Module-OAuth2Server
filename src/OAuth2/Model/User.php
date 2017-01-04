@@ -159,6 +159,7 @@ class User extends DataOptionsOpen
 
         foreach ($identifiers as $c) {
             if (!$c instanceof iEntityUserIdentifierObject)
+                // TODO when get from persistence object will unserialize this and remove from here
                 $c = new UserIdentifierObject($c);
 
             $this->addIdentifier($c);

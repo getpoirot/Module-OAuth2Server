@@ -4,6 +4,7 @@ namespace Module\OAuth2\Actions\Users;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Model\Mongo\Users;
+use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
@@ -67,17 +68,22 @@ class RegisterRequest
 
         # Map Given Data Of API Protocol and Map To Entity Model:
         $identifiers   = [];
-        if (isset($post['email']))
-            $identifiers[] = ['type' => 'email', 'value' => $post['email'], 'validated' => false];
-        if (isset($post['mobile']))
-            $identifiers[] = [ 'type' => 'mobile', 'value' => [$post['mobile']['country'], $post['mobile']['number']], 'validated' => false ];
+        if ( isset($post[ UserIdentifierObject::IDENTITY_USERNAME ]) )
+            $identifiers[] = UserIdentifierObject::newUsernameIdentifier($post['username']);
+        if ( isset($post[ UserIdentifierObject::IDENTITY_EMAIL ]) )
+            $identifiers[] = UserIdentifierObject::newEmailIdentifier($post['email']);
+        if ( isset($post[ UserIdentifierObject::IDENTITY_MOBILE ]) )
+            $identifiers[] = UserIdentifierObject::newMobileIdentifier([$post['mobile']['country'], $post['mobile']['number']]);
 
+
+        $username = (isset($post['username'])) ? $post['username']
+            : $this->_attainUsernameFromFullname($post['fullname']);
 
         $entity = new \Module\OAuth2\Model\User;
         $entity
             ->setFullName($post['fullname'])
             ->setIdentifiers($identifiers)
-            ->setUsername($this->_attainUsernameFromFullname($post['fullname']))
+            ->setUsername($username)
             ->setPassword($post['credential']) // Add Grant Password
         ;
 
@@ -109,6 +115,9 @@ class RegisterRequest
         # Sanitize Data:
         if (isset($post['mobile']) && is_array($post['mobile']))
             $post['mobile']['number'] = ltrim(preg_replace('/\s+/', '', $post['mobile']['number']), '0');
+
+        if (isset($post['username']))
+            $post['username'] = strtolower(preg_replace('/\s+/', '.', $post['username']));
 
         # Validate Data:
         if (!$allowNoEmail && !isset($post['email']))

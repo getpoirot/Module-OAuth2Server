@@ -357,8 +357,13 @@ class Users extends aRepository
         switch ($property) {
             case 'uid':
                 return $this->findOneByUID($value);
-            case 'username':
+            case 'email':
                 $userIdentifier = new UserIdentifierObject(['type' => 'email', 'value' => $value, 'validated' => true]);
+                $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
+                // TODO return iData interface
+                return $user;
+            case 'username':
+                $userIdentifier = new UserIdentifierObject(['type' => 'username', 'value' => $value, 'validated' => true]);
                 $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;

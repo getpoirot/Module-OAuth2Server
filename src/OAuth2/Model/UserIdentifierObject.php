@@ -1,16 +1,23 @@
 <?php
 namespace Module\OAuth2\Model;
 
-
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
-class UserIdentifierObject extends DataOptionsOpen
+
+class UserIdentifierObject
+    extends DataOptionsOpen
     implements iEntityUserIdentifierObject
 {
+    const IDENTITY_EMAIL    = 'email';
+    const IDENTITY_MOBILE   = 'mobile';
+    const IDENTITY_USERNAME = 'username';
+
+
     protected $type;
     protected $value;
     protected $is_validated = false;
+
 
     /**
      * Set Type
@@ -71,5 +78,62 @@ class UserIdentifierObject extends DataOptionsOpen
     function isValidated()
     {
         return $this->is_validated;
+    }
+
+
+    // ..
+
+    static function newIdentifierByName($name, $value, $validated = null)
+    {
+        switch ($name) {
+            case self::IDENTITY_EMAIL:
+                return self::newEmailIdentifier($value, $validated);
+            case self::IDENTITY_MOBILE:
+                return self::newMobileIdentifier($value, $validated);
+            case self::IDENTITY_USERNAME:
+                return self::newUsernameIdentifier($value, $validated);
+        }
+
+        throw new \Exception(sprintf(
+            'Unknown Identifier (%s).'
+            , $name
+        ));
+    }
+
+    static function newEmailIdentifier($value, $validated = null)
+    {
+        $self = new self;
+        $self->setType(self::IDENTITY_EMAIL);
+        $self->setValue($value);
+        if ($validated === null)
+            $validated = false;
+
+        $self->setValidated($validated);
+        return $self;
+    }
+
+    static function newMobileIdentifier($value, $validated = null)
+    {
+        $self = new self;
+        $self->setType(self::IDENTITY_MOBILE);
+        $self->setValue($value);
+        if ($validated === null)
+            $validated = false;
+
+        $self->setValidated($validated);
+        return $self;
+    }
+
+    static function newUsernameIdentifier($value, $validated = null)
+    {
+        $self = new self;
+        $self->setType(self::IDENTITY_USERNAME);
+        $self->setValue($value);
+        if ($validated === null)
+            // username is always validated
+            $validated = true;
+
+        $self->setValidated($validated);
+        return $self;
     }
 }

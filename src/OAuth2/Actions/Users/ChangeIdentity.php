@@ -35,9 +35,18 @@ class ChangeIdentity
             throw new exIdentifierExists('Identifier Is Given To Another User.', 400);
 
         /** @var iEntityUserIdentifierObject $ident */
-        $authCodes = [];
-        foreach ($identifiers as $ident)
+        $authCodes = []; $rIdentifiers = [];
+        foreach ($identifiers as $ident) {
+            if ($ident->isValidated()) {
+                // TODO more generalized for identities
+                $this->_changeValidatedIdentity($uid, $ident);
+                $rIdentifiers[] = [$ident->getType() => true];
+                continue;
+            }
+
+            $rIdentifiers[] = [$ident->getType() => false];
             $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
+        }
 
         $code = $this->ValidationGenerator($uid, $authCodes);
         return array(
@@ -46,6 +55,7 @@ class ChangeIdentity
                     'main/oauth/api/me/identifiers/confirm'
                     , array('validation_code' => $code)
                 ),
+                'identifiers' => $rIdentifiers
             )
         );
     }
@@ -95,6 +105,30 @@ class ChangeIdentity
 
     // ..
 
+    protected function _changeValidatedIdentity($uid, iEntityUserIdentifierObject $ident)
+    {
+        if ($ident->getType() !== UserIdentifierObject::IDENTITY_USERNAME)
+            throw new \Exception(
+                sprintf( 'Identifier %s is invalid.', $ident->getType() )
+            );
+
+        ## Validate User Collection Identifier
+        /** @var Users $repoUsers */
+        $repoUsers = $this->IoC()->get('services/repository/Users');
+
+        if ($repoUsers->isIdentifiersRegistered(array($ident)))
+            throw new exIdentifierExists(sprintf(
+                'Identifier "%s" exists.', $ident->getValue()
+            ));
+
+        $repoUsers->setUserIdentifier(
+            $uid
+            , $ident->getType()
+            , $ident->getValue()
+            , true
+        );
+    }
+
     /**
      * Assert Validated Change Password Post Data
      *
@@ -112,13 +146,8 @@ class ChangeIdentity
 
         # Sanitize Data:
         $identifiers = [];
-        foreach ($post as $k => $v) {
-            if ($k != 'email' && $k != 'mobile' )
-                // Only Email and Mobile is Available as Identifiers.
-                continue;
-
-            $identifiers[] = new UserIdentifierObject(['type'=>$k, 'value'=>$v, 'validated'=>false]);
-        }
+        foreach ($post as $k => $v)
+            $identifiers[] = UserIdentifierObject::newIdentifierByName($k, $v);
 
         return ['identifiers' => $identifiers];
     }

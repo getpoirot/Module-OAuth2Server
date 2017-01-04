@@ -104,7 +104,7 @@ class ValidationCodeAuthObject
                 return ValidationCodeAuthObject::newMobileAuthCode($ident->getValue());
             default:
                 throw new \Exception(sprintf(
-                    'Unknown Identifier (%s); Auth Code Cant Be Generated.'
+                    'Auth Code Cant Be Generated; Unknown Identifier (%s).'
                     , $ident->getType()
                 ));
         }
