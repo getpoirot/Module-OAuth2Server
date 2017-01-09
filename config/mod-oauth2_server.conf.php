@@ -112,7 +112,9 @@ return [
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => [
-                        ['key' => ['identifier' => 1, 'secret_key' => 1]],],],],
+                        ['key' => ['identifier' => 1]],
+                        ['key' => ['identifier' => 1, 'secret_key' => 1]],
+                    ],],],
 
             \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class => [
                 'collection' => [
@@ -122,8 +124,8 @@ return [
                     'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
                     // ensure indexes
                     'indexes' => [
-                        ['key' => ['user_identifier' => 1,]],
-                        ['key' => ['user_identifier' => 1,  'clients_approved.client_identifier' => 1]],
+                        ['key' => ['user' => 1,]],
+                        ['key' => ['user' => 1,  'clients_approved.client' => 1]],
                     ],],],
 
             \Module\OAuth2\Services\Repository\ServiceRepoValidationCodes::class => [
