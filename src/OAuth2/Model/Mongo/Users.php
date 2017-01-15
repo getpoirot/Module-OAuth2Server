@@ -102,8 +102,15 @@ class Users extends aRepository
     {
         $or = [];
         /** @var iEntityUserIdentifierObject $arg */
-        foreach ($identifiers as $arg)
+        foreach ($identifiers as $arg) {
+            if (!$arg instanceof iEntityUserIdentifierObject)
+                throw new \InvalidArgumentException(sprintf(
+                    'Identifier must be instance of "iEntityUserIdentifierObject"; given: (%s).'
+                    , \Poirot\Std\flatten($arg)
+                ));
+
             $or[] = [ 'type' =>  $arg->getType(), 'value' => $arg->getValue()];
+        }
 
 
         $query = [

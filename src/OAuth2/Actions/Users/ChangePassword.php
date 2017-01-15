@@ -24,6 +24,7 @@ class ChangePassword
         $r = $repoUsers->updateGrantTypeValue($uid, 'password', $credential);
 
         return [
+            // TODO dispatch result from chained route closure!!
             ListenerDispatch::RESULT_DISPATCH => ($r) ? 'changed' : 'unchanged',
         ];
     }
