@@ -132,6 +132,29 @@ return [
                             'match_whole' => false,
                         ],
                         'routes' => [
+                            'exists' => [
+                                'route' => 'RouteSegment',
+                                'options' => [
+                                    'criteria'    => '/exists',
+                                    'match_whole' => true,
+                                ],
+                                'params'  => [
+                                    ListenerDispatch::CONF_KEY => [
+                                        \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::getParsedRequestDataClosure(),
+                                        '/module/oauth2/actions/users/isExistsUserWithIdentifier',
+                                    ],
+                                ],
+                            ],
+                            'whois' => [
+                                'route' => 'RouteSegment',
+                                'options' => [
+                                    'criteria'    => '/whois',
+                                    'match_whole' => true,
+                                ],
+                                'params'  => [
+                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/WhoisRequest',
+                                ],
+                            ],
                             'profile' => [
                                 'route' => 'RouteSegment',
                                 'options' => [

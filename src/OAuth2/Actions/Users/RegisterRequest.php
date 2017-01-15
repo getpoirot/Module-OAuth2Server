@@ -63,7 +63,7 @@ class RegisterRequest
         # make response data
 
         return array(
-            'user'          => $user->getUID(),
+            'uid'           => $user->getUID(),
             'validated'     => $rIdentifiers,
             'next_validate' => (string) $this->withModule('foundation')->url(
                 'main/oauth/validate'

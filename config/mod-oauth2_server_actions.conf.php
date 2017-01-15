@@ -21,6 +21,12 @@ return [
                 \Module\OAuth2\Actions\Users\RegisterRequest::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterRequest'],
 
+                \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'isExistsUserWithIdentifier'],
+
+                \Module\OAuth2\Actions\Users\WhoisRequest::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'WhoisRequest'],
+
                 \Module\OAuth2\Actions\Users\Register::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Register'],
 
