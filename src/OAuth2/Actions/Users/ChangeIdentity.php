@@ -40,22 +40,29 @@ class ChangeIdentity
             if ($ident->isValidated()) {
                 // TODO more generalized for identities
                 $this->_changeValidatedIdentity($uid, $ident);
-                $rIdentifiers[] = [$ident->getType() => true];
+                $rIdentifiers[$ident->getType()] = true;
                 continue;
             }
 
-            $rIdentifiers[] = [$ident->getType() => false];
+            $rIdentifiers[$ident->getType()] = false;
             $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
         }
 
+        // TODO maybe we have no identifier(s) to validate; exp. when user change username
+        // @link RegisterRequest
         $code = $this->ValidationGenerator($uid, $authCodes);
+
         return array(
             ListenerDispatch::RESULT_DISPATCH => array(
-                'url_validation' => (string) $this->withModule('foundation')->url(
+                'validated'     => $rIdentifiers,
+                'next_validate' => (string) $this->withModule('foundation')->url(
                     'main/oauth/api/me/identifiers/confirm'
                     , array('validation_code' => $code)
                 ),
-                'identifiers' => $rIdentifiers
+                'alter_next_validate' => (string) $this->withModule('foundation')->url(
+                    'main/oauth/validate'
+                    , array('validation_code' => $code)
+                ),
             )
         );
     }

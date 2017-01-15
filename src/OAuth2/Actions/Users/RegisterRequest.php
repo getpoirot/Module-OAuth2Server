@@ -3,6 +3,7 @@ namespace Module\OAuth2\Actions\Users;
 
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exRegistration;
+use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
@@ -35,29 +36,40 @@ class RegisterRequest
      */
     function handleRegisterRequest(iHttpRequest $request, $allowNoEmail = false)
     {
-        if (MethodType::_($request)->isPost())
-        {
-            // TODO implement commit/rollback; maybe momento design pattern or something is useful here
+        if (!MethodType::_($request)->isPost())
+            return null;
 
-            $user = $this->Register()->persistUser(
-                $this->attainUserFromRequest($request, $allowNoEmail)
-            );
+        // TODO implement commit/rollback; maybe momento/aggregate design pattern or something is useful here
 
-            // Continue Used to OAuth Registration Follow!!!
-            $queryParams = ParseRequestData::_($request)->parseQueryParams();
-            $continue    = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
+        $user = $this->Register()->persistUser(
+            $this->attainUserFromRequest($request, $allowNoEmail)
+        );
 
-            $code = $this->Register()->giveUserValidationCode($user, $continue);
+        // Continue Used to OAuth Registration Follow!!!
+        $queryParams = ParseRequestData::_($request)->parseQueryParams();
+        $continue    = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
 
-            return array(
-                'url_validation' => (string) $this->withModule('foundation')->url(
-                    'main/oauth/validate'
-                    , array('validation_code' => $code)
-                ),
-            );
+        /** @var iEntityUserIdentifierObject $ident */
+        $rIdentifiers = [];
+        foreach ($user->getIdentifiers() as $ident) {
+            // TODO more generalized for identities
+            if ($ident->isValidated()) continue;
+            $rIdentifiers[$ident->getType()] = false;
         }
 
-        return null;
+        // TODO maybe we have no identifier(s) to validate; exp. when user change username
+        $code = $this->Register()->giveUserValidationCode($user, $continue);
+
+        # make response data
+
+        return array(
+            'user'          => $user->getUID(),
+            'validated'     => $rIdentifiers,
+            'next_validate' => (string) $this->withModule('foundation')->url(
+                'main/oauth/validate'
+                , array('validation_code' => $code)
+            ),
+        );
     }
 
     function attainUserFromRequest(iHttpRequest $request, $allowNoEmail = false)
