@@ -48,7 +48,7 @@ return [
                     ],
                 ],
                 'routes' => [
-                    ## ME
+                    ## me
                     'me' => [
                         'route' => 'RouteSegment',
                         'options' => [
@@ -123,6 +123,8 @@ return [
                             ],
                         ],
                     ],
+
+                    ## members
                     'members' => [
                         'route' => 'RouteSegment',
                         'options' => [
