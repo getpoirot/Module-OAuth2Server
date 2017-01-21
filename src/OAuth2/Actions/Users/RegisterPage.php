@@ -24,7 +24,7 @@ class RegisterPage
             {
                 /** @var $r [ url_validation => (string) ] */
                 $r = $this->handleRegisterRequest($request, false);
-                $r = $r['url_validation'];
+                $r = $r['next_validate'];
             }
             catch (exRegistration $e) {
                 $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
