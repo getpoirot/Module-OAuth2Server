@@ -17,7 +17,7 @@ use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
-// TODO implement commit/rollback; maybe momento design pattern or something is useful here
+// TODO implement commit/rollback; maybe momento|aggregate design pattern or something is useful here
 class ValidatePage
     extends aAction
 {
@@ -167,6 +167,9 @@ class ValidatePage
 
     protected function _truncate($v, $type = null)
     {
+        if ($v instanceof \Traversable)
+            $v = \Poirot\Std\cast($v)->toArray();
+        
         switch ($type) {
             case 'mobile':
                 return $v[0].' '.$this->_truncate($v[1]);
