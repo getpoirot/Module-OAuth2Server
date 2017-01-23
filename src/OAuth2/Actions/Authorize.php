@@ -16,12 +16,29 @@ use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
 class Authorize extends aAction
 {
+    /** @var GrantAggregateGrants */
+    protected $grantResponder;
+    /** @var iRepoUsersApprovedClients */
+    protected $repoApprovedClients;
+
+
+    /**
+     * Authorize constructor.
+     *
+     * @param GrantAggregateGrants      $grantResponder      @IoC /module/oauth2/services/
+     * @param iRepoUsersApprovedClients $repoApprovedClients @IoC /module/oauth2/services/repository/Users.ApprovedClients
+     */
+    function __construct(GrantAggregateGrants $grantResponder, iRepoUsersApprovedClients $repoApprovedClients)
+    {
+        $this->grantResponder = $grantResponder;
+        $this->repoApprovedClients = $repoApprovedClients;
+    }
+
     function __invoke(HttpRequest $request = null, HttpResponse $response = null)
     {
-        /** @var GrantAggregateGrants $aggregateGrant */
-        $aggregateGrant = $this->IoC()->get('services/GrantResponder');
+        $aggregateGrant = $this->grantResponder;
 
-        $requestPsr  = new ServerRequestBridgeInPsr($request);
+        $requestPsr = new ServerRequestBridgeInPsr($request);
 
         /** @var aGrant $grant */
         if (!$grant = $aggregateGrant->canRespondToRequest($requestPsr))
@@ -39,8 +56,7 @@ class Authorize extends aAction
 
         // check whether to display approve page or not?
         if (!$approveNotRequire = $client->isResidentClient()) {
-            /** @var iRepoUsersApprovedClients $RepoApprovedClients */
-            $RepoApprovedClients = $this->IoC()->get('services/repository/Users.ApprovedClients');
+            $RepoApprovedClients = $this->repoApprovedClients;
             $User = $this->RetrieveAuthenticatedUser();
 
             //// also maybe client approve the client in the past
@@ -60,7 +76,7 @@ class Authorize extends aAction
 
             } elseif (MethodType::_($request)->isPost() && $_post->get('allow_access', null) !== null) {
                 // Allow Access The Client
-                $RepoApprovedClients = $this->IoC()->get('services/repository/Users.ApprovedClients');
+                $RepoApprovedClients = $this->repoApprovedClients;
                 $User = $this->RetrieveAuthenticatedUser();
                 $RepoApprovedClients->approveClient($User, $client);
             } else {
