@@ -4,7 +4,7 @@ namespace Module\OAuth2\Actions\Events;
 class EventHeap
     extends \Poirot\Events\EventHeap
 {
-    const EVENT_APP_ERROR            = 'app.error';
+    const EVENT_USER_REGISTER = 'oauth2.user.register';
 
 
     /**
