@@ -71,8 +71,6 @@ class LoginPage extends aAction
         $post = ParseRequestData::_($request)->parseBody();
         $post = $this->_assertValidData($post);
 
-        // TODO Login with Mobile Number
-
         $identifier = $this->_getAuthenticator()->authenticate(
             __(new CredentialUserPass())
                 ->setUsername($post['username'])
