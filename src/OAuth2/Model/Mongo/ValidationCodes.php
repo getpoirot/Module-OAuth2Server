@@ -139,4 +139,30 @@ class ValidationCodes extends aRepository
 
         return $r->getModifiedCount();
     }
+
+    /**
+     * Update Sent DateTime Data Of AuthCode Type From Given Validation Code
+     * To Current Time
+     *
+     * @param string $validationCode
+     * @param string $authType
+     *
+     * @return int Affected Rows
+     */
+    function updateAuthCodeTimestampSent($validationCode, $authType)
+    {
+        $r = $this->_query()->updateMany(
+            [
+                'validation_code' => $validationCode,
+                'auth_codes.type' => $authType,
+            ],
+            [
+                '$set' => [
+                    'auth_codes.$.timestamp_sent' => __(new UTCDatetime(time()))->__toString(),
+                ]
+            ]
+        );
+
+        return $r->getModifiedCount();
+    }
 }

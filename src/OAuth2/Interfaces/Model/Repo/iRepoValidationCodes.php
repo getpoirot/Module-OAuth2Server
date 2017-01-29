@@ -59,4 +59,15 @@ interface iRepoValidationCodes
      * @return int Affected Rows
      */
     function updateAuthCodeAsValidated($validationCode, $authType);
+
+    /**
+     * Update Sent DateTime Data Of AuthCode Type From Given Validation Code
+     * To Current Time
+     *
+     * @param string $validationCode
+     * @param string $authType
+     *
+     * @return int Affected Rows
+     */
+    function updateAuthCodeTimestampSent($validationCode, $authType);
 }
