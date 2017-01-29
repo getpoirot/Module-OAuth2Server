@@ -4,6 +4,7 @@ namespace Module\OAuth2\Actions\Users;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
+use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Module\OAuth2\Model\ValidationCodeAuthObject;
@@ -16,6 +17,19 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 class ChangeIdentity
     extends aAction
 {
+    /** @var iRepoUsers */
+    protected $repoUsers;
+
+
+    /**
+     * ValidatePage constructor.
+     * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
+     */
+    function __construct(iRepoUsers $users)
+    {
+        $this->repoUsers = $users;
+    }
+
     /**
      * @param string $uid
      * @param array $identifiers
@@ -26,7 +40,7 @@ class ChangeIdentity
     function __invoke($uid = null, $identifiers = null)
     {
         /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->repoUsers;
 
 
         # Check Identifier Uniqueness:
@@ -121,7 +135,7 @@ class ChangeIdentity
 
         ## Validate User Collection Identifier
         /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->repoUsers;
 
         if ($repoUsers->isIdentifiersRegistered(array($ident)))
             throw new exIdentifierExists(sprintf(

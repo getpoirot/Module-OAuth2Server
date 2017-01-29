@@ -5,15 +5,32 @@ use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iEntityUser;
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
+use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Mongo\User;
-use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Model\ValidationCodeAuthObject;
 
 
 class Register
     extends aAction
 {
+    /** @var iRepoUsers */
+    protected $repoUsers;
+    /** @var iRepoValidationCodes */
+    protected $repoValidationCodes;
+
+
+    /**
+     * ValidatePage constructor.
+     * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
+     * @param iRepoValidationCodes $validationCodes @IoC /module/oauth2/services/repository/
+     */
+    function __construct(iRepoUsers $users, iRepoValidationCodes $validationCodes)
+    {
+        $this->repoUsers = $users;
+        $this->repoValidationCodes = $validationCodes;
+    }
+
     function __invoke()
     {
         return $this;
@@ -29,8 +46,7 @@ class Register
     function persistUser(iEntityUser $entity)
     {
         # Persist Data:
-        /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->repoUsers;
 
         ## validate existence identifier
         #- email or mobile not given before
@@ -64,7 +80,7 @@ class Register
     function giveUserValidationCode(iEntityUser $user, $continue = null)
     {
         /** @var iRepoValidationCodes $repoValidationCodes */
-        $repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
+        $repoValidationCodes = $this->repoValidationCodes;
 
         if ($r = $repoValidationCodes->findOneByUserIdentifier($user->getUID()))
             // User has active validation code before!!

@@ -3,7 +3,6 @@ namespace Module\OAuth2\Actions\Users;
 
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Exception\exRegistration;
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\Interfaces\iHttpRequest;
 

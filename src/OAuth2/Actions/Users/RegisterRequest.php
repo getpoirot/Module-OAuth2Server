@@ -4,6 +4,7 @@ namespace Module\OAuth2\Actions\Users;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
+use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
@@ -15,6 +16,20 @@ use Poirot\Http\Interfaces\iHttpRequest;
 class RegisterRequest
     extends aAction
 {
+    /** @var iRepoUsers */
+    protected $repoUsers;
+
+
+    /**
+     * ValidatePage constructor.
+     * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
+     */
+    function __construct(iRepoUsers $users)
+    {
+        $this->repoUsers = $users;
+    }
+
+
     function __invoke(iHttpRequest $request = null)
     {
         if ($request === null)
@@ -42,7 +57,7 @@ class RegisterRequest
         // TODO implement commit/rollback; maybe momento/aggregate design pattern or something is useful here
 
         $user = $this->Register()->persistUser(
-            $this->attainUserFromRequest($request, $allowNoEmail)
+            $this->makeUserEntityFromRequest($request, $allowNoEmail)
         );
 
         // Continue Used to OAuth Registration Follow!!!
@@ -72,7 +87,7 @@ class RegisterRequest
         );
     }
 
-    function attainUserFromRequest(iHttpRequest $request, $allowNoEmail = false)
+    function makeUserEntityFromRequest(iHttpRequest $request, $allowNoEmail = false)
     {
         # Validate Sent Data:
         $post = ParseRequestData::_($request)->parseBody();
@@ -141,7 +156,7 @@ class RegisterRequest
     protected function _attainUsernameFromFullname($fullname)
     {
         /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->repoUsers;
         return $repoUsers->attainNextUsername($fullname);
     }
 }

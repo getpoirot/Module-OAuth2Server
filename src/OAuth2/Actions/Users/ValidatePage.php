@@ -6,13 +6,13 @@ use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iEntityValidationCode;
 use Module\OAuth2\Interfaces\Model\iEntityValidationCodeAuthObject;
+use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Module;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
-use Poirot\AuthSystem\Authenticate\Identity\IdentityUsername;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
@@ -21,19 +21,33 @@ use Poirot\Http\Interfaces\iHttpRequest;
 class ValidatePage
     extends aAction
 {
-    /** @var iRepoValidationCodes $repoValidationCodes */
+    /** @var iRepoValidationCodes */
     protected $repoValidationCodes;
+    /** @var iRepoUsers */
+    protected $repoUsers;
+
+    /**
+     * ValidatePage constructor.
+     * @param iRepoValidationCodes $validationCodes @IoC /module/oauth2/services/repository/
+     * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
+     */
+    function __construct(iRepoValidationCodes $validationCodes, iRepoUsers $users)
+    {
+        $this->repoValidationCodes = $validationCodes;
+        $this->repoUsers = $users;
+    }
 
 
     function __invoke($validation_code = null, iHttpRequest $request = null)
     {
-        $repoValidationCodes = $this->_getRepoValidationCode();
+        $repoValidationCodes = $this->repoValidationCodes;
         if (!$vc = $repoValidationCodes->findOneByValidationCode($validation_code))
             throw new exRouteNotMatch();
 
 
         # Handle Params Sent With Request Message If Has!!!
         $this->_handleValidate($vc, $request);
+
 
         # Prepare Output Values:
 
@@ -46,16 +60,24 @@ class ValidatePage
             $vAuthCodes[$ac->getType()]['truncated']    = $v;
         }
 
+
         # All Is Validated? Handle Login
         if ($isAllValidated)
             if ($r = $this->_handleLogin($vc, $request))
                 return $r;
 
+
+        # Build View Params
         return [
+            // TODO almost the params that build this request will present as self to response !!!
+            'self' => [
+                'validation_code' => $validation_code,
+            ],
             'is_validated'  => (boolean) $isAllValidated,
             'verifications' => $vAuthCodes,
         ];
     }
+
 
     /**
      * Handle Validate Request
@@ -81,7 +103,7 @@ class ValidatePage
 
                 if ($ac->getType() == $requestAuthType && $ac->getCode() == $requestAuthCode) {
                     // Given Code Match; Update To Validated!!!
-                    $this->_getRepoValidationCode()->updateAuthCodeAsValidated(
+                    $this->repoValidationCodes->updateAuthCodeAsValidated(
                         $validationCode->getValidationCode()
                         , $ac->getType()
                     );
@@ -90,8 +112,7 @@ class ValidatePage
                     $ac->setValidated();
 
                     ## Validate User Collection Identifier
-                    /** @var Users $repoUsers */
-                    $repoUsers = $this->IoC()->get('services/repository/Users');
+                    $repoUsers = $this->repoUsers;
                     $repoUsers->setUserIdentifier(
                         $validationCode->getUserIdentifier()
                         , $ac->getType()
@@ -101,23 +122,11 @@ class ValidatePage
                 }
             }
         }
-
     }
 
 
     // ..
 
-    /**
-     * Retrieve Repo Validation Codes From IOC
-     * @return mixed|iRepoValidationCodes
-     */
-    protected function _getRepoValidationCode()
-    {
-        if (!$this->repoValidationCodes)
-            $this->repoValidationCodes = $this->IoC()->get('services/repository/ValidationCodes');
-
-        return $this->repoValidationCodes;
-    }
 
     /**
      * Handle Login When Verification is Complete
@@ -140,7 +149,7 @@ class ValidatePage
 
         ## Sign-in User, Then Redirect To Login Page
         /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->repoUsers;
         $user      = $repoUsers->findOneByUID($validationCode->getUserIdentifier());
         // Identity From Credential Authenticator
         /** @see RepoUserPassCredential::doFindIdentityMatch */
