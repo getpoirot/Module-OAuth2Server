@@ -203,6 +203,30 @@ return [
                 ],
             ],
 
+            'validate' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    // also "validation_code" exists in params and pass through actions as argument
+                    'criteria'    => '/members/validate/:validation_code{\w+}',
+                    'match_whole' => true,
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
+                ],
+            ],
+
+            'validate_resend' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    // also "validation_code" exists in params and pass through actions as argument
+                    'criteria'    => '/members/validate/resend/:validation_code{\w+}/:identifier_type{\w+}',
+                    'match_whole' => true,
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidationResendAuthCode',
+                ],
+            ],
+
             ##
             'register' => [
                 'route' => 'RouteSegment',
@@ -234,19 +258,11 @@ return [
                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LogoutPage',
                 ],
             ],
-            'validate' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    // also "validation_code" exists in params and pass through actions as argument
-                    'criteria'    => '/members/validate/:validation_code{\w+}',
-                    'match_whole' => true,
-                ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
-                ],
-            ],
 
-            ##
+
+
+            ## OAuth2 EndPoints:
+
             'authorize' => [
                 'route' => 'RouteSegment',
                 'options' => [

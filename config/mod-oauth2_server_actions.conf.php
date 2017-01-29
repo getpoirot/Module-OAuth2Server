@@ -41,6 +41,9 @@ return [
 
                 \Module\OAuth2\Actions\Users\ValidatePage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidatePage'],
+                \Module\OAuth2\Actions\Users\ValidationResendAuthCodeAction::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidationResendAuthCode'],
+
 
                 \Module\OAuth2\Actions\Users\ValidationGenerator::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidationGenerator'],
