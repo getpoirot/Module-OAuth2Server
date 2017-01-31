@@ -203,29 +203,63 @@ return [
                 ],
             ],
 
-            'validate' => [
+            ## members
+            'members' => [
                 'route' => 'RouteSegment',
                 'options' => [
-                    // also "validation_code" exists in params and pass through actions as argument
-                    'criteria'    => '/members/validate/:validation_code{\w+}',
-                    'match_whole' => true,
+                    'criteria'    => '/members',
+                    'match_whole' => false,
                 ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
+                'routes' => [
+                    'validate' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            // also "validation_code" exists in params and pass through actions as argument
+                            'criteria'    => '/validate/:validation_code{\w+}',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
+                        ],
+                    ],
+                    'validate_resend' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            // also "validation_code" exists in params and pass through actions as argument
+                            'criteria'    => '/validate/resend/:validation_code{\w+}/:identifier_type{\w+}',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidationResendAuthCode',
+                        ],
+                    ],
+
+                    'signin_recognize' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            // also "validation_code" exists in params and pass through actions as argument
+                            'criteria'    => '/signin/recognize',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninRecognizePage',
+                        ],
+                    ],
+
+                    'signin_challenge' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/signin/challenge/:uid{\w+}[/:identifier{\w+}]',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninChallengePage',
+                        ],
+                    ],
+
                 ],
             ],
 
-            'validate_resend' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    // also "validation_code" exists in params and pass through actions as argument
-                    'criteria'    => '/members/validate/resend/:validation_code{\w+}/:identifier_type{\w+}',
-                    'match_whole' => true,
-                ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidationResendAuthCode',
-                ],
-            ],
 
             ##
             'register' => [

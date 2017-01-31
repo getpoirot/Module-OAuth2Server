@@ -161,6 +161,33 @@ class Users extends aRepository
 
         return $r;
     }
+
+    /**
+     * Find Match With Exact Identifier Value
+     *
+     * @param mixed $identifier
+     *
+     * @return iEntityUser|false
+     */
+    function findOneHasIdentifierWithValue($identifier)
+    {
+        /** @var iEntityUserIdentifierObject $arg */
+            $match[] = [
+                '$match' => [],
+            ];
+
+
+        $r = $this->_query()->findOne([
+            'identifiers' => [
+                '$elemMatch' => [
+                    'value'     => strtolower($identifier),
+                    'validated' => true
+                ],
+            ],
+        ]);
+
+        return $r ? $r : false;
+    }
     
     /**
      * Find User By Identifier (username)

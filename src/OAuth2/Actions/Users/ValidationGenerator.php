@@ -169,7 +169,7 @@ class ValidationGenerator
 
         /** @var UrlAction $validationUrl */
         $validationUrl = $this->withModule('foundation')->url(
-            'main/oauth/validate'
+            'main/oauth/members/validate'
             , array('validation_code' => $validationCode->getValidationCode())
         );
 

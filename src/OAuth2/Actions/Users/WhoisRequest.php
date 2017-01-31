@@ -2,14 +2,11 @@
 namespace Module\OAuth2\Actions\Users;
 
 use Module\OAuth2\Actions\aAction;
-use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\iEntityUser;
-use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
-use Module\OAuth2\Model\Mongo\Users;
+use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
-use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
@@ -17,6 +14,19 @@ use Poirot\Http\Interfaces\iHttpRequest;
 class WhoisRequest
     extends aAction
 {
+    /** @var iRepoUsers */
+    protected $repoUsers;
+
+
+    /**
+     * Constructor.
+     * @param iRepoUsers $users @IoC /module/oauth2/services/repository/
+     */
+    function __construct(iRepoUsers $users)
+    {
+        $this->repoUsers = $users;
+    }
+
     function __invoke(iHttpRequest $request = null)
     {
         if ($request === null)
@@ -46,8 +56,7 @@ class WhoisRequest
         $identifier->setType(key($post));
         $identifier->setValue(current($post));
 
-        /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->repoUsers;
         /** @var iEntityUser $u */
         $u = $repoUsers->findOneMatchByIdentifiers([$identifier], true);
 

@@ -81,7 +81,7 @@ class RegisterRequest
             'uid'           => $user->getUID(),
             'validated'     => $rIdentifiers,
             'next_validate' => (string) $this->withModule('foundation')->url(
-                'main/oauth/validate'
+                'main/oauth/members/validate'
                 , array('validation_code' => $code)
             ),
         );

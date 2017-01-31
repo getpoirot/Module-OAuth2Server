@@ -15,6 +15,12 @@ return [
                 \Module\OAuth2\Actions\Users\LogoutPage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'LogoutPage'],
 
+                \Module\OAuth2\Actions\Users\SigninRecognizePage::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'SigninRecognizePage'],
+
+                \Module\OAuth2\Actions\Users\SigninChallengePage::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'SigninChallengePage'],
+
                 \Module\OAuth2\Actions\Users\RegisterPage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterPage'],
 

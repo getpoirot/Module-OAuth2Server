@@ -74,7 +74,7 @@ class ChangeIdentity
                     , array('validation_code' => $code)
                 ),
                 'alter_next_validate' => (string) $this->withModule('foundation')->url(
-                    'main/oauth/validate'
+                    'main/oauth/members/validate'
                     , array('validation_code' => $code)
                 ),
             )

@@ -47,6 +47,15 @@ interface iRepoUsers
     function findOneMatchByIdentifiers(array $identifiers, $allValidated = null);
 
     /**
+     * Find Match With Exact Identifier Value
+     *
+     * @param mixed $identifier
+     *
+     * @return iEntityUser|false
+     */
+    function findOneHasIdentifierWithValue($identifier);
+
+    /**
      * Update Identifier Type Of Given User to Validated
      *
      * @param string $uid User Identifier
