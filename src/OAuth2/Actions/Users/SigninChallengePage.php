@@ -31,8 +31,6 @@ class SigninChallengePage
      */
     function __invoke($uid = null, $identifier = null)
     {
-        kd(func_get_args());
-
         /** @var iEntityUser $user */
         $user = $this->repoUsers->findOneByUID($uid);
         if (!$user)
