@@ -56,7 +56,7 @@ class ValidatePage
         foreach ($vc->getAuthCodes() as $ac) {
             $isAllValidated &= $isValid = $ac->isValidated();
             $vAuthCodes[$ac->getType()]['is_validated'] = $isValid;
-            $v = $this->_truncate($ac->getValue(), $ac->getType());
+            $v = \Module\OAuth2\truncateIdentifierValue($ac->getValue(), $ac->getType());
             $vAuthCodes[$ac->getType()]['truncated']    = $v;
         }
 
@@ -172,34 +172,5 @@ class ValidatePage
         $this->repoValidationCodes->deleteByValidationCode($validationCode->getValidationCode());
 
         return new ResponseRedirect($continue);
-    }
-
-    protected function _truncate($v, $type = null)
-    {
-        if ($v instanceof \Traversable)
-            $v = \Poirot\Std\cast($v)->toArray();
-        
-        switch ($type) {
-            case 'mobile':
-                return $v[0].' '.$this->_truncate($v[1]);
-                break;
-            default:
-        }
-
-        if (false !== $pos = strpos($v, '@')) {
-            // maybe its email
-            $username = $this->_truncate(substr($v, 0, $pos));
-            return $username.substr($v, $pos);
-        }
-
-        $len    = strlen($v);
-        $chrNum = round($len / 4);
-
-        $return = '';
-        $return .= substr($v, 0, $chrNum);
-        $return .= str_repeat('-', $len - ($chrNum * 2));
-        $return .= substr($v, -1*($chrNum));
-
-        return $return;
     }
 }

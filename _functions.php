@@ -62,4 +62,44 @@ namespace Module\OAuth2
 
         return $randomString;
     }
+
+    /**
+     * Truncate Identifier Value To Something That Hard To Predict For Strangers
+     *
+     * exp.
+     *  naderi.payam@gmail.com ----> na------am@gmail.com
+     *
+     * @param string $value
+     * @param string $type
+     *
+     * @return string
+     */
+    function truncateIdentifierValue($value, $type = null, $threshold = 4)
+    {
+        if ($value instanceof \Traversable)
+            $value = \Poirot\Std\cast($value)->toArray();
+
+        switch ($type) {
+            case 'mobile':
+                return $value[0].' '.truncateIdentifierValue($value[1]);
+                break;
+            default:
+        }
+
+        if (false !== $pos = strpos($value, '@')) {
+            // maybe its email
+            $username = truncateIdentifierValue(substr($value, 0, $pos));
+            return $username.substr($value, $pos);
+        }
+
+        $len    = strlen($value);
+        $chrNum = round($len / $threshold);
+
+        $return = '';
+        $return .= substr($value, 0, $chrNum);
+        $return .= str_repeat('*', $len - ($chrNum * 2));
+        $return .= substr($value, -1*($chrNum));
+
+        return $return;
+    }
 }

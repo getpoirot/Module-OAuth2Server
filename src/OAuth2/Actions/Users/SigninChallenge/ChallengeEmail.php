@@ -10,14 +10,26 @@ use Poirot\View\ViewModelTemplate;
 class ChallengeEmail
     extends aChallenge
 {
+    const CHALLENGE_TYPE = 'email';
+
+
     /**
-     * @param iEntityUser  $user
      * @param iHttpRequest $request
      *
      * @return iViewModelPermutation|ViewModelTemplate
      */
-    function __invoke(iEntityUser $user = null, iHttpRequest $request = null)
+    function doInvoke(iHttpRequest $request = null)
     {
-        // TODO: Implement __invoke() method.
+
+
+        # Build View
+        $v = $this->getChallengeIdentifierObject()->getValue();
+        return $this->viewModel
+            ->setTemplate('main/oauth/members/challenge/email')
+            ->setVariables([
+                'url_next_challenge' => (string) $this->getNextUserChallengeUrl(),
+                'email_truncate'     => \Module\OAuth2\truncateIdentifierValue($v),
+            ])
+        ;
     }
 }

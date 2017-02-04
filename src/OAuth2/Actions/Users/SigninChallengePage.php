@@ -1,8 +1,10 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
+use Module\Foundation\Actions\Helper\UrlAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
+use Module\OAuth2\Actions\Users\SigninChallenge\aChallenge;
 use Module\OAuth2\Actions\Users\SigninChallenge\ChallengeEmail;
 use Module\OAuth2\Actions\Users\SigninChallenge\ChallengeFine;
 use Module\OAuth2\Actions\Users\SigninChallenge\ChallengeMobile;
@@ -59,7 +61,7 @@ class SigninChallengePage
 
 
         # Issue Challenge
-        $challenge = $this->_newChallenge($identifier);
+        $challenge = $this->_newChallenge($identifier, $user);
         if (!$challenge)
             // Given Challenge is not valid pick another!
             return $this->_pickAChallengeForUser($user);
@@ -104,20 +106,66 @@ class SigninChallengePage
     }
 
     /**
-     * @param $identifier
+     * @param string      $identifier_type
+     * @param iEntityUser $user
+     *
      * @return callable
+     * @throws \Exception
      */
-    protected function _newChallenge($identifier)
+    protected function _newChallenge($identifier_type, $user)
     {
-        switch ($identifier) {
+        switch ($identifier_type) {
             case 'fine':
-                return \Poirot\Ioc\newInitIns(new instance(ChallengeFine::class));
+                $challenge = \Poirot\Ioc\newInitIns(new instance(ChallengeFine::class));
                 break;
             case 'email':
-                return \Poirot\Ioc\newInitIns(new instance(ChallengeEmail::class));
+                $challenge = \Poirot\Ioc\newInitIns(new instance(ChallengeEmail::class));
+                break;
             case 'mobile':
-                return \Poirot\Ioc\newInitIns(new instance(ChallengeMobile::class));
+                $challenge = \Poirot\Ioc\newInitIns(new instance(ChallengeMobile::class));
+                break;
+
+            default: throw new \Exception(sprintf(
+                'Challenge (%s) is not specified.'
+                , $identifier_type
+            ));
         }
+
+        // Generate next challenge link and inject to challenge abstract
+
+        // attain next identifier and create link to challenge it!
+        /** @var UserIdentifierObject $idnt */
+        $nextChallengeType = 'fine';
+        $userIdentifiers = $user->getIdentifiers();
+        do {
+            /** @var UserIdentifierObject $currIdentifier */
+            $currIdentifier = current($userIdentifiers);
+            if ($currIdentifier->getType() === $identifier_type) {
+                // achieve self challenge try next
+                $tryNext = true;
+                continue;
+            }
+
+            if ( isset($tryNext) && $this->_canHandleChallengeForIdentifier($currIdentifier->getType()) ) {
+                $nextChallengeType = $currIdentifier->getType();
+                break;
+            }
+
+        } while( next($userIdentifiers) );
+
+
+        /** @var UrlAction $nextUrl */
+        $foundation = $this->withModule('foundation');
+        $uid = $user->getUID();
+        $nextUrl = $foundation->url(
+            'main/oauth/members/signin_challenge'
+            , ['uid' => $uid, 'identifier' => $nextChallengeType]
+            , false
+        );
+
+        /** @var aChallenge $challenge */
+        $challenge->setNextUserChallengeUrl( $nextUrl->uri() );
+        return $challenge;
     }
 
     protected function _canHandleChallengeForIdentifier($type)
