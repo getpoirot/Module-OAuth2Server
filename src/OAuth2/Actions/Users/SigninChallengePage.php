@@ -131,6 +131,12 @@ class SigninChallengePage
             ));
         }
 
+        if (!$challenge instanceof aChallenge)
+            throw new \Exception(sprintf(
+                'Challenge (%s) is requested but (%s) is instanced.'
+                , $identifier_type, \Poirot\Std\flatten($challenge)
+            ));
+
         // Generate next challenge link and inject to challenge abstract
 
         // attain next identifier and create link to challenge it!

@@ -138,6 +138,7 @@ return [
                     'indexes' => [
                         [ 'key' => ['validation_code' => 1, ] ],
                         [ 'key' => ['user_identifier' => 1, ] ],
+                        [ 'key' => ['user_identifier'=>1, 'auth_codes.type'=>1, 'auth_codes.validated'=>1, ] ],
                         // db.oauth.users.validation_codes.createIndex({"date_mongo_expiration": 1}, {expireAfterSeconds: 0});
                         [ 'key' => ['date_mongo_expiration' => 1 ], 'expireAfterSeconds'=> 0],
                     ],],],

@@ -41,6 +41,19 @@ interface iRepoValidationCodes
     function findOneByUserIdentifier($userIdentifier);
 
     /**
+     * Find Match For User Identifier That Has Specific Identifier Type
+     * Validation Code Generated
+     *
+     * note: consider expiration time
+     *
+     * @param string $userIdentifier
+     * @param string $identifierType
+     *
+     * @return false|iEntityValidationCode
+     */
+    function findOneByUserHasIdentifierValidation($userIdentifier, $identifierType);
+
+    /**
      * Delete Entity By Identifier
      *
      * @param string $validationCode

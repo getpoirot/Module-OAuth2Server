@@ -9,8 +9,8 @@ use Module\OAuth2\Interfaces\Model\iEntityValidationCodeAuthObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 
+use Module;
 use Module\OAuth2\Model\Mongo\Users;
-use Module\OAuth2\Module;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
@@ -157,7 +157,7 @@ class ValidatePage
 
         /** @var AuthenticatorFacade $authenticator */
         $authenticator = $this->withModule('authorization')->Facade();
-        $identifier    = $authenticator->authenticator(Module::AUTHENTICATOR)->authenticate($user);
+        $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
         $identifier->signIn();
 
 

@@ -1,12 +1,16 @@
 <?php
 namespace Module\OAuth2\Actions\Users\SigninChallenge;
 
+use Module\Authorization\Module\AuthenticatorFacade;
+use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\iEntityUser;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Http\Interfaces\iHttpResponse;
 use Poirot\View\Interfaces\iViewModelPermutation;
 use Poirot\View\ViewModelTemplate;
 use Psr\Http\Message\UriInterface;
+
 
 abstract class aChallenge
 {
@@ -35,11 +39,17 @@ abstract class aChallenge
      * @param iEntityUser  $user
      * @param iHttpRequest $request
      *
-     * @return iViewModelPermutation|ViewModelTemplate
+     * @return iViewModelPermutation|ViewModelTemplate|iHttpResponse
      */
     function __invoke(iEntityUser $user = null, iHttpRequest $request = null)
     {
         $this->user = $user;
+
+        if ($redirectResponse = $this->_assertUser($user))
+            // Check Whether Attained User Is Same As Current Logged in User?!
+            // if so redirect to login page
+            return $redirectResponse;
+
         return $this->doInvoke($request);
     }
 
@@ -52,12 +62,37 @@ abstract class aChallenge
 
 
     /**
+     * Check Whether User That want to recover Account is not currently Logged in,
+     * if so redirect it to dashboard
+     *
+     * @param iEntityUser $user
+     *
+     * @return ResponseRedirect
+     */
+    protected function _assertUser($user)
+    {
+        /** @var AuthenticatorFacade $authorization */
+        $authorization = \IOC::GetIoC()->get('/module/authorization');
+        $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)->hasAuthenticated();
+        if (false !== $identifier) {
+            // Some user is logged in
+            if ( $identifier->withIdentity()->getUID() == $user->getUID() ) {
+                // The Same User is found
+                $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
+                return new ResponseRedirect($continue);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get Current Challenge Identifier Object
      *
      * @return UserIdentifierObject
      * @throws \Exception
      */
-    function getChallengeIdentifierObject()
+    protected function _getChallengeIdentifierObject()
     {
         $user = $this->user;
 

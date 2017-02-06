@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
+use Module\Authorization\Module\AuthenticatorFacade;
 use Module\Foundation\Actions\Helper\UrlAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
@@ -43,6 +44,24 @@ class SigninRecognizePage
         $u = $_query['u'];
         /** @var iEntityUser $user */
         $user = $this->repoUsers->findOneByUID($u);
+
+
+        # Check Whether Attained User Is Same As Current Logged in User?!
+
+        /** @var AuthenticatorFacade $authorization */
+        $authorization = $this->withModule('authorization')->Facade();
+        $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)->hasAuthenticated();
+        if (false !== $identifier) {
+            // Some user is logged in
+            if ( $identifier->withIdentity()->getUID() == $user->getUID() ) {
+                // The Same User is found
+                $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
+                return new ResponseRedirect($continue);
+            }
+        }
+
+
+        # Build View
 
         return [
             // Tell Template View To Display Recognition.

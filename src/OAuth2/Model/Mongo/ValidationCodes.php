@@ -99,6 +99,38 @@ class ValidationCodes extends aRepository
     }
 
     /**
+     * Find Match For User Identifier That Has Specific Identifier Type
+     * Validation Code Generated
+     *
+     * note: consider expiration time
+     *
+     * @param string $userIdentifier
+     * @param string $identifierType
+     *
+     * @return false|iEntityValidationCode
+     */
+    function findOneByUserHasIdentifierValidation($userIdentifier, $identifierType)
+    {
+        $r = $this->_query()->findOne([
+            'user_identifier'       => $userIdentifier,
+            'auth_codes' => [
+                '$elemMatch' => [
+                    'validated' => false,
+                    'type'      => $identifierType,
+                ]
+            ]
+            /// there may be a delay between the time a document expires and the time
+            //- that MongoDB removes the document from the database.
+            /* Disabled To Avoid Using Compound Indexes
+             * 'date_mongo_expiration' => [
+                '$lte' => new UTCDatetime( round(microtime(true) * 1000) ),
+            ]*/
+        ]);
+
+        return $r ? $r : false;
+    }
+
+    /**
      * Delete Entity By Given Validation Code
      *
      * @param string $validationCode
