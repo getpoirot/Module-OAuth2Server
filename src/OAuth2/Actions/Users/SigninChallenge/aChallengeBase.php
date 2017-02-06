@@ -44,21 +44,25 @@ abstract class aChallengeBase
 
     // ...
 
-    protected function _handleStartAction()
+    protected function _handleStartAction(iHttpRequest $request)
     {
         $userUID = $this->user->getUID();
 
         # Check that user may have currently active validation code generated for this challenge!!
         if ($r = $this->repoValidationCodes->findOneByUserHasIdentifierValidation($userUID, static::CHALLENGE_TYPE)) {
             $validationCode = $r->getValidationCode();
+            // TODO what if continue follow has changed??
         } else {
             // Generate validation code
+            $_get     = ParseRequestData::_($request)->parseQueryParams();
+            $continue = isset($_get['continue']) ? $_get['continue'] : null;
+
             # Create Auth Codes Based On Identifier:
             $authCodes = [
                 ValidationCodeAuthObject::newByIdentifier( $this->_getChallengeIdentifierObject() )
             ];
 
-            $validationCode = \Module\OAuth2\Actions\Users\IOC::validationGenerator($userUID, $authCodes);
+            $validationCode = \Module\OAuth2\Actions\Users\IOC::validationGenerator($userUID, $authCodes, $continue);
         }
 
         $redirect = \Module\Foundation\Actions\IOC::url();
@@ -112,7 +116,7 @@ abstract class aChallengeBase
 
 
 
-                $response = $this->__loginUser($r->getUserIdentifier());
+                $response = $this->__loginUser($r->getUserIdentifier(), $r->getContinueFollowRedirection());
 
                 ## Delete Validation Entity From Repo
                 $this->repoValidationCodes->deleteByValidationCode($validationCode);
@@ -130,7 +134,7 @@ abstract class aChallengeBase
         ;
     }
 
-    protected function __loginUser($userUID)
+    protected function __loginUser($userUID, $continue = null)
     {
         ## Sign-in User, Then Redirect To Login Page
         /** @var Users $repoUsers */
@@ -146,7 +150,7 @@ abstract class aChallengeBase
         $identifier->signIn();
 
         ## Continue Follow:
-        $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
+        $continue = ($continue) ? $continue :(string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
         return new ResponseRedirect($continue);
     }
 }

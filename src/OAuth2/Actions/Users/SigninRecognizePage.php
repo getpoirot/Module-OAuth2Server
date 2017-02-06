@@ -7,6 +7,7 @@ use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iEntityUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
@@ -44,6 +45,8 @@ class SigninRecognizePage
         $u = $_query['u'];
         /** @var iEntityUser $user */
         $user = $this->repoUsers->findOneByUID($u);
+        if (false == $user)
+            throw new exRouteNotMatch();
 
 
         # Check Whether Attained User Is Same As Current Logged in User?!
@@ -83,7 +86,7 @@ class SigninRecognizePage
     protected function _handleRecognizeIdentifier(iHttpRequest $request)
     {
         /** @var UrlAction $url */
-        $url = $this->withModule('foundation')->url(null, null);
+        $url = $this->withModule('foundation')->url(null, null, true);
 
         $_post = ParseRequestData::_($request)->parseBody();
         if (!isset($_post['identifier'])) {
@@ -105,7 +108,8 @@ class SigninRecognizePage
         }
 
 
-        $url = $url->uri()->withQuery(\Poirot\Psr7\buildQuery( ['u' => $u->getUID() ]));
+        $url = $url->uri();
+        $url = \Poirot\Psr7\modifyUri($url, ['query' => \Poirot\Psr7\buildQuery(['u' => $u->getUID()]) ]);
         return new ResponseRedirect((string) $url);
     }
 }

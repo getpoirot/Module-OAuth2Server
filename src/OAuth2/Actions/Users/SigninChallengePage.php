@@ -99,7 +99,7 @@ class SigninChallengePage
         $redirect = $this->withModule('foundation')->url(
             'main/oauth/members/signin_challenge'
             , ['uid' => $user->getUID(), 'identifier' => $challengeType]
-            , false
+            , true
         );
 
         return new ResponseRedirect($redirect);
@@ -166,7 +166,7 @@ class SigninChallengePage
         $nextUrl = $foundation->url(
             'main/oauth/members/signin_challenge'
             , ['uid' => $uid, 'identifier' => $nextChallengeType]
-            , false
+            , true
         );
 
         /** @var aChallenge $challenge */

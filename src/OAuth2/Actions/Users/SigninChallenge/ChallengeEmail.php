@@ -26,7 +26,7 @@ class ChallengeEmail
         if (isset($_request_params['a']) && $_request_params['a'] == 'start')
             // Create Validation and Send Email Code
             // Redirect to Input Given Code From User
-            return $this->_handleStartAction();
+            return $this->_handleStartAction($request);
 
         if (isset($_request_params['a']) && $_request_params['a'] == 'confirm')
             // Display Confirm Dialog
