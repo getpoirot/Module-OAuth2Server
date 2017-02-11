@@ -140,8 +140,11 @@ class RegisterRequest
     protected function _assertValidData(array $post, $allowNoEmail = false)
     {
         # Sanitize Data:
-        if (isset($post['mobile']) && is_array($post['mobile']))
+        if (isset($post['mobile']) && is_array($post['mobile'])) {
             $post['mobile']['number'] = ltrim(preg_replace('/\s+/', '', $post['mobile']['number']), '0');
+            if (!isset($post['mobile']['country']))
+                $post['mobile']['country'] = '+98';
+        }
 
         if (isset($post['username']))
             $post['username'] = strtolower(preg_replace('/\s+/', '.', $post['username']));
