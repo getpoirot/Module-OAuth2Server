@@ -41,26 +41,7 @@ namespace Module\OAuth2
      */
     function generateCode($length = 8, $contains = GENERATE_CODE_NUMBERS | GENERATE_CODE_STRINGS)
     {
-        $characters = null;
-
-        if (($contains & GENERATE_CODE_NUMBERS) == GENERATE_CODE_NUMBERS)
-            $characters .= '0123456789';
-
-        if (($contains & GENERATE_CODE_STRINGS_LOWER) == GENERATE_CODE_STRINGS_LOWER)
-            $characters .= 'abcdefghijklmnopqrstuvwxyz';
-
-        if (($contains & GENERATE_CODE_STRINGS_UPPER) == GENERATE_CODE_STRINGS_UPPER)
-            $characters .= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-        if ($characters === null)
-            throw new \InvalidArgumentException('Invalid Contains Argument Provided; Does Not Match Any Condition.');
-
-
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++)
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-
-        return $randomString;
+        return \Poirot\Std\generateShuffleCode($length, $contains);
     }
 
     /**
