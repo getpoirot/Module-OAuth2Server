@@ -13,6 +13,7 @@ use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Storage\Gateway\DataStorageSession;
 use Poirot\View\Interfaces\iViewModelPermutation;
 
 
@@ -115,13 +116,21 @@ abstract class aChallengeBase
                     throw new \RuntimeException('Invalid Request.');
 
 
+                ## Login User, Generate Hash Session Token, Redirect To Pick New Password
+                $this->__loginUser($r->getUserIdentifier(), $r->getContinueFollowRedirection());
 
-                $response = $this->__loginUser($r->getUserIdentifier(), $r->getContinueFollowRedirection());
+                ### generate token hash session
+                $token = Module\OAuth2\Actions\Users\SigninNewPassPage::generateAndRememberToken($validationCode);
 
-                ## Delete Validation Entity From Repo
-                $this->repoValidationCodes->deleteByValidationCode($validationCode);
-
-                return $response;
+                ### redirect to change password
+                $redirect = \Module\Foundation\Actions\IOC::url(
+                    'main/oauth/members/pick_new_password'
+                    , [
+                        'validation_code' => $validationCode,
+                        'token'           => $token,
+                    ]
+                );
+                return new ResponseRedirect($redirect);
             } // end post
         }
 
@@ -148,9 +157,5 @@ abstract class aChallengeBase
         $authenticator = \IOC::GetIoC()->get('/module/authorization');
         $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
         $identifier->signIn();
-
-        ## Continue Follow:
-        $continue = ($continue) ? $continue :(string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
-        return new ResponseRedirect($continue);
     }
 }

@@ -255,6 +255,17 @@ return [
                         ],
                     ],
 
+                    'pick_new_password' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/signin/newpass/:validation_code{\w+}/:token{\w+}',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninNewPassPage',
+                        ],
+                    ],
+
                 ],
             ],
 

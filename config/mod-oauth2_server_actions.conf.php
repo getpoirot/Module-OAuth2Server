@@ -21,6 +21,9 @@ return [
                 \Module\OAuth2\Actions\Users\SigninChallengePage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'SigninChallengePage'],
 
+                \Module\OAuth2\Actions\Users\SigninNewPassPage::class
+                => [\Poirot\Ioc\Container\BuildContainer::NAME => 'SigninNewPassPage'],
+
                 \Module\OAuth2\Actions\Users\RegisterPage::class
                 => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterPage'],
 
