@@ -67,6 +67,31 @@ return [
                                 ],
                             ],
                             ## Identifiers:
+                            'grants' => [
+                                'route' => 'RouteSegment',
+                                'options' => [
+                                    'criteria'    => '/grants',
+                                    'match_whole' => false,
+                                ],
+                                'routes' => [
+                                    // Change Password:
+                                    'password' => [
+                                        'route' => 'RouteSegment',
+                                        'options' => [
+                                            'criteria'    => '/password',
+                                            'match_whole' => true,
+                                        ],
+                                        'params'  => [
+                                            ListenerDispatch::CONF_KEY => [
+                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedUIDFromTokenClosure(),
+                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedRequestDataClosure(),
+                                                '/module/oauth2/actions/users/ChangePassword',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            ## Identifiers:
                             'identifiers' => [
                                 'route' => 'RouteSegment',
                                 'options' => [
@@ -74,21 +99,6 @@ return [
                                     'match_whole' => false,
                                 ],
                                 'routes' => [
-                                    // Change Password:
-                                    'change_pass' => [
-                                        'route' => 'RouteSegment',
-                                        'options' => [
-                                            'criteria'    => '/change_pass',
-                                            'match_whole' => true,
-                                        ],
-                                        'params'  => [
-                                            ListenerDispatch::CONF_KEY => [
-                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedRequestDataClosure(),
-                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedUIDFromTokenClosure(),
-                                                '/module/oauth2/actions/users/ChangePassword',
-                                            ],
-                                        ],
-                                    ],
                                     // Identifiers:
                                     // Change Identity (email, mobile, ..):
                                     'change' => [

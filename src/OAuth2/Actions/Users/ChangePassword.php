@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Actions\Users;
 
 use Module\OAuth2\Actions\aAction;
+use Module\OAuth2\Exception\exPasswordNotMatch;
 use Module\OAuth2\Model\Mongo\Users;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
@@ -13,15 +14,26 @@ class ChangePassword
     extends aAction
 {
     /**
-     * @param string             $uid
-     * @param string             $credential
+     * Change Password Grant Credential By User ID
+     *
+     * @param string $uid      User uid
+     * @param string $newpass
+     * @param string $currpass
+     *
      * @return array
+     * @throws \Exception
      */
-    function __invoke($uid = null, $credential = null)
+    function __invoke($uid = null, $newpass = null, $currpass = null)
     {
         /** @var Users $repoUsers */
         $repoUsers = $this->IoC()->get('services/repository/Users');
-        $r = $repoUsers->updateGrantTypeValue($uid, 'password', $credential);
+
+        // Current password must match
+        $u = $repoUsers->findOneByUID($uid);
+        if ($repoUsers->makeCredentialHash($currpass) !== $u->getPassword())
+            throw new exPasswordNotMatch('Current Password Does not match!');
+
+        $r = $repoUsers->updateGrantTypeValue($uid, 'password', $newpass);
 
         return [
             // TODO dispatch result from chained route closure!!
@@ -88,6 +100,8 @@ class ChangePassword
     protected function _assertValidData(array $post)
     {
         # Validate Data:
+        if (!isset($post['newpass']) || !isset($post['currpass']))
+            throw new \InvalidArgumentException('Arguments "newpass" & "currpass" is required.');
 
         # Sanitize Data:
 

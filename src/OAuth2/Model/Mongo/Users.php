@@ -1,16 +1,15 @@
 <?php
 namespace Module\OAuth2\Model\Mongo;
 
-use Cocur\Slugify\Slugify;
 use Module\MongoDriver\Model\Repository\aRepository;
 
+use Module\OAuth2\Interfaces\Model\iEntityUser;
 use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Lib\NamesGenerator;
 use Module\OAuth2\Model\User as BaseUser;
 use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
 use Poirot\Std\Interfaces\Struct\iData;
 
 
@@ -56,6 +55,22 @@ class Users extends aRepository
     }
 
     /**
+     * Used When Persistence want to store credential
+     * or match given plain hash with persistence
+     *
+     * exp. md5(password) = stored_password
+     *
+     * @param string $credential
+     *
+     * @return mixed
+     */
+    function makeCredentialHash($credential)
+    {
+        return md5($credential);
+    }
+
+    
+    /**
      * Insert User Entity
      *
      * @param \Module\OAuth2\Interfaces\Model\iEntityUser $user
@@ -71,7 +86,7 @@ class Users extends aRepository
             ->setIdentifiers($user->getIdentifiers())
             ->setGrants($user->getGrants())
             ->setUsername($user->getUsername())
-            ->setPassword(md5($user->getPassword()))
+            ->setPassword( $this->makeCredentialHash($user->getPassword()) )
             ->setDateCreated( $user->getDateCreated() )
         ;
 
@@ -231,7 +246,7 @@ class Users extends aRepository
                     '$elemMatch' => [
                         // iEntityUserGrantObject()
                         'type'  => 'password',
-                        'value' => md5($credential),
+                        'value' => $this->makeCredentialHash($credential),
                     ]
                 ],],
             ],
@@ -336,7 +351,7 @@ class Users extends aRepository
     {
         if ($grantType == 'password')
             // All Passwords Stored As MD5Sum
-            $grantValue = md5($grantValue);
+            $grantValue = $this->makeCredentialHash($grantValue);
 
         $r = $this->_query()->updateMany(
             [

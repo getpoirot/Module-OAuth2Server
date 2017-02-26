@@ -19,6 +19,18 @@ interface iRepoUsers
     function attainNextUsername($fullname = null);
 
     /**
+     * Used When Persistence want to store credential
+     * or match given plain hash with persistence
+     *
+     * exp. md5(password) = stored_password
+     *
+     * @param string $credential
+     * 
+     * @return mixed
+     */
+    function makeCredentialHash($credential);
+    
+    /**
      * Insert User Entity
      *
      * @param iEntityUser $user
