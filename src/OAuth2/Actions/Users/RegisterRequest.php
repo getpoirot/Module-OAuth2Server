@@ -59,32 +59,43 @@ class RegisterRequest
         $user = $this->Register()->persistUser(
             $this->makeUserEntityFromRequest($request, $allowNoEmail)
         );
-
-        // Continue Used to OAuth Registration Follow!!!
-        $queryParams = ParseRequestData::_($request)->parseQueryParams();
-        $continue    = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
-
+        
         /** @var iEntityUserIdentifierObject $ident */
-        $rIdentifiers = [];
-        foreach ($user->getIdentifiers() as $ident) {
-            // TODO more generalized for identities
-            if ($ident->isValidated()) continue;
-            $rIdentifiers[$ident->getType()] = false;
+        $validate = []; $ids = [];
+        foreach ($user->getIdentifiers() as $ident) 
+        {
+            $ids[$ident->getType()] = $ident->getValue();
+            
+            if ($ident->isValidated()) 
+                continue;
+            
+            $validate[] = $ident->getType();
         }
 
-        // TODO maybe we have no identifier(s) to validate; exp. when user change username
-        $code = $this->Register()->giveUserValidationCode($user, $continue);
-
+        // Continue Used to OAuth Registration Follow!!!
+        $queryParams    = ParseRequestData::_($request)->parseQueryParams();
+        $continue       = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
+        
+        $validationCode = $this->Register()->giveUserValidationCode($user, $continue);
+        
         # make response data
-
-        return array(
+        
+        $r = array(
             'uid'           => $user->getUID(),
-            'validated'     => $rIdentifiers,
-            'next_validate' => (string) $this->withModule('foundation')->url(
-                'main/oauth/members/validate'
-                , array('validation_code' => $code)
-            ),
+            'identifiers'   => $ids,
+            'validate'      => $validate,
         );
+        
+        (!$validationCode) ?: $r = array_merge($r, array(
+            '_link' => array(
+                'next_validate' => (string) $this->withModule('foundation')->url(
+                    'main/oauth/members/validate'
+                    , array('validation_code' => $validationCode)
+                ),
+            ),
+        )); 
+        
+        return $r;
     }
 
     function makeUserEntityFromRequest(iHttpRequest $request, $allowNoEmail = false)
@@ -100,9 +111,10 @@ class RegisterRequest
         if ( isset($post[ UserIdentifierObject::IDENTITY_EMAIL ]) )
             $identifiers[] = UserIdentifierObject::newEmailIdentifier($post['email']);
         if ( isset($post[ UserIdentifierObject::IDENTITY_MOBILE ]) )
-            $identifiers[] = UserIdentifierObject::newMobileIdentifier([$post['mobile']['country'], $post['mobile']['number']]);
+            $identifiers[] = UserIdentifierObject::newMobileIdentifier($post['mobile']['number'], $post['mobile']['country']);
 
 
+        // TODO CONFIG to give users default username on registration
         $username = (isset($post['username'])) ? $post['username']
             : $this->_attainUsernameFromFullname($post['fullname']);
 

@@ -55,10 +55,11 @@ class WhoisRequest
         $identifier = new UserIdentifierObject;
         $identifier->setType(key($post));
         $identifier->setValue(current($post));
+        $identifier->setValidated();
 
         $repoUsers = $this->repoUsers;
         /** @var iEntityUser $u */
-        $u = $repoUsers->findOneMatchByIdentifiers([$identifier], true);
+        $u = $repoUsers->findOneMatchByIdentifiers([$identifier]);
 
         if (!$u)
             // Resource not Found

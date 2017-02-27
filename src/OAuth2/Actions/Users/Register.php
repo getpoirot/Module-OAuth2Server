@@ -50,19 +50,10 @@ class Register
 
         ## validate existence identifier
         #- email or mobile not given before
-        if ($repoUsers->isIdentifiersRegistered($entity->getIdentifiers())) {
-            throw new exIdentifierExists(
-                sprintf('Identifier Is Given To Another User.')
-                , 400);
-        }
-
-        ## do not persist duplicated data for none validated users
-        if ($user = $repoUsers->findOneMatchByIdentifiers($entity->getIdentifiers(), false)) {
-            // delete old one and lets registration follow
-            $repoUsers->deleteByUID($user->getUID(), false);
-            $entity->setUID($user->getUID()); // don't change UID; continue with old validations
-        }
-
+        $identifiers = $repoUsers->hasAnyIdentifiersRegistered( $entity->getIdentifiers() );
+        if (!empty($identifiers))
+            throw new exIdentifierExists($identifiers);
+        
         /** @var User|iEntityUser $user */
         $user = $repoUsers->insert($entity);
         return $user;
@@ -79,20 +70,16 @@ class Register
      */
     function giveUserValidationCode(iEntityUser $user, $continue = null)
     {
-        /** @var iRepoValidationCodes $repoValidationCodes */
-        $repoValidationCodes = $this->repoValidationCodes;
-
-        if ($r = $repoValidationCodes->findOneByUserIdentifier($user->getUID()))
-            // User has active validation code before!!
-            return $r->getValidationCode();
-
-
         # Create Auth Codes for each Identifier:
         $authCodes = [];
         $identifiers = $user->getIdentifiers();
         /** @var iEntityUserIdentifierObject $ident */
         foreach ($identifiers as $ident) {
-            if ($ident->isValidated()) continue; // validated identifiers don't need auth code such as username
+            if ($ident->isValidated())
+                // validated identifiers don't need auth code such as username
+                continue; 
+            
+            // TODO Merged Config To Generate Codes or defined service
             $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
         }
 

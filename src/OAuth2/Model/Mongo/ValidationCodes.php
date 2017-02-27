@@ -109,7 +109,7 @@ class ValidationCodes extends aRepository
      *
      * @return false|iEntityValidationCode
      */
-    function findOneByUserHasIdentifierValidation($userIdentifier, $identifierType)
+    function findOneHasAuthCodeMatchUserType($userIdentifier, $identifierType)
     {
         $r = $this->_query()->findOne([
             'user_identifier'       => $userIdentifier,
@@ -150,16 +150,16 @@ class ValidationCodes extends aRepository
      * Update Authorization Type Of Given Validation Code
      * to Validated
      *
-     * @param string $validationCode
+     * @param string $vid
      * @param string $authType
      *
      * @return int Affected Rows
      */
-    function updateAuthCodeAsValidated($validationCode, $authType)
+    function updateAuthAsValidated($vid, $authType)
     {
         $r = $this->_query()->updateMany(
             [
-                'validation_code' => $validationCode,
+                'validation_code' => $vid,
                 'auth_codes.type' => $authType,
             ],
             [
@@ -181,7 +181,7 @@ class ValidationCodes extends aRepository
      *
      * @return int Affected Rows
      */
-    function updateAuthCodeTimestampSent($validationCode, $authType)
+    function updateAuthTimestampSent($validationCode, $authType)
     {
         $r = $this->_query()->updateMany(
             [

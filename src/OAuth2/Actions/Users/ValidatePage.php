@@ -16,15 +16,19 @@ use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Storage\Gateway\DataStorageSession;
 
 // TODO implement commit/rollback; maybe momento|aggregate design pattern or something is useful here
 class ValidatePage
     extends aAction
 {
+    const SESSION_REALM = 'ValidatePage';
+
     /** @var iRepoValidationCodes */
     protected $repoValidationCodes;
     /** @var iRepoUsers */
     protected $repoUsers;
+
 
     /**
      * ValidatePage constructor.
@@ -46,7 +50,7 @@ class ValidatePage
 
 
         # Handle Params Sent With Request Message If Has!!!
-        $this->_handleValidate($vc, $request);
+        $token = $this->_handleValidate($vc, $request);
 
 
         # Prepare Output Values:
@@ -62,9 +66,10 @@ class ValidatePage
 
 
         # All Is Validated? Handle Login
-        if ($isAllValidated)
+        if ($isAllValidated) {
             if ($r = $this->_handleLogin($vc, $request))
                 return $r;
+        }
 
 
         # Build View Params
@@ -73,7 +78,10 @@ class ValidatePage
             'self' => [
                 'validation_code' => $validation_code,
             ],
+
             'is_validated'  => (boolean) $isAllValidated,
+            'token'         => $token,
+
             'verifications' => $vAuthCodes,
         ];
     }
@@ -88,6 +96,8 @@ class ValidatePage
      *
      * @param iEntityValidationCode $validationCode
      * @param iHttpRequest          $request
+     *
+     * @return string|false Token if valid something
      */
     protected function _handleValidate(iEntityValidationCode $validationCode, iHttpRequest $request)
     {
@@ -103,7 +113,7 @@ class ValidatePage
 
                 if ($ac->getType() == $requestAuthType && $ac->getCode() == $requestAuthCode) {
                     // Given Code Match; Update To Validated!!!
-                    $this->repoValidationCodes->updateAuthCodeAsValidated(
+                    $this->repoValidationCodes->updateAuthAsValidated(
                         $validationCode->getValidationCode()
                         , $ac->getType()
                     );
@@ -111,17 +121,23 @@ class ValidatePage
                     // Mark As Validated; So Display Latest Status When Code Execution Follows.
                     $ac->setValidated();
 
-                    ## Validate User Collection Identifier
-                    $repoUsers = $this->repoUsers;
-                    $repoUsers->setUserIdentifier(
+                    ## VALIDATE_USER_IDENTIFIER
+                    ## Update User Identifier To Validated With Current Value
+                    $this->repoUsers->setUserIdentifier(
                         $validationCode->getUserIdentifier()
                         , $ac->getType()
                         , $ac->getValue()
                         , true
                     );
+
+
+                    ## Remember Token For This Validation; It Used To Access User For Login Directly
+                    return self::generateAndRememberToken($validationCode->getValidationCode());
                 }
             }
         }
+
+        return false;
     }
 
 
@@ -147,30 +163,74 @@ class ValidatePage
             return null;
 
 
-        ## Sign-in User, Then Redirect To Login Page
-        /** @var Users $repoUsers */
-        $repoUsers = $this->repoUsers;
-        $user      = $repoUsers->findOneByUID($validationCode->getUserIdentifier());
-        // Identity From Credential Authenticator
-        /** @see RepoUserPassCredential::doFindIdentityMatch */
-        $user      = __( new IdentityOpen() )->setUID($user->getUID());
-
-        /** @var AuthenticatorFacade $authenticator */
-        $authenticator = $this->withModule('authorization')->Facade();
-        $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
-        $identifier->signIn();
+        ## User must redirect to Login Page to Authenticate then Continue
+        $continue = $validationCode->getContinueFollowRedirection();
+        $redirect = \Module\Foundation\Actions\IOC::url('main/oauth/login');
+        (!$continue) ?: $redirect = $redirect->uri()->withQuery(sprintf('continue=%s', $continue));
 
 
-        ## Continue Follow:
-        $continue = ($validationCode->getContinueFollowRedirection())
-            ? $validationCode->getContinueFollowRedirection()
-            : (string) $this->withModule('foundation')->url('main/oauth/login')
-        ;
+        if ( self::hasTokenBind($validationCode->getValidationCode()) ) {
+            // User Itself Validated this Validation Auth Codes
+            // @see self::_handleValidate
+            ## Sign-in User, Then Redirect To Login Page
+            /** @var Users $repoUsers */
+            $repoUsers = $this->repoUsers;
+            $user      = $repoUsers->findOneByUID($validationCode->getUserIdentifier());
+            // Identity From Credential Authenticator
+            /** @see RepoUserPassCredential::doFindIdentityMatch */
+            $user      = __( new IdentityOpen() )->setUID($user->getUID());
+
+            /** @var AuthenticatorFacade $authenticator */
+            $authenticator = $this->withModule('authorization')->Facade();
+            $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
+            $identifier->signIn();
+
+
+            ## Continue Follow Directly:
+            (!$continue) ?: $redirect = $continue;
+        }
 
 
         ## Delete Validation Entity From Repo
-        $this->repoValidationCodes->deleteByValidationCode($validationCode->getValidationCode());
+        // $this->repoValidationCodes->deleteByValidationCode($validationCode->getValidationCode());
 
-        return new ResponseRedirect($continue);
+        return new ResponseRedirect( (string) $redirect );
+    }
+
+
+    // Helpers:
+
+    /**
+     * Check The Given Token, Validation Code Pair is Valid
+     * by check the session storage equality
+     *
+     * @param string $validationCode
+     *
+     * @return bool
+     */
+    static function hasTokenBind($validationCode)
+    {
+        $storage = new DataStorageSession(self::SESSION_REALM);
+        $vToken  = $storage->get($validationCode);
+
+        return $vToken;
+    }
+
+    /**
+     * Generate Token and store to session as bind with given
+     * validation code
+     *
+     * - it will gather in pages for valid requests assertion
+     *
+     * @param string $validationCode
+     *
+     * @return string
+     */
+    static function generateAndRememberToken($validationCode)
+    {
+        $token   = \Poirot\Std\generateShuffleCode(16);
+        $storage = new DataStorageSession(self::SESSION_REALM);
+        $storage->set($validationCode, $token);
+        return $token;
     }
 }

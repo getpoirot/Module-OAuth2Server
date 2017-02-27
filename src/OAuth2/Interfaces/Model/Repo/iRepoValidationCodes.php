@@ -51,7 +51,7 @@ interface iRepoValidationCodes
      *
      * @return false|iEntityValidationCode
      */
-    function findOneByUserHasIdentifierValidation($userIdentifier, $identifierType);
+    function findOneHasAuthCodeMatchUserType($userIdentifier, $identifierType);
 
     /**
      * Delete Entity By Identifier
@@ -66,12 +66,12 @@ interface iRepoValidationCodes
      * Update Authorization Type Of Given Validation Code
      * to Validated
      *
-     * @param string $validationCode
+     * @param string $vid
      * @param string $authType
      *
      * @return int Affected Rows
      */
-    function updateAuthCodeAsValidated($validationCode, $authType);
+    function updateAuthAsValidated($vid, $authType);
 
     /**
      * Update Sent DateTime Data Of AuthCode Type From Given Validation Code
@@ -82,5 +82,5 @@ interface iRepoValidationCodes
      *
      * @return int Affected Rows
      */
-    function updateAuthCodeTimestampSent($validationCode, $authType);
+    function updateAuthTimestampSent($validationCode, $authType);
 }

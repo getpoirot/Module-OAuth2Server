@@ -115,8 +115,8 @@ class ValidationCodeAuthObject
         $self = new self;
         $self->setType('email');
         $self->setCode(\Module\OAuth2\generateCode(
-            10,
-            \Module\OAuth2\GENERATE_CODE_NUMBERS | \Module\OAuth2\GENERATE_CODE_STRINGS_LOWER
+            5,
+            \Module\OAuth2\GENERATE_CODE_NUMBERS
         ));
         $self->setValue($value);
         $self->setValidated($validated);
@@ -129,7 +129,7 @@ class ValidationCodeAuthObject
         $self = new self;
         $self->setType('mobile');
         $self->setCode(\Module\OAuth2\generateCode(
-            4,
+            4, // length is used somewhere else like validation; be aware
             \Module\OAuth2\GENERATE_CODE_NUMBERS
         ));
         $self->setValue($value);

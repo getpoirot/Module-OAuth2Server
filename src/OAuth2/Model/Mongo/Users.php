@@ -47,7 +47,7 @@ class Users extends aRepository
             $identifier->setType('username');
             $identifier->setValue($username);
 
-            $goNext = $this->isIdentifiersRegistered(array($identifier));
+            $goNext = $this->hasAnyIdentifiersRegistered(array($identifier));
             $i++;
         } while ($goNext);
 
@@ -107,48 +107,65 @@ class Users extends aRepository
     }
 
     /**
-     * Is Identifier Existed?
+     * Has Identifier Existed?
+     * return identifiers from list that has picked by someone or empty list
      *
      * @param []iEntityUserIdentifierObject $identifier
      *
-     * @return boolean
+     * @return []iEntityUserIdentifierObject
      */
-    function isIdentifiersRegistered(array $identifiers)
+    function hasAnyIdentifiersRegistered(array $identifiers)
     {
         $or = [];
-        /** @var iEntityUserIdentifierObject $arg */
-        foreach ($identifiers as $arg) {
-            if (!$arg instanceof iEntityUserIdentifierObject)
+        /** @var iEntityUserIdentifierObject $id */
+        foreach ($identifiers as $id) {
+            if (!$id instanceof iEntityUserIdentifierObject)
                 throw new \InvalidArgumentException(sprintf(
                     'Identifier must be instance of "iEntityUserIdentifierObject"; given: (%s).'
-                    , \Poirot\Std\flatten($arg)
+                    , \Poirot\Std\flatten($id)
                 ));
 
-            $or[] = [ 'type' =>  $arg->getType(), 'value' => $arg->getValue()];
+            $or[] = [ 'type' =>  $id->getType(), 'value' => $id->getValue()];
         }
 
 
         $query = [
             'identifiers' => [ '$elemMatch' => [
-                'validated' => true,
                 '$or' => $or,
             ]]
         ];
 
-        $r = $this->_query()->findOne($query);
 
-        return (boolean) $r;
+        /** @var iEntityUser|User $r */
+        $r = $this->_query()->findOne($query);
+        
+        $return = [];
+        if ($r) {
+            // check which identifiers are picked by user
+            /** @var iEntityUserIdentifierObject $uid */
+            foreach ($r->getIdentifiers() as $uid) {
+                /** @var iEntityUserIdentifierObject $gid */
+                foreach ($identifiers as $i => $gid) {
+                    if ($uid->getType() != $gid->getType() || $uid->getValue() != $gid->getValue())
+                        continue;
+                    
+                    $return[] = $gid;
+                    unset($identifiers[$i]);
+                }
+            }
+        }
+        
+        return $return;
     }
 
     /**
      * Find Match With Exact Identifiers?
      *
-     * @param array   $identifiers
-     * @param boolean $allValidated
+     * @param iEntityUserIdentifierObject[] $identifiers
      *
      * @return iEntityUser|false
      */
-    function findOneMatchByIdentifiers(array $identifiers, $allValidated = null)
+    function findOneMatchByIdentifiers(array $identifiers)
     {
         $match = [];
 
@@ -156,17 +173,20 @@ class Users extends aRepository
         foreach ($identifiers as $arg) {
             $match[] = [
                 '$match' => ['identifiers' => [
-                    '$elemMatch' => [
+                    '$elemMatch' => \Poirot\Std\cast($arg)->toArray(function($val) {
+                            return $val === null; // filter null values
+                        })
                         // iEntityUserIdentifierObject()
+                        /*
                         'type'      => $arg->getType(),
                         'value'     => $arg->getValue(),
-                        'validated' => ($allValidated !== null) ? $allValidated : $arg->isValidated()
-                    ],
+                        'validated' => $arg->isValidated()
+                        */
                 ],],
             ];
         }
 
-
+        
         /** @var \MongoDB\Driver\Cursor $r */
         $cursor = $this->_query()->aggregate($match);
 

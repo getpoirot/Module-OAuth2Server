@@ -16,11 +16,12 @@ class UserIdentifierObject
 
     protected $type;
     protected $value;
-    protected $is_validated = false;
+    protected $is_validated;
 
 
     /**
      * Set Type
+     * 
      * @param string $type
      * @return $this
      */
@@ -32,6 +33,8 @@ class UserIdentifierObject
 
     /**
      * Get Contact Type
+     * 
+     * @required
      * @return string
      */
     function getType()
@@ -52,6 +55,8 @@ class UserIdentifierObject
 
     /**
      * Get Value
+     * 
+     * @required
      * @return mixed
      */
     function getValue()
@@ -73,7 +78,7 @@ class UserIdentifierObject
     /**
      * Is Validated?
      * !! default false
-     * @return boolean
+     * @return boolean|null
      */
     function isValidated()
     {
@@ -89,9 +94,9 @@ class UserIdentifierObject
             case self::IDENTITY_EMAIL:
                 return self::newEmailIdentifier($value, $validated);
             case self::IDENTITY_MOBILE:
-                return self::newMobileIdentifier($value, $validated);
+                return self::newMobileIdentifier($value[1], $value[0], $validated);
             case self::IDENTITY_USERNAME:
-                return self::newUsernameIdentifier($value, $validated);
+                return self::newUsernameIdentifier($value);
         }
 
         throw new \Exception(sprintf(
@@ -105,35 +110,34 @@ class UserIdentifierObject
         $self = new self;
         $self->setType(self::IDENTITY_EMAIL);
         $self->setValue($value);
-        if ($validated === null)
-            $validated = false;
+        
+        if ($validated !== null)
+            $self->setValidated($validated);
 
-        $self->setValidated($validated);
         return $self;
     }
 
-    static function newMobileIdentifier($value, $validated = null)
+    static function newMobileIdentifier($number, $countryCode = null, $validated = null)
     {
         $self = new self;
         $self->setType(self::IDENTITY_MOBILE);
-        $self->setValue($value);
-        if ($validated === null)
-            $validated = false;
-
-        $self->setValidated($validated);
+        $self->setValue([
+            $countryCode,
+            $number
+        ]);
+        
+        if ($validated !== null)
+            $self->setValidated($validated);
+        
         return $self;
     }
 
-    static function newUsernameIdentifier($value, $validated = null)
+    static function newUsernameIdentifier($value)
     {
         $self = new self;
         $self->setType(self::IDENTITY_USERNAME);
         $self->setValue($value);
-        if ($validated === null)
-            // username is always validated
-            $validated = true;
-
-        $self->setValidated($validated);
+        
         return $self;
     }
 }

@@ -95,6 +95,9 @@ class SigninNewPassPage
         $newPass = trim($_post['newpassword']);
         // TODO what if it expired before change password
         $vc  = $this->repoValidationCodes->findOneByValidationCode($this->_validationCode);
+        if (!$vc) 
+            throw new exRouteNotMatch;
+        
         $uid = $vc->getUserIdentifier();
 
         $this->repoUsers->updateGrantTypeValue($uid, 'password', $newPass);
@@ -114,7 +117,9 @@ class SigninNewPassPage
     {
         // TODO what if it expired before change password
         $vc  = $this->repoValidationCodes->findOneByValidationCode($this->_validationCode);
-
+        if (!$vc)
+            throw new exRouteNotMatch;
+        
         ## Continue Follow:
         $continue = ($vc->getContinueFollowRedirection())
             ? $vc->getContinueFollowRedirection()
@@ -126,6 +131,7 @@ class SigninNewPassPage
         return new ResponseRedirect($continue);
     }
 
+    
     // Helpers:
 
     /**

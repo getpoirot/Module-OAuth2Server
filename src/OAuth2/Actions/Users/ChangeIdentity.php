@@ -32,12 +32,12 @@ class ChangeIdentity
 
     /**
      * @param string $uid
-     * @param array $identifiers
+     * @param array $authCodes
      *
      * @return array
      * @throws exIdentifierExists
      */
-    function __invoke($uid = null, $identifiers = null)
+    function __invoke($uid = null, $authCodes = null)
     {
         /** @var Users $repoUsers */
         $repoUsers = $this->repoUsers;
@@ -45,13 +45,15 @@ class ChangeIdentity
 
         # Check Identifier Uniqueness:
         /** @var iEntityUserIdentifierObject $ident */
-        if ($repoUsers->isIdentifiersRegistered($identifiers))
-            throw new exIdentifierExists('Identifier Is Given To Another User.', 400);
+        if ($identifiers = $repoUsers->hasAnyIdentifiersRegistered($authCodes))
+            throw new exIdentifierExists($identifiers);
 
+        // TODO Whats hapenning here {
         /** @var iEntityUserIdentifierObject $ident */
         $authCodes = []; $rIdentifiers = [];
-        foreach ($identifiers as $ident) {
+        foreach ($authCodes as $ident) {
             if ($ident->isValidated()) {
+                // TODO what is this?
                 // TODO more generalized for identities
                 $this->_changeValidatedIdentity($uid, $ident);
                 $rIdentifiers[$ident->getType()] = true;
@@ -61,6 +63,7 @@ class ChangeIdentity
             $rIdentifiers[$ident->getType()] = false;
             $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
         }
+        // }
 
         // TODO maybe we have no identifier(s) to validate; exp. when user change username
         // @link RegisterRequest
@@ -137,8 +140,8 @@ class ChangeIdentity
         /** @var Users $repoUsers */
         $repoUsers = $this->repoUsers;
 
-        if ($repoUsers->isIdentifiersRegistered(array($ident)))
-            throw new exIdentifierExists(sprintf(
+        if ($repoUsers->hasAnyIdentifiersRegistered(array($ident)))
+            throw new exIdentifierExists(array($ident), sprintf(
                 'Identifier "%s" exists.', $ident->getValue()
             ));
 

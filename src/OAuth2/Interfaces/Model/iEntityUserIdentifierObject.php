@@ -1,6 +1,8 @@
 <?php
 namespace Module\OAuth2\Interfaces\Model;
 
+use Poirot\Std\Interfaces\Struct\iDataOptions;
+
 /*
 {
   "type": "mobile",
@@ -13,6 +15,7 @@ namespace Module\OAuth2\Interfaces\Model;
 */
 
 interface iEntityUserIdentifierObject
+    extends iDataOptions // let it to hydrate to array
 {
     /**
      * Set Type
@@ -36,7 +39,7 @@ interface iEntityUserIdentifierObject
 
     /**
      * Get Value
-     * @return mixed
+     * @return mixed|null
      */
     function getValue();
 
@@ -50,7 +53,7 @@ interface iEntityUserIdentifierObject
     /**
      * Is Validated?
      * !! default false
-     * @return boolean
+     * @return boolean|null
      */
     function isValidated();
 }

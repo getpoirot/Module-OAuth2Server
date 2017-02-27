@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Interfaces\Model\Repo;
 
 use Module\OAuth2\Interfaces\Model\iEntityUser;
+use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser as BaseEntityUser;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers as BaseRepoUsers;
 
@@ -40,23 +41,23 @@ interface iRepoUsers
     function insert(iEntityUser $user);
 
     /**
-     * Is Identifier Existed?
+     * Has Identifier Existed?
+     * return identifiers from list that has picked by someone or empty list
      *
      * @param []iEntityUserIdentifierObject $identifier
      *
-     * @return boolean
+     * @return []iEntityUserIdentifierObject
      */
-    function isIdentifiersRegistered(array $identifiers);
+    function hasAnyIdentifiersRegistered(array $identifiers);
 
     /**
      * Find Match With Exact Identifiers?
      *
-     * @param array   $identifiers
-     * @param boolean $allValidated
+     * @param iEntityUserIdentifierObject[] $identifiers
      *
      * @return iEntityUser|false
      */
-    function findOneMatchByIdentifiers(array $identifiers, $allValidated = null);
+    function findOneMatchByIdentifiers(array $identifiers);
 
     /**
      * Find Match With Exact Identifier Value

@@ -41,7 +41,7 @@ class ValidationGenerator
      *
      * @return string Validation code identifier
      */
-    function __invoke($uid = null, array $identifiers = null, $continue = null)
+    function __invoke($uid = null, array $authCodes = null, $continue = null)
     {
         if ($uid === null)
             // allow access to other methods
@@ -52,14 +52,14 @@ class ValidationGenerator
         $validationCode = new ValidationCode;
         $validationCode
             ->setUserIdentifier($uid)
-            ->setAuthCodes($identifiers)
+            ->setAuthCodes($authCodes)
             ->setContinueFollowRedirection($continue) // used by oauth registration follow
         ;
 
         $v = $repoValidationCodes->insert($validationCode);
 
         /** @var ValidationCodeAuthObject $id */
-        foreach ($identifiers as $id)
+        foreach ($authCodes as $id)
             $this->sendValidation($v, $id->getType());
 
         return $v->getValidationCode();
@@ -141,7 +141,7 @@ class ValidationGenerator
 
 
         # Update Last Sent Validation Code Datetime
-        $this->repoValidationCodes->updateAuthCodeTimestampSent(
+        $this->repoValidationCodes->updateAuthTimestampSent(
             $validationCode->getValidationCode()
             , $authCode->getType()
         );
@@ -188,7 +188,7 @@ class ValidationGenerator
 
 
         # Update Last Sent Validation Code Datetime
-        $this->repoValidationCodes->updateAuthCodeTimestampSent(
+        $this->repoValidationCodes->updateAuthTimestampSent(
             $validationCode->getValidationCode()
             , $authCode->getType()
         );

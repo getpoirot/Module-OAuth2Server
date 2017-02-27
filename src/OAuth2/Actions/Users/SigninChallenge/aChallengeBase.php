@@ -50,9 +50,9 @@ abstract class aChallengeBase
         $userUID = $this->user->getUID();
 
         # Check that user may have currently active validation code generated for this challenge!!
-        if ($r = $this->repoValidationCodes->findOneByUserHasIdentifierValidation($userUID, static::CHALLENGE_TYPE)) {
+        if ($r = $this->repoValidationCodes->findOneHasAuthCodeMatchUserType($userUID, static::CHALLENGE_TYPE)) {
             $validationCode = $r->getValidationCode();
-            // TODO what if continue follow has changed??
+            // TODO what if continue redirect attribute has changed??
         } else {
             // Generate validation code
             $_get     = ParseRequestData::_($request)->parseQueryParams();
@@ -107,6 +107,9 @@ abstract class aChallengeBase
                         return new ResponseRedirect((string) $redirect);
                     }
 
+
+                    ## update value to validated
+                    $this->repoValidationCodes->updateAuthAsValidated($validationCode, $ac->getType());
                     $done = true;
                     break;
                 }
@@ -115,6 +118,10 @@ abstract class aChallengeBase
                     // Given Challenge is not as same as challenge type!!
                     throw new \RuntimeException('Invalid Request.');
 
+
+                ## VALIDATE_USER_IDENTIFIER
+                ## Update User Identifier To Validated With Current Value
+                $this->repoUsers->setUserIdentifier($r->getUserIdentifier(), $ac->getType(), $ac->getValue(), true);
 
                 ## Login User, Generate Hash Session Token, Redirect To Pick New Password
                 $this->__loginUser($r->getUserIdentifier(), $r->getContinueFollowRedirection());
@@ -134,11 +141,18 @@ abstract class aChallengeBase
             } // end post
         }
 
-
+        
+        # Build View
+        
+        $v = $this->_getChallengeIdentifierObject()->getValue();
+        $v = (is_array($v)) ? $v[1] : $v; // maybe cell phone number ['+98', '9355497674']
         return $this->viewModel
             ->setTemplate('main/oauth/members/challenge/'.static::CHALLENGE_TYPE.'_confirm')
             ->setVariables([
-
+                'self' => [
+                    'validation_code' => $validationCode,
+                ],
+                'value_truncate' => \Module\OAuth2\truncateIdentifierValue($v, null, 6),
             ])
         ;
     }

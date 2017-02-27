@@ -28,7 +28,7 @@ class isExistsUserWithIdentifier
         /** @var iEntityUserIdentifierObject $ident */
         $return = [];
         foreach ($identifiers as $ident) {
-            $r = $repoUsers->isIdentifiersRegistered([$ident]);
+            $r = $repoUsers->hasAnyIdentifiersRegistered([$ident]);
             $return[$ident->getType()] = $r;
         }
 
