@@ -231,6 +231,7 @@ return [
                         ],
                     ],
                     'validate_resend' => [
+                        // TODO force render strategy by router; when error happen the ajax requests also must response in ?json
                         'route' => 'RouteSegment',
                         'options' => [
                             // also "validation_code" exists in params and pass through actions as argument

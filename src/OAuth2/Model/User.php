@@ -24,6 +24,8 @@ class User extends DataOptionsOpen
 
 
     /**
+     * TODO get unique id from repository nextUID
+     * 
      * Unique User Identifier (username)
      *
      * @return string|int
