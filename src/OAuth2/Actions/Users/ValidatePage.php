@@ -12,6 +12,7 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module;
 use Module\OAuth2\Model\Mongo\Users;
 use Poirot\Application\Exception\exRouteNotMatch;
+use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
@@ -50,7 +51,7 @@ class ValidatePage
 
 
         # Handle Params Sent With Request Message If Has!!!
-        $token = $this->_handleValidate($vc, $request);
+        $this->_handleValidate($vc, $request);
 
 
         # Prepare Output Values:
@@ -80,8 +81,6 @@ class ValidatePage
             ],
 
             'is_validated'  => (boolean) $isAllValidated,
-            'token'         => $token,
-
             'verifications' => $vAuthCodes,
         ];
     }
@@ -232,5 +231,18 @@ class ValidatePage
         $storage = new DataStorageSession(self::SESSION_REALM);
         $storage->set($validationCode, $token);
         return $token;
+    }
+
+    static function prepareApiResultClosure()
+    {
+        return function ($self = null, $is_validated = null, $verifications = null) {
+            return [ 
+                ListenerDispatch::RESULT_DISPATCH => [
+                    'self' => $self,
+                    'is_validated' => $is_validated,
+                    'verifications' => $verifications,
+                ] 
+            ];
+        };
     }
 }

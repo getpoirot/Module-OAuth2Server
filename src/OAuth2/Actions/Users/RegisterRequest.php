@@ -77,7 +77,8 @@ class RegisterRequest
         $continue       = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
         
         $validationCode = $this->Register()->giveUserValidationCode($user, $continue);
-        
+
+
         # make response data
         
         $r = array(
@@ -104,16 +105,6 @@ class RegisterRequest
         $post = ParseRequestData::_($request)->parseBody();
         $post = $this->_assertValidData($post, $allowNoEmail);
 
-        # Map Given Data Of API Protocol and Map To Entity Model:
-        $identifiers   = [];
-        if ( isset($post[ UserIdentifierObject::IDENTITY_USERNAME ]) )
-            $identifiers[] = UserIdentifierObject::newUsernameIdentifier($post['username']);
-        if ( isset($post[ UserIdentifierObject::IDENTITY_EMAIL ]) )
-            $identifiers[] = UserIdentifierObject::newEmailIdentifier($post['email']);
-        if ( isset($post[ UserIdentifierObject::IDENTITY_MOBILE ]) )
-            $identifiers[] = UserIdentifierObject::newMobileIdentifier($post['mobile']['number'], $post['mobile']['country']);
-
-
         // TODO CONFIG to give users default username on registration
         $username = (isset($post['username'])) ? $post['username']
             : $this->_attainUsernameFromFullname($post['fullname']);
@@ -121,7 +112,7 @@ class RegisterRequest
         $entity = new \Module\OAuth2\Model\User;
         $entity
             ->setFullName($post['fullname'])
-            ->setIdentifiers($identifiers)
+            ->setIdentifiers($post['identifiers'])
             ->setUsername($username)
             ->setPassword($post['credential']) // Add Grant Password
         ;
@@ -151,6 +142,14 @@ class RegisterRequest
      */
     protected function _assertValidData(array $post, $allowNoEmail = false)
     {
+        # Validate Data:
+        if (! (isset($post['fullname']) && isset($post['credential'])) )
+            throw new exRegistration('Fullname and Credential is Required.');
+
+        if (!$allowNoEmail && !isset($post['email']))
+            throw new exRegistration('Email is Required.');
+
+
         # Sanitize Data:
         if (isset($post['mobile']) && is_array($post['mobile'])) {
             $post['mobile']['number'] = ltrim(preg_replace('/\s+/', '', $post['mobile']['number']), '0');
@@ -161,10 +160,19 @@ class RegisterRequest
         if (isset($post['username']))
             $post['username'] = strtolower(preg_replace('/\s+/', '.', $post['username']));
 
-        # Validate Data:
-        if (!$allowNoEmail && !isset($post['email']))
-            throw new exRegistration('Email is Required.');
+        # Map Given Data Of API Protocol and Map To Entity Model:
+        $identifiers   = [];
+        if ( isset($post[ UserIdentifierObject::IDENTITY_USERNAME ]) )
+            $identifiers[] = UserIdentifierObject::newUsernameIdentifier($post['username']);
+        if ( isset($post[ UserIdentifierObject::IDENTITY_EMAIL ]) )
+            $identifiers[] = UserIdentifierObject::newEmailIdentifier($post['email']);
+        if ( isset($post[ UserIdentifierObject::IDENTITY_MOBILE ]) )
+            $identifiers[] = UserIdentifierObject::newMobileIdentifier($post['mobile']['number'], $post['mobile']['country']);
 
+        if (empty($identifiers))
+            throw new exRegistration('No Valid Identifier Given.');
+
+        $post['identifiers'] = $identifiers;
         return $post;
     }
 

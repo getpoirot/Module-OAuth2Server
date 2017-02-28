@@ -17,13 +17,14 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 class ChangeIdentity
     extends aAction
 {
-    /** @var iRepoUsers */
+    /** @var Users */
     protected $repoUsers;
 
 
     /**
      * ValidatePage constructor.
-     * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
+     *
+     * @param iRepoUsers $users @IoC /module/oauth2/services/repository/
      */
     function __construct(iRepoUsers $users)
     {
@@ -32,56 +33,69 @@ class ChangeIdentity
 
     /**
      * @param string $uid
-     * @param array $authCodes
-     *
+     * @param array $changeIds
+     * 
      * @return array
-     * @throws exIdentifierExists
+     * @throws \Exception
      */
-    function __invoke($uid = null, $authCodes = null)
+    function __invoke($uid = null, $changeIds = null)
     {
-        /** @var Users $repoUsers */
-        $repoUsers = $this->repoUsers;
-
-
         # Check Identifier Uniqueness:
         /** @var iEntityUserIdentifierObject $ident */
-        if ($identifiers = $repoUsers->hasAnyIdentifiersRegistered($authCodes))
+        if ($identifiers = $this->repoUsers->hasAnyIdentifiersRegistered($changeIds))
             throw new exIdentifierExists($identifiers);
 
-        // TODO Whats hapenning here {
-        /** @var iEntityUserIdentifierObject $ident */
-        $authCodes = []; $rIdentifiers = [];
-        foreach ($authCodes as $ident) {
-            if ($ident->isValidated()) {
-                // TODO what is this?
-                // TODO more generalized for identities
-                $this->_changeValidatedIdentity($uid, $ident);
-                $rIdentifiers[$ident->getType()] = true;
-                continue;
+        if (false === $user = $this->repoUsers->findOneByUID($uid))
+            throw new \Exception('User not found.', 500);
+
+
+        # Update User Identifiers With New Values
+        $userIdentifiers = $user->getIdentifiers();
+        $newIdentifiers  = []; $rIdentifiers = [];
+        /** @var iEntityUserIdentifierObject $id */
+        foreach ($userIdentifiers as $id) {
+            foreach ($changeIds as $i => $nid) {
+                if ($nid->getType() === $id->getType()) {
+                    $id = $nid;
+                    $rIdentifiers[$id->getType()] = (boolean) $id->isValidated();
+
+                    unset($changeIds[$i]);
+                    break;
+                }
             }
 
-            $rIdentifiers[$ident->getType()] = false;
-            $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
+            $newIdentifiers[] = $id;
         }
-        // }
 
-        // TODO maybe we have no identifier(s) to validate; exp. when user change username
-        // @link RegisterRequest
-        $code = $this->ValidationGenerator($uid, $authCodes);
+        $user->setIdentifiers($newIdentifiers);
 
-        return array(
-            ListenerDispatch::RESULT_DISPATCH => array(
-                'validated'     => $rIdentifiers,
+
+        # Send Validation Code
+        $validationCode = $this->register()->giveUserValidationCode($user);
+
+        # re-Set user identifiers with given value
+        /** @var iEntityUserIdentifierObject $id */
+        foreach ($user->getIdentifiers() as $id)
+            $this->repoUsers->setUserIdentifier($uid, $id->getType(), $id->getValue(), $id->isValidated());
+
+
+        # Build Response
+        $r = array();
+        $r['validated'] = $rIdentifiers;
+
+        (!$validationCode)
+            ?: $r['_link'] = array(
                 'next_validate' => (string) $this->withModule('foundation')->url(
-                    'main/oauth/api/me/identifiers/confirm'
-                    , array('validation_code' => $code)
-                ),
-                'alter_next_validate' => (string) $this->withModule('foundation')->url(
                     'main/oauth/members/validate'
-                    , array('validation_code' => $code)
+                    , array('validation_code' => $validationCode)
                 ),
-            )
-        );
+                'next_validate_alter' => (string) $this->withModule('foundation')->url(
+                    'main/oauth/members/validate'
+                    , array('validation_code' => $validationCode)
+                ),
+            );
+
+        return [ListenerDispatch::RESULT_DISPATCH => $r];
     }
 
 
@@ -104,7 +118,7 @@ class ChangeIdentity
         return function (iHttpRequest $request = null) {
             # Validate Sent Data:
             $post = ParseRequestData::_($request)->parse();
-            $post = __(new self)->_assertValidData($post);
+            $post = self::_assertValidData($post);
 
             return $post;
         };
@@ -154,17 +168,17 @@ class ChangeIdentity
     }
 
     /**
-     * Assert Validated Change Password Post Data
+     * Assert Validated Change Identifier
      *
      * Array (
-     *   [credential] => e10adc3949ba59abbe56e057f20f883e
+     *   [username] => 'payam.naderi'
      * )
      *
      * @param array $post
      *
-     * @return array
+     * @return iEntityUserIdentifierObject[]
      */
-    protected function _assertValidData(array $post)
+    protected static function _assertValidData(array $post)
     {
         # Validate Data:
 
@@ -173,6 +187,6 @@ class ChangeIdentity
         foreach ($post as $k => $v)
             $identifiers[] = UserIdentifierObject::newIdentifierByName($k, $v);
 
-        return ['identifiers' => $identifiers];
+        return ['changeIds' => $identifiers];
     }
 }

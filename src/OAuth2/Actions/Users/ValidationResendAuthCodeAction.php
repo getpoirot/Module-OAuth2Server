@@ -1,7 +1,6 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
-use Module\Foundation\HttpSapi\Response\ResponseJson;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
@@ -38,7 +37,6 @@ class ValidationResendAuthCodeAction
             return false;
 
         $expiry = $this->ValidationGenerator()->sendValidation($vc, $identifier_type);
-
-        return new ResponseJson(['resend' => $expiry]);
+        return ['resend' => $expiry];
     }
 }

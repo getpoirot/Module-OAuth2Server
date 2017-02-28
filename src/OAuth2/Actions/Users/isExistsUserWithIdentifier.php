@@ -29,7 +29,7 @@ class isExistsUserWithIdentifier
         $return = [];
         foreach ($identifiers as $ident) {
             $r = $repoUsers->hasAnyIdentifiersRegistered([$ident]);
-            $return[$ident->getType()] = $r;
+            $return[$ident->getType()] = (boolean) $r;
         }
 
         return [
@@ -68,11 +68,15 @@ class isExistsUserWithIdentifier
     // ..
 
     /**
-     * Assert Validated Change Password Post Data
+     * Assert Validated Post Data To Identifiers Object
      *
      * Array (
-     *   [credential] => e10adc3949ba59abbe56e057f20f883e
-     * )
+     *   [username] => payam
+     *   [email] => naderi.payam@gmail.com
+     *   [mobile] => Array (
+     *     [0] => +98
+     *     [1] => 9355497674
+     * ))
      *
      * @param array $post
      *
@@ -90,7 +94,7 @@ class isExistsUserWithIdentifier
 
             $post[$i] = $identifier;
         }
-
+        
         return $post;
     }
 }

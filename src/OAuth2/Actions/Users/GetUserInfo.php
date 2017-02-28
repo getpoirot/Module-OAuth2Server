@@ -13,35 +13,63 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 class GetUserInfo extends aAction
 {
     /**
-     * @param string             $uid
-     * @param iEntityAccessToken $token
+     * @param string $uid
      *
      * @return array
      */
-    function __invoke($uid = null, $token = null)
+    function __invoke($uid = null, $checkIsValidID = null)
     {
-        if ($uid === null)
-            // Retrieve from token
-            $uid = $token->getOwnerIdentifier();
-
         /** @var Users $repoUsers */
         $repoUsers = $this->IoC()->get('services/repository/Users');
         /** @var iEntityUser $u */
         if ( ($uid == null) || !($u = $repoUsers->findOneByUID($uid)) )
             throw new exRouteNotMatch('User not Found.');
 
-        $userInfo = [
-            'username'     => $u->getUsername(),
-            'fullname'     => $u->getFullName(),
-            'date_created' => $u->getDateCreated(),
-        ];
+        $userInfo = [ 'fullname' => $u->getFullName() ];
 
         /** @var iEntityUserIdentifierObject $identifier */
-        foreach ($u->getIdentifiers() as $identifier)
+        if ($checkIsValidID)
+            $validated = array();
+
+        $isValidAll = true;
+        foreach ($u->getIdentifiers() as $identifier) {
+            if ($checkIsValidID) {
+                // embed identifiers validaty
+                $isValidAll &= $identifier->isValidated();
+                $validated[$identifier->getType()] = (boolean) $identifier->isValidated();
+            }
+
             $userInfo[$identifier->getType()] = $identifier->getValue();
+        }
+
+        (!isset($validated))       ?: $userInfo['is_valid']      = (boolean) $isValidAll;
+        (!isset($validated))       ?: $userInfo['is_valid_more'] = $validated;
+        $userInfo['date_created']  = $u->getDateCreated();
 
         return [
             ListenerDispatch::RESULT_DISPATCH => $userInfo,
         ];
+    }
+
+    
+    // ..
+    
+    /**
+     * Used With Chained Actions To Extract Data From Request
+     *
+     */
+    static function parseUidFromTokenClosure()
+    {
+        /**
+         * Token from token assertion
+         * @see \Module\OAuth2\assertAuthToken() 
+         * 
+         * @param iEntityAccessToken $token
+         * @return array
+         */
+        return function (iEntityAccessToken $token = null) {
+            $uid = $token->getOwnerIdentifier();
+            return ['uid' => $uid];
+        };
     }
 }

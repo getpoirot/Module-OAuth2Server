@@ -8,6 +8,7 @@ use Module\OAuth2\Model\UserIdentifierObject;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
+use Poirot\Http\HttpResponse;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
@@ -55,17 +56,20 @@ class WhoisRequest
         $identifier = new UserIdentifierObject;
         $identifier->setType(key($post));
         $identifier->setValue(current($post));
-        $identifier->setValidated();
 
         $repoUsers = $this->repoUsers;
         /** @var iEntityUser $u */
         $u = $repoUsers->findOneMatchByIdentifiers([$identifier]);
 
-        if (!$u)
-            // Resource not Found
-            throw new exRouteNotMatch;
 
         # make response data
+
+        if (!$u) {
+            // Indicate no Content
+            $response = new HttpResponse;
+            $response->setStatusCode(204);
+            return $response;
+        }
 
         return array(
             'uid' => $u->getUID(),

@@ -215,8 +215,7 @@ class Users extends aRepository
         $r = $this->_query()->findOne([
             'identifiers' => [
                 '$elemMatch' => [
-                    'value'     => strtolower($identifier),
-                    'validated' => true
+                    'value'     => strtolower($identifier)
                 ],
             ],
         ]);
@@ -256,7 +255,6 @@ class Users extends aRepository
                 '$match' => ['identifiers' => [
                     '$elemMatch' => [
                         // iEntityUserIdentifierObject()
-                        'validated' => true,
                         'value'     => $username, // match with any element item if array
                     ],
                 ],],
@@ -427,12 +425,12 @@ class Users extends aRepository
             case 'uid':
                 return $this->findOneByUID($value);
             case 'email':
-                $userIdentifier = new UserIdentifierObject(['type' => 'email', 'value' => $value, 'validated' => true]);
+                $userIdentifier = new UserIdentifierObject(['type' => 'email', 'value' => $value]);
                 $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;
             case 'username':
-                $userIdentifier = new UserIdentifierObject(['type' => 'username', 'value' => $value, 'validated' => true]);
+                $userIdentifier = new UserIdentifierObject(['type' => 'username', 'value' => $value]);
                 $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;

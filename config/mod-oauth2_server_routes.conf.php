@@ -63,7 +63,11 @@ return [
                                     'match_whole' => true,
                                 ],
                                 'params'  => [
-                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/GetUserInfo',
+                                    ListenerDispatch::CONF_KEY => [
+                                        \Module\OAuth2\Actions\Users\GetUserInfo::parseUidFromTokenClosure(),
+                                        function() { return ['checkIsValidID' => true];}, // 
+                                        '/module/oauth2/actions/users/GetUserInfo'
+                                    ],
                                 ],
                             ],
                             ## Identifiers:
@@ -124,7 +128,10 @@ return [
                                         ],
                                         'params'  => [
                                             // TODO separate Page with API func.
-                                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage'
+                                            ListenerDispatch::CONF_KEY => [
+                                                '/module/oauth2/actions/Users/ValidatePage',
+                                                \Module\OAuth2\Actions\Users\ValidatePage::prepareApiResultClosure(),
+                                            ],
                                         ],
                                     ],
                                 ],
@@ -173,7 +180,7 @@ return [
                                     ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/GetUserInfo',
                                 ],
                             ],
-                            // When POST something
+                            // Register New User Request By POST
                             'post' => [
                                 'route'   => 'RouteMethod',
                                 'options' => [

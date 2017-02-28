@@ -21,7 +21,7 @@ class RegisterPage
         # Persist Registration Request:
         if (MethodType::_($request)->isPost())
         {
-            $r = (string) $this->withModule('foundation')->url();
+            $r = (string) $this->withModule('foundation')->url(null, null, true);
 
             try
             {

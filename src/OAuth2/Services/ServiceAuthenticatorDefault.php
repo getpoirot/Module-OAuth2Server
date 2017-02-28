@@ -39,7 +39,8 @@ class ServiceAuthenticatorDefault
                 // TODO using cookie+session identifier to recognize user and feature to remember me!!
                 __(new IdentifierSession)->setIssuerException(function(exAuthentication $e) use ($request) {
                     $loginUrl = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login'); // ensure routes loaded
-                    $loginUrl .= '?continue='.urlencode($request->getTarget());
+                    $continue = \Module\Foundation\Actions\IOC::path(sprintf('$baseUrl/%s', $request->getTarget()));
+                    $loginUrl .= '?continue='.urlencode($continue);
                     header('Location: '.$loginUrl);
                 })
                 /** @see Users::findOneMatchBy */

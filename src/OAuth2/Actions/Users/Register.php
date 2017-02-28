@@ -60,6 +60,8 @@ class Register
     }
 
     /**
+     * TODO some actions used this feature so it can be moved somewhere with more uniqueness
+     * 
      * Generate And Persist Validation Code For User
      *
      * @param iEntityUser  $user
@@ -79,11 +81,14 @@ class Register
                 // validated identifiers don't need auth code such as username
                 continue; 
             
-            // TODO Merged Config To Generate Codes or defined service
+            // TODO Merged Config or defined service To Generate Codes Settings
             $authCodes[] = ValidationCodeAuthObject::newByIdentifier($ident);
         }
 
-        $code = $this->ValidationGenerator($user->getUID(), $authCodes, $continue);
+        $code = null;
+        if (!empty($authCodes))
+            $code = $this->ValidationGenerator($user->getUID(), $authCodes, $continue);
+
         return $code;
     }
 }

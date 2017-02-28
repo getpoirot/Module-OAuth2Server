@@ -94,7 +94,21 @@ class UserIdentifierObject
             case self::IDENTITY_EMAIL:
                 return self::newEmailIdentifier($value, $validated);
             case self::IDENTITY_MOBILE:
-                return self::newMobileIdentifier($value[1], $value[0], $validated);
+                $number  = null;
+                $country = null;
+                if (is_array($value))
+                {
+                    if (isset($value['number']))
+                        $number = $value['number'];
+                    elseif (isset($value[1]))
+                        $number = $value[1];
+
+                    if (isset($value['country']))
+                        $country = $value['country'];
+                    elseif (isset($value[0]))
+                        $country = $value[1];
+                }
+                return self::newMobileIdentifier($number, $country, $validated);
             case self::IDENTITY_USERNAME:
                 return self::newUsernameIdentifier($value);
         }
@@ -137,6 +151,7 @@ class UserIdentifierObject
         $self = new self;
         $self->setType(self::IDENTITY_USERNAME);
         $self->setValue($value);
+        $self->setValidated(); // username is always validated and not require validation send
         
         return $self;
     }
