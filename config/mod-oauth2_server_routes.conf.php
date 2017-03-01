@@ -64,7 +64,7 @@ return [
                                 ],
                                 'params'  => [
                                     ListenerDispatch::CONF_KEY => [
-                                        \Module\OAuth2\Actions\Users\GetUserInfo::parseUidFromTokenClosure(),
+                                        \Module\OAuth2\Actions\Users\GetUserInfo::functorParseUidFromToken(),
                                         function() { return ['checkIsValidID' => true];}, // 
                                         '/module/oauth2/actions/users/GetUserInfo'
                                     ],
@@ -87,8 +87,8 @@ return [
                                         ],
                                         'params'  => [
                                             ListenerDispatch::CONF_KEY => [
-                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedUIDFromTokenClosure(),
-                                                \Module\OAuth2\Actions\Users\ChangePassword::getParsedRequestDataClosure(),
+                                                \Module\OAuth2\Actions\Users\ChangePassword::functorGetParsedUIDFromToken(),
+                                                \Module\OAuth2\Actions\Users\ChangePassword::functorGetParsedRequestData(),
                                                 '/module/oauth2/actions/users/ChangePassword',
                                             ],
                                         ],
@@ -113,8 +113,8 @@ return [
                                         ],
                                         'params'  => [
                                             ListenerDispatch::CONF_KEY => [
-                                                \Module\OAuth2\Actions\Users\ChangeIdentity::getParsedRequestDataClosure(),
-                                                \Module\OAuth2\Actions\Users\ChangeIdentity::getParsedUIDFromTokenClosure(),
+                                                \Module\OAuth2\Actions\Users\ChangeIdentity::functorGetParsedRequestData(),
+                                                \Module\OAuth2\Actions\Users\ChangeIdentity::functorGetParsedUIDFromToken(),
                                                 '/module/oauth2/actions/users/ChangeIdentity',
                                             ]
                                         ],
@@ -155,7 +155,7 @@ return [
                                 ],
                                 'params'  => [
                                     ListenerDispatch::CONF_KEY => [
-                                        \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::getParsedRequestDataClosure(),
+                                        \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::functorGetParsedRequestData(),
                                         '/module/oauth2/actions/users/isExistsUserWithIdentifier',
                                     ],
                                 ],

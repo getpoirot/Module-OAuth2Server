@@ -58,7 +58,7 @@ class GetUserInfo extends aAction
      * Used With Chained Actions To Extract Data From Request
      *
      */
-    static function parseUidFromTokenClosure()
+    static function functorParseUidFromToken()
     {
         /**
          * Token from token assertion

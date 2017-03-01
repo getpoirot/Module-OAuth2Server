@@ -49,7 +49,7 @@ class isExistsUserWithIdentifier
      *
      * @return callable
      */
-    static function getParsedRequestDataClosure()
+    static function functorGetParsedRequestData()
     {
         /**
          * @param iHttpRequest $request

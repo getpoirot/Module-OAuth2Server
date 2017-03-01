@@ -52,7 +52,7 @@ class ChangePassword
      *
      * @return callable
      */
-    static function getParsedRequestDataClosure()
+    static function functorGetParsedRequestData()
     {
         /**
          * @param iHttpRequest $request
@@ -67,7 +67,7 @@ class ChangePassword
         };
     }
 
-    static function getParsedUIDFromTokenClosure()
+    static function functorGetParsedUIDFromToken()
     {
         /**
          * note: currently with dispatcher listener we cant retrieve both
