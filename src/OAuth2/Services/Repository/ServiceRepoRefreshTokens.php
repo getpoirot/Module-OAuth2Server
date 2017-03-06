@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
+use Module\OAuth2\Model\Mongo\RefreshTokens;
 use Module\OAuth2\Services\BuildOAuthModuleServices;
 
 
@@ -11,14 +12,17 @@ class ServiceRepoRefreshTokens
     /** @var string Service Name */
     protected $name = BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS;
 
-    
+
     /**
-     * Repository Class Name
+     * Return new instance of Repository
      *
-     * @return string
+     * @param \MongoDB\Database $mongoDb
+     * @param string           $collection
+     *
+     * @return RefreshTokens
      */
-    function getRepoClassName()
+    function newRepoInstance($mongoDb, $collection)
     {
-        return \Module\OAuth2\Model\Mongo\RefreshTokens::class;
+        return new RefreshTokens($mongoDb, $collection);
     }
 }

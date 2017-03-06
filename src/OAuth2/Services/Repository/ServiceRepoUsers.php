@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
+use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Services\BuildOAuthModuleServices;
 
 class ServiceRepoUsers
@@ -10,14 +11,17 @@ class ServiceRepoUsers
     /** @var string Service Name */
     protected $name = BuildOAuthModuleServices::SERVICE_NAME_USERS;
 
-    
+
     /**
-     * Repository Class Name
+     * Return new instance of Repository
      *
-     * @return string
+     * @param \MongoDB\Database $mongoDb
+     * @param string           $collection
+     *
+     * @return Users
      */
-    function getRepoClassName()
+    function newRepoInstance($mongoDb, $collection)
     {
-        return \Module\OAuth2\Model\Mongo\Users::class;
+        return new Users($mongoDb, $collection);
     }
 }

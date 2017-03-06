@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
+use Module\OAuth2\Model\Mongo\AccessTokens;
 use Module\OAuth2\Services\BuildOAuthModuleServices;
 
 
@@ -11,14 +12,17 @@ class ServiceRepoAccessTokens
     /** @var string Service Name */
     protected $name = BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS;
 
-    
+
     /**
-     * Repository Class Name
+     * Return new instance of Repository
      *
-     * @return string
+     * @param \MongoDB\Database $mongoDb
+     * @param string           $collection
+     *
+     * @return AccessTokens
      */
-    function getRepoClassName()
+    function newRepoInstance($mongoDb, $collection)
     {
-        return \Module\OAuth2\Model\Mongo\AccessTokens::class;
+        return new AccessTokens($mongoDb, $collection);
     }
 }
