@@ -2,7 +2,6 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
-use Module\OAuth2\Model\Mongo\Client;
 use Module\OAuth2\Model\Mongo\Clients;
 use Module\OAuth2\Services\BuildOAuthModuleServices;
 
@@ -23,6 +22,6 @@ class ServiceRepoClients
      */
     function newRepoInstance($mongoDb, $collection)
     {
-        return new Client($mongoDb, $collection);
+        return new Clients($mongoDb, $collection);
     }
 }
