@@ -10,19 +10,20 @@ class ServiceRepoValidationCodes
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = BuildOAuthModuleServices::SERVICE_NAME_VALIDATION_CODES;
+    protected $name = BuildOAuthModuleServices::SERVICE_VALIDATION_CODES;
 
 
     /**
      * Return new instance of Repository
      *
-     * @param \MongoDB\Database $mongoDb
-     * @param string           $collection
+     * @param \MongoDB\Database  $mongoDb
+     * @param string             $collection
+     * @param string|object|null $persistable
      *
      * @return ValidationCodes
      */
-    function newRepoInstance($mongoDb, $collection)
+    function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new ValidationCodes($mongoDb, $collection);
+        return new ValidationCodes($mongoDb, $collection, $persistable);
     }
 }

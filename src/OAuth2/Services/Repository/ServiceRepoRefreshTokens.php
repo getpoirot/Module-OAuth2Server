@@ -10,19 +10,20 @@ class ServiceRepoRefreshTokens
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS;
+    protected $name = BuildOAuthModuleServices::SERVICE_REFRESH_TOKENS;
 
 
     /**
      * Return new instance of Repository
      *
-     * @param \MongoDB\Database $mongoDb
-     * @param string           $collection
+     * @param \MongoDB\Database  $mongoDb
+     * @param string             $collection
+     * @param string|object|null $persistable
      *
      * @return RefreshTokens
      */
-    function newRepoInstance($mongoDb, $collection)
+    function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new RefreshTokens($mongoDb, $collection);
+        return new RefreshTokens($mongoDb, $collection, $persistable);
     }
 }

@@ -10,19 +10,20 @@ class ServiceRepoAccessTokens
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS;
+    protected $name = BuildOAuthModuleServices::SERVICE_ACCESS_TOKENS;
 
 
     /**
      * Return new instance of Repository
      *
-     * @param \MongoDB\Database $mongoDb
-     * @param string           $collection
+     * @param \MongoDB\Database  $mongoDb
+     * @param string             $collection
+     * @param string|object|null $persistable
      *
      * @return AccessTokens
      */
-    function newRepoInstance($mongoDb, $collection)
+    function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new AccessTokens($mongoDb, $collection);
+        return new AccessTokens($mongoDb, $collection, $persistable);
     }
 }

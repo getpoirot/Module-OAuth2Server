@@ -94,20 +94,6 @@ class Module implements iSapiModule
     }
 
     /**
-     * Get Action Services
-     *
-     * priority not that serious
-     *
-     * - return Array used to Build ModuleActionsContainer
-     *
-     * @return array|ContainerForFeatureActions|BuildContainer|\Traversable
-     */
-    function getActions()
-    {
-        return \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server_actions');
-    }
-
-    /**
      * Get Nested Module Services
      *
      * it can be used to manipulate other registered services by modules
@@ -153,5 +139,19 @@ class Module implements iSapiModule
             $buildRoute->setRoutes($routes);
             $buildRoute->build($router);
         }
+    }
+
+    /**
+     * Get Action Services
+     *
+     * priority: after GrabRegisteredServices
+     *
+     * - return Array used to Build ModuleActionsContainer
+     *
+     * @return array|ContainerForFeatureActions|BuildContainer|\Traversable
+     */
+    function getActions()
+    {
+        return \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server_actions');
     }
 }

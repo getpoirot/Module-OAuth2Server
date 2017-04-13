@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
-use Module\Authorization\Module\AuthenticatorFacade;
+use Module\Authorization\Module\AuthenticatorAction;
 use Module\Foundation\Actions\Helper\UrlAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
@@ -51,7 +51,7 @@ class SigninRecognizePage
 
         # Check Whether Attained User Is Same As Current Logged in User?!
 
-        /** @var AuthenticatorFacade $authorization */
+        /** @var AuthenticatorAction $authorization */
         $authorization = $this->withModule('authorization')->Facade();
         $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)->hasAuthenticated();
         if (false !== $identifier) {

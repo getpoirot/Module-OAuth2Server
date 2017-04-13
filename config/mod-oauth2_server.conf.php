@@ -1,4 +1,5 @@
 <?php
+use Module\OAuth2;
 use Module\OAuth2\Services\BuildOAuthModuleServices;
 
 return [
@@ -15,7 +16,7 @@ return [
                             'retrieve_user_callback' => [
                                 \Poirot\Ioc\INST => [\Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class],],
                             'repo_auth_code' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_AUTH_CODES],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_AUTH_CODES],],
                         ], ], ],
 
                 ## Grant Authorization Implicit:
@@ -53,15 +54,15 @@ return [
                     ## Options used by all grant types
                     'repo_client' => [
                         // Clients as registered service
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_CLIENTS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_CLIENTS],],
                     'repo_access_token' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_ACCESS_TOKENS],],
 
                     ## Options used by [extension, refresh_token, password, authorization_code]
                     'repo_user' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_USERS],],
                     'repo_refresh_token' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_REFRESH_TOKENS],],
 
 
                     ## TTL
@@ -78,38 +79,33 @@ return [
 
     # Authorization:
 
-    Module\Authorization\Module::CONF_KEY 
-    => [
-        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_AUTHENTICATORS => [
-            \Module\OAuth2\Module::AUTHENTICATOR => [
-                \Poirot\Ioc\INST => ['/module/oauth2/services/'.BuildOAuthModuleServices::SERVICE_NAME_AUTHENTICATOR],
-                ],],
-
-
-        \Module\Authorization\Module\AuthenticatorFacade::CONF_KEY_GUARDS => [
-            'oauth_routes' => [
-                \Poirot\Ioc\INST => [
-                    \Module\Authorization\Guard\GuardRoute::class,
-                    'options' => [
-                        'authenticator' => \Module\OAuth2\Module::AUTHENTICATOR,
-                        'routes_denied' => [
-                            'main/oauth/authorize',
-                            'main/oauth/me/*',
-                        ],],],],],
-    ],
+    \Module\Authorization\Module::CONF_KEY => array(
+        'authenticators' => array(
+            'services' => array(
+                // Authenticators Services
+                OAuth2\Services\ServiceAuthenticatorDefault::class,
+            ),
+        ),
+        'guards' => array(
+            'services' => array(
+                // Guards Services
+                'oauth_routes' => OAuth2\Services\ServiceAuthGuard::class,
+            ),
+        ),
+    ),
 
 
     # Mongo Driver:
 
     Module\MongoDriver\Module::CONF_KEY 
     => [
-        \Module\MongoDriver\Services\aServiceRepository::CONF_KEY => [
+        \Module\MongoDriver\Services\aServiceRepository::CONF_REPOSITORIES => [
             \Module\OAuth2\Services\Repository\ServiceRepoClients::class => [
                 'collection' => [
                     // query on which collection
                     'name' => 'oauth.clients',
                     // which client to connect and query with
-                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    'client' => 'master',
                     // ensure indexes
                     'indexes' => [
                         ['key' => ['identifier' => 1]],
@@ -121,7 +117,7 @@ return [
                     // query on which collection
                     'name' => 'oauth.users.approved_clients',
                     // which client to connect and query with
-                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    'client' => 'master',
                     // ensure indexes
                     'indexes' => [
                         ['key' => ['user' => 1,]],
@@ -133,7 +129,7 @@ return [
                     // query on which collection
                     'name' => 'oauth.users.validation_codes',
                     // which client to connect and query with
-                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    'client' => 'master',
                     // ensure indexes
                     'indexes' => [
                         [ 'key' => ['validation_code' => 1, ] ],
@@ -148,7 +144,7 @@ return [
                     // query on which collection
                     'name' => 'oauth.users',
                     // which client to connect and query with
-                    'client' => \Module\MongoDriver\Module\MongoDriverManagementFacade::CLIENT_DEFAULT,
+                    'client' => 'master',
                     // ensure indexes
                     'indexes' => [
                         [ 'key' => ['date_created_mongo'=>1, ] ],

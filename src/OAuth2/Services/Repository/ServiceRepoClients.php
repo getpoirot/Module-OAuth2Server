@@ -9,19 +9,20 @@ class ServiceRepoClients
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = BuildOAuthModuleServices::SERVICE_NAME_CLIENTS;
+    protected $name = BuildOAuthModuleServices::SERVICE_CLIENTS;
 
 
     /**
      * Return new instance of Repository
      *
-     * @param \MongoDB\Database $mongoDb
-     * @param string           $collection
+     * @param \MongoDB\Database  $mongoDb
+     * @param string             $collection
+     * @param string|object|null $persistable
      *
      * @return Clients
      */
-    function newRepoInstance($mongoDb, $collection)
+    function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new Clients($mongoDb, $collection);
+        return new Clients($mongoDb, $collection, $persistable);
     }
 }

@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Actions\Users\SigninChallenge;
 
 use Module;
-use Module\Authorization\Module\AuthenticatorFacade;
+use Module\Authorization\Module\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
@@ -167,7 +167,7 @@ abstract class aChallengeBase
         /** @see RepoUserPassCredential::doFindIdentityMatch */
         $user      = __( new IdentityOpen() )->setUID($userUID);
 
-        /** @var AuthenticatorFacade $authenticator */
+        /** @var AuthenticatorAction $authenticator */
         $authenticator = \IOC::GetIoC()->get('/module/authorization');
         $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
         $identifier->signIn();

@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
-use Module\Authorization\Module\AuthenticatorFacade;
+use Module\Authorization\Module\AuthenticatorAction;
 
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Model\User;
@@ -16,7 +16,7 @@ class RetrieveAuthenticatedUser extends aAction
      */
     function __invoke()
     {
-        /** @var AuthenticatorFacade $authenticator */
+        /** @var AuthenticatorAction $authenticator */
         $authenticator = $this->withModule('authorization')->Facade();
         if (!$identifier = $authenticator->authenticator(Module::AUTHENTICATOR)->hasAuthenticated())
             return false;

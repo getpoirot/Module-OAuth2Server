@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
-use Module\Authorization\Module\AuthenticatorFacade;
+use Module\Authorization\Module\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Module;
@@ -89,7 +89,7 @@ class LoginPage extends aAction
      */
     function _getAuthenticator()
     {
-        /** @var AuthenticatorFacade $authenticator */
+        /** @var AuthenticatorAction $authenticator */
         $authenticator = $this->withModule('authorization')->Facade();
         $authenticator = $authenticator->authenticator(Module::AUTHENTICATOR);
         return $authenticator;

@@ -14,13 +14,14 @@ class ServiceRepoUsersApprovedClients
     /**
      * Return new instance of Repository
      *
-     * @param \MongoDB\Database $mongoDb
-     * @param string            $collection
+     * @param \MongoDB\Database  $mongoDb
+     * @param string             $collection
+     * @param string|object|null $persistable
      *
      * @return ApprovedClients
      */
-    function newRepoInstance($mongoDb, $collection)
+    function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new ApprovedClients($mongoDb, $collection);
+        return new ApprovedClients($mongoDb, $collection, $persistable);
     }
 }

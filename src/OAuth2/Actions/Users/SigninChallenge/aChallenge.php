@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users\SigninChallenge;
 
-use Module\Authorization\Module\AuthenticatorFacade;
+use Module\Authorization\Module\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\iEntityUser;
 use Module\OAuth2\Model\UserIdentifierObject;
@@ -71,7 +71,7 @@ abstract class aChallenge
      */
     protected function _assertUser($user)
     {
-        /** @var AuthenticatorFacade $authorization */
+        /** @var AuthenticatorAction $authorization */
         $authorization = \IOC::GetIoC()->get('/module/authorization');
         $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)->hasAuthenticated();
         if (false !== $identifier) {

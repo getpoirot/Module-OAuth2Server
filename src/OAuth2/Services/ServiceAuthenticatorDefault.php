@@ -2,7 +2,6 @@
 namespace Module\OAuth2\Services;
 
 use Module\OAuth2\Model\Authenticate\RepoUserPassCredential;
-use Module\OAuth2\Model\Mongo\Users;
 use Poirot\AuthSystem\Authenticate\Authenticator;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
 use Poirot\AuthSystem\Authenticate\Identifier\aIdentifier;
@@ -16,7 +15,7 @@ use Poirot\Ioc\Container\Service\aServiceContainer;
 class ServiceAuthenticatorDefault
     extends aServiceContainer
 {
-    protected $name = BuildOAuthModuleServices::SERVICE_NAME_AUTHENTICATOR;
+    protected $name = BuildOAuthModuleServices::SERVICE_AUTHENTICATOR;
     
     
     /**
@@ -26,9 +25,12 @@ class ServiceAuthenticatorDefault
      */
     function newService()
     {
+        ## Set Credential Repo Behalf Of Users Repository
         $repoUsers = $this->services()
-            ->get('/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_NAME_USERS);
+            ->get('/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_USERS);
+
         $credentialAdapter = __(new RepoUserPassCredential)->setRepoUsers($repoUsers);
+
 
         ### Attain Login Continue If Has
         /** @var iHttpRequest $request */
