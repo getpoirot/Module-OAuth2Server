@@ -1,6 +1,6 @@
 <?php
 use Module\OAuth2;
-use Module\OAuth2\Services\BuildOAuthModuleServices;
+use Module\OAuth2\Services\BuildServices;
 
 return [
     \Module\OAuth2\Module::CONF_KEY 
@@ -16,7 +16,7 @@ return [
                             'retrieve_user_callback' => [
                                 \Poirot\Ioc\INST => [\Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class],],
                             'repo_auth_code' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_AUTH_CODES],],
+                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::AUTH_CODES],],
                         ], ], ],
 
                 ## Grant Authorization Implicit:
@@ -54,15 +54,15 @@ return [
                     ## Options used by all grant types
                     'repo_client' => [
                         // Clients as registered service
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_CLIENTS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::CLIENTS],],
                     'repo_access_token' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_ACCESS_TOKENS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::ACCESS_TOKENS],],
 
                     ## Options used by [extension, refresh_token, password, authorization_code]
                     'repo_user' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_USERS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::USERS],],
                     'repo_refresh_token' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_REFRESH_TOKENS],],
+                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::REFRESH_TOKENS],],
 
 
                     ## TTL

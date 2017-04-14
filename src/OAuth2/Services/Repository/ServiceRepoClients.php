@@ -3,13 +3,13 @@ namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
 use Module\OAuth2\Model\Mongo\Clients;
-use Module\OAuth2\Services\BuildOAuthModuleServices;
+use Module\OAuth2\Services\BuildServices;
 
 class ServiceRepoClients
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = BuildOAuthModuleServices::SERVICE_CLIENTS;
+    protected $name = BuildServices::CLIENTS;
 
 
     /**

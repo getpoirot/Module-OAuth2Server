@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2;
 
-use Module\OAuth2\Services\BuildOAuthModuleServices;
+use Module\OAuth2\Services\BuildServices;
 
 use Poirot\Application\Interfaces\Sapi\iSapiModule;
 use Poirot\Application\ModuleManager\Interfaces\iModuleManager;
@@ -30,9 +30,10 @@ class Module implements iSapiModule
     , Sapi\Module\Feature\iFeatureModuleNestServices
     , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
 {
-    const CONF_KEY = 'module.oauth2';
+    const CONF_KEY      = 'module.oauth2';
     const AUTHENTICATOR = 'module.oauth2.default_authenticator';
-    
+
+
     /**
      * Register class autoload on Autoload
      *
@@ -50,7 +51,7 @@ class Module implements iSapiModule
         $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
         $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
 
-        require_once __DIR__.'/../../_functions.php';
+        require_once __DIR__.'/_functions.php';
     }
 
     /**
@@ -107,10 +108,10 @@ class Module implements iSapiModule
      */
     function getServices(Container $moduleContainer = null)
     {
-        $conf = \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server_services');
-        $builder = new BuildOAuthModuleServices;
-        $builder->with($builder::parseWith($conf));
+        $conf    = \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server_services');
 
+        $builder = new BuildServices;
+        $builder->with($builder::parseWith($conf));
         return $builder;
     }
 

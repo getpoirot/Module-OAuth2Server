@@ -15,7 +15,7 @@ use Poirot\Ioc\Container\Service\aServiceContainer;
 class ServiceAuthenticatorDefault
     extends aServiceContainer
 {
-    protected $name = BuildOAuthModuleServices::SERVICE_AUTHENTICATOR;
+    protected $name = BuildServices::AUTHENTICATOR;
     
     
     /**
@@ -27,7 +27,7 @@ class ServiceAuthenticatorDefault
     {
         ## Set Credential Repo Behalf Of Users Repository
         $repoUsers = $this->services()
-            ->get('/module/oauth2/services/repository/'.BuildOAuthModuleServices::SERVICE_USERS);
+            ->get('/module/oauth2/services/repository/'.BuildServices::USERS);
 
         $credentialAdapter = __(new RepoUserPassCredential)->setRepoUsers($repoUsers);
 

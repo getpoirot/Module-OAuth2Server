@@ -3,14 +3,14 @@ namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
 use Module\OAuth2\Model\Mongo\AccessTokens;
-use Module\OAuth2\Services\BuildOAuthModuleServices;
+use Module\OAuth2\Services\BuildServices;
 
 
 class ServiceRepoAccessTokens
     extends aServiceRepository
 {
     /** @var string Service Name */
-    protected $name = BuildOAuthModuleServices::SERVICE_ACCESS_TOKENS;
+    protected $name = BuildServices::ACCESS_TOKENS;
 
 
     /**

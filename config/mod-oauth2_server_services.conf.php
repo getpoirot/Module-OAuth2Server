@@ -10,11 +10,11 @@
  *
  * @see \Module\OAuth2::getServices()
  */
-use Module\OAuth2\Services\BuildOAuthModuleServices;
+use Module\OAuth2\Services\BuildServices;
 
 return [
     'services' => [
-        BuildOAuthModuleServices::SERVICE_AUTHENTICATOR
+        BuildServices::AUTHENTICATOR
             => \Module\OAuth2\Services\ServiceAuthenticatorDefault::class
     ],
     'nested' => [
@@ -22,27 +22,27 @@ return [
             // Define Default Services
             'services' =>
                 [
-                    BuildOAuthModuleServices::SERVICE_CLIENTS
+                    BuildServices::CLIENTS
                        => \Module\OAuth2\Services\Repository\ServiceRepoClients::class,
 
-                    BuildOAuthModuleServices::SERVICE_USERS
+                    BuildServices::USERS
                        => \Module\OAuth2\Services\Repository\ServiceRepoUsers::class,
 
-                    BuildOAuthModuleServices::SERVICE_ACCESS_TOKENS => [
+                    BuildServices::ACCESS_TOKENS => [
                         \Poirot\Ioc\Container\BuildContainer::INST
                            => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokens::class,
                         // options:
                         'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                     ],
 
-                    BuildOAuthModuleServices::SERVICE_REFRESH_TOKENS => [
+                    BuildServices::REFRESH_TOKENS => [
                         \Poirot\Ioc\Container\BuildContainer::INST
                            => \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
                         // options:
                         'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                     ],
 
-                    BuildOAuthModuleServices::SERVICE_AUTH_CODES => [
+                    BuildServices::AUTH_CODES => [
                         \Poirot\Ioc\Container\BuildContainer::INST
                            => \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
                         // options:
@@ -50,10 +50,10 @@ return [
                     ],
 
 
-                    BuildOAuthModuleServices::SERVICE_USERS_APPROVED_CLIENTS
+                    BuildServices::USERS_APPROVED_CLIENTS
                     => \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class,
 
-                    BuildOAuthModuleServices::SERVICE_VALIDATION_CODES
+                    BuildServices::VALIDATION_CODES
                     => \Module\OAuth2\Services\Repository\ServiceRepoValidationCodes::class,
                 ],
         ],

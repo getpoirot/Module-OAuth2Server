@@ -20,7 +20,8 @@
             "Module\\OAuth2\\": "src/OAuth2/"
         }
         , "files" : [
-            "_functions.php"
+            "src/OAuth2/_functions.php"
+            , "src/OAuth2/_ioc-facade.php"
         ]
     }
 }
