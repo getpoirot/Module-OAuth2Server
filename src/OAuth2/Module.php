@@ -14,7 +14,6 @@ use Poirot\Ioc\Container\BuildContainer;
 use Poirot\Loader\Autoloader\LoaderAutoloadAggregate;
 use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
 use Poirot\Loader\Interfaces\iLoaderAutoload;
-use Poirot\Loader\LoaderAggregate;
 
 use Poirot\Router\BuildRouterStack;
 use Poirot\Router\Interfaces\iRouterStack;
@@ -116,33 +115,6 @@ class Module implements iSapiModule
     }
 
     /**
-     * Resolve to service with name
-     *
-     * - each argument represent requested service by registered name
-     *   if service not available default argument value remains
-     * - "services" as argument will retrieve services container itself.
-     *
-     * ! after all modules loaded
-     *
-     * @param iRouterStack $router
-     * @param LoaderAggregate $viewModelResolver
-     *
-     * @internal param null $services service names must have default value
-     */
-    function resolveRegisteredServices(
-        $router = null
-        , $viewModelResolver = null
-    ) {
-        # Register Http Routes:
-        if ($router) {
-            $routes = include __DIR__ . '/../../config/mod-oauth2_server_routes.conf.php';
-            $buildRoute = new BuildRouterStack();
-            $buildRoute->setRoutes($routes);
-            $buildRoute->build($router);
-        }
-    }
-
-    /**
      * Get Action Services
      *
      * priority: after GrabRegisteredServices
@@ -154,5 +126,30 @@ class Module implements iSapiModule
     function getActions()
     {
         return \Poirot\Config\load(__DIR__ . '/../../config/mod-oauth2_server_actions');
+    }
+
+    /**
+     * Resolve to service with name
+     *
+     * - each argument represent requested service by registered name
+     *   if service not available default argument value remains
+     * - "services" as argument will retrieve services container itself.
+     *
+     * ! after all modules loaded
+     *
+     * @param iRouterStack $router
+     *
+     * @internal param null $services service names must have default value
+     */
+    function resolveRegisteredServices(
+        $router = null
+    ) {
+        # Register Http Routes:
+        if ($router) {
+            $routes = include __DIR__ . '/../../config/mod-oauth2_server_routes.conf.php';
+            $buildRoute = new BuildRouterStack();
+            $buildRoute->setRoutes($routes);
+            $buildRoute->build($router);
+        }
     }
 }

@@ -8,7 +8,8 @@ use Module\OAuth2\Model\User;
 use Module\OAuth2\Module;
 
 
-class RetrieveAuthenticatedUser extends aAction
+class RetrieveAuthenticatedUser
+    extends aAction
 {
     /**
      * Retrieve Authenticated User
@@ -17,9 +18,10 @@ class RetrieveAuthenticatedUser extends aAction
     function __invoke()
     {
         /** @var AuthenticatorAction $authenticator */
-        $authenticator = $this->withModule('authorization')->Facade();
+        $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
         if (!$identifier = $authenticator->authenticator(Module::AUTHENTICATOR)->hasAuthenticated())
             return false;
+
 
         $identity = $identifier->withIdentity();
 

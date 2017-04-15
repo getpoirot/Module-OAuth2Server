@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
-use Module\Authorization\Module\AuthenticatorAction;
+use Module\Authorization\Actions\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iEntityValidationCode;
@@ -180,7 +180,7 @@ class ValidatePage
             $user      = __( new IdentityOpen() )->setUID($user->getUID());
 
             /** @var AuthenticatorAction $authenticator */
-            $authenticator = $this->withModule('authorization')->Facade();
+            $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
             $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
             $identifier->signIn();
 

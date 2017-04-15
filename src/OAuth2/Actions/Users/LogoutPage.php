@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Users;
 
-use Module\Authorization\Module\AuthenticatorAction;
+use Module\Authorization\Actions\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Model\Mongo\Clients;
@@ -16,8 +16,8 @@ class LogoutPage extends aAction
 {
     function __invoke(iHttpRequest $request = null)
     {
-        if ($this->_getAuthenticator()->hasAuthenticated())
-            $this->_getAuthenticator()->identifier()->signOut();
+        if ($this->_authenticator()->hasAuthenticated())
+            $this->_authenticator()->identifier()->signOut();
 
         # Request Client For Redirect URI
         $query = ParseRequestData::_($request)->parseQueryParams();
@@ -50,10 +50,10 @@ class LogoutPage extends aAction
      * Get OAuth Authenticator
      * @return iAuthenticator|Authenticator
      */
-    function _getAuthenticator()
+    function _authenticator()
     {
         /** @var AuthenticatorAction $authenticator */
-        $authenticator = $this->withModule('authorization')->Facade();
+        $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
         $authenticator = $authenticator->authenticator(Module::AUTHENTICATOR);
         return $authenticator;
     }

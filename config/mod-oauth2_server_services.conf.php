@@ -11,51 +11,38 @@
  * @see \Module\OAuth2::getServices()
  */
 use Module\OAuth2\Services\BuildServices;
+use Module\OAuth2\Services;
+use Poirot\Ioc\Container\BuildContainer;
 
 return [
     'services' => [
-        BuildServices::AUTHENTICATOR
-            => \Module\OAuth2\Services\ServiceAuthenticatorDefault::class
+        // Default Authenticator Used By Authorize Module as Authenticators Registered Service
+        BuildServices::AUTHENTICATOR => Services\ServiceAuthenticatorDefault::class
     ],
     'nested' => [
         'repository' => [
             // Define Default Services
-            'services' =>
-                [
-                    BuildServices::CLIENTS
-                       => \Module\OAuth2\Services\Repository\ServiceRepoClients::class,
-
-                    BuildServices::USERS
-                       => \Module\OAuth2\Services\Repository\ServiceRepoUsers::class,
-
-                    BuildServices::ACCESS_TOKENS => [
-                        \Poirot\Ioc\Container\BuildContainer::INST
-                           => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokens::class,
-                        // options:
-                        'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
-                    ],
-
-                    BuildServices::REFRESH_TOKENS => [
-                        \Poirot\Ioc\Container\BuildContainer::INST
-                           => \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
-                        // options:
-                        'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
-                    ],
-
-                    BuildServices::AUTH_CODES => [
-                        \Poirot\Ioc\Container\BuildContainer::INST
-                           => \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
-                        // options:
-                        'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
-                    ],
-
-
-                    BuildServices::USERS_APPROVED_CLIENTS
-                    => \Module\OAuth2\Services\Repository\ServiceRepoUsersApprovedClients::class,
-
-                    BuildServices::VALIDATION_CODES
-                    => \Module\OAuth2\Services\Repository\ServiceRepoValidationCodes::class,
+            'services' => [
+                BuildServices::CLIENTS                => Services\Repository\ServiceRepoClients::class,
+                BuildServices::USERS                  => Services\Repository\ServiceRepoUsers::class,
+                BuildServices::USERS_APPROVED_CLIENTS => Services\Repository\ServiceRepoUsersApprovedClients::class,
+                BuildServices::VALIDATION_CODES       => Services\Repository\ServiceRepoValidationCodes::class,
+                BuildServices::ACCESS_TOKENS          => [
+                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokens::class,
+                    // options:
+                    'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                 ],
+                BuildServices::REFRESH_TOKENS         => [
+                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
+                    // options:
+                    'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                ],
+                BuildServices::AUTH_CODES             => [
+                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
+                    // options:
+                    'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                ],
+            ],
         ],
     ],
 ];

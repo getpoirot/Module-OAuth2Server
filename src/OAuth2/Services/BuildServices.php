@@ -28,18 +28,15 @@ class BuildServices
 
     protected $implementations =
         [
-            // Grant Responders while response to token requests
-            'GrantResponder' => GrantAggregateGrants::class,
-
             // Default Authenticator when we want login and identify user in console...
-            'Authenticator'  => iAuthenticator::class
+            self::AUTHENTICATOR => iAuthenticator::class
         ];
 
 
     protected $services =
         [
-            // Default Grant Responder
-            'GrantResponder' => \Module\OAuth2\Services\ServiceGrantResponder::class,
+            // Available Grants Types Used By Grant Responder
+            'ContainerGrants' => ServiceGrantsContainer::class,
         ];
 
     protected $nested =

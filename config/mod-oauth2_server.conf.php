@@ -1,95 +1,49 @@
 <?php
+use Module\Authorization\Services\ServiceAuthenticatorsContainer;
+use Module\Authorization\Services\ServiceGuardsContainer;
 use Module\OAuth2;
-use Module\OAuth2\Services\BuildServices;
 
 return [
-    \Module\OAuth2\Module::CONF_KEY 
-    => [
-        \Module\OAuth2\Services\ServiceGrantResponder::CONF_KEY => [
-            ## Options given to GrantResponder Service
-            'attached_grants' => [
+
+    \Module\OAuth2\Module::CONF_KEY => [
+        OAuth2\Services\ServiceGrantsContainer::CONF => [
+            // Capped Container Of Available Grants
+            'services' => [
                 ## Grant Authorization Code:
-                [
-                    \Poirot\Ioc\INST => [
-                        \Poirot\OAuth2\Server\Grant\GrantAuthCode::class,
-                        'options' => [
-                            'retrieve_user_callback' => [
-                                \Poirot\Ioc\INST => [\Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class],],
-                            'repo_auth_code' => [
-                                \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::AUTH_CODES],],
-                        ], ], ],
-
+                'authorization_code' => OAuth2\Services\Grant\ServiceAuthorizationCode::class,
                 ## Grant Authorization Implicit:
-                [
-                    \Poirot\Ioc\INST => [
-                        \Poirot\OAuth2\Server\Grant\GrantImplicit::class,
-                        'options' => [
-                            'retrieve_user_callback' => [
-                                // Clients as registered service
-                                \Poirot\Ioc\INST => [\Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class],],],],],
-
+                'implicit'           => OAuth2\Services\Grant\ServiceImplicit::class,
                 ## Grant Client Credential:
-                [
-                    \Poirot\Ioc\INST => [
-                        \Poirot\OAuth2\Server\Grant\GrantClientCredentials::class,],],
-
+                'client_credentials' => OAuth2\Services\Grant\ServiceClientCredential::class,
                 ## Grant Password:
-                [
-                    \Poirot\Ioc\INST => [
-                        \Poirot\OAuth2\Server\Grant\GrantPassword::class, ],],
-
+                'password'           => OAuth2\Services\Grant\ServicePassword::class,
                 ## Grant Refresh Token:
-                [
-                    \Poirot\Ioc\INST => [
-                        \Poirot\OAuth2\Server\Grant\GrantRefreshToken::class, ],],
-
+                'refresh_token'      => OAuth2\Services\Grant\ServiceRefreshToken::class,
                 ## Grant Extension Validate Token:
-                [
-                    \Poirot\Ioc\INST => [
-                        \Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation::class, ],],
-
+                \Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation::TYPE_GRANT
+                    => OAuth2\Services\Grant\ServiceExtensionValidation::class
             ],
-            'options_override' => [
-                'default' => [
-                    ## Options used by all grant types
-                    'repo_client' => [
-                        // Clients as registered service
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::CLIENTS],],
-                    'repo_access_token' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::ACCESS_TOKENS],],
-
-                    ## Options used by [extension, refresh_token, password, authorization_code]
-                    'repo_user' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::USERS],],
-                    'repo_refresh_token' => [
-                        \Poirot\Ioc\INST => ['/module/oauth2/services/repository/'.BuildServices::REFRESH_TOKENS],],
-
-
-                    ## TTL
-                    'ttl_auth_code'     => new \DateInterval('PT5M'),
-                    'ttl_refresh_token' => new \DateInterval('P1M'),
-                    'ttl_access_token'  => new \DateInterval('PT1H'),
-                ],
-
-                // or
-                //- 'classGrantName' => $options
-            ],
-        ],],
+        ],
+    ],
 
 
     # Authorization:
 
     \Module\Authorization\Module::CONF_KEY => array(
-        'authenticators' => array(
-            'services' => array(
-                // Authenticators Services
-                OAuth2\Services\ServiceAuthenticatorDefault::class,
+        ServiceAuthenticatorsContainer::CONF => array(
+            'plugins_container' => array(
+                'services' => array(
+                    // Authenticators Services
+                    OAuth2\Services\ServiceAuthenticatorDefault::class,
+                ),
             ),
         ),
-        'guards' => array(
-            'services' => array(
-                // Guards Services
-                'oauth_routes' => OAuth2\Services\ServiceAuthGuard::class,
+        ServiceGuardsContainer::CONF => array(
+            'plugins_container' => array(
+                'services' => array(
+                    // Guards Services
+                    'oauth_routes' => OAuth2\Services\ServiceAuthGuard::class,
+                ),
             ),
         ),
     ),
