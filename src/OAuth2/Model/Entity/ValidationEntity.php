@@ -1,8 +1,9 @@
 <?php
-namespace Module\OAuth2\Model;
+namespace Module\OAuth2\Model\Entity;
 
 use Module\OAuth2\Interfaces\Model\iValidation;
 use Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject;
+use Module\OAuth2\Model\Entity\Validation\AuthObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
 
@@ -85,7 +86,7 @@ class ValidationEntity
         foreach ($authCodes as $code) {
             if (!$code instanceof iValidationAuthCodeObject)
                 // Usually constructed from bson unseriallized objects
-                $code = new ValidationAuthCodeObject($code);
+                $code = new AuthObject($code);
 
             $this->addAuthCode($code);
         }

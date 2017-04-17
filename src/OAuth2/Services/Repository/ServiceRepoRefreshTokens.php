@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
-use Module\OAuth2\Model\Mongo\RefreshTokens;
+use Module\OAuth2\Model\Driver\Mongo\RefreshTokenRepo;
 use Module\OAuth2\Services\BuildServices;
 
 
@@ -20,10 +20,10 @@ class ServiceRepoRefreshTokens
      * @param string             $collection
      * @param string|object|null $persistable
      *
-     * @return RefreshTokens
+     * @return RefreshTokenRepo
      */
     function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new RefreshTokens($mongoDb, $collection, $persistable);
+        return new RefreshTokenRepo($mongoDb, $collection, $persistable);
     }
 }

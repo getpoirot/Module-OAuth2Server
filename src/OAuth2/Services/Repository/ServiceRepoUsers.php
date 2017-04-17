@@ -2,8 +2,9 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
-use Module\OAuth2\Model\Mongo\Users;
+use Module\OAuth2\Model\Driver\Mongo\UserRepo;
 use Module\OAuth2\Services\BuildServices;
+
 
 class ServiceRepoUsers
     extends aServiceRepository
@@ -19,10 +20,10 @@ class ServiceRepoUsers
      * @param string             $collection
      * @param string|object|null $persistable
      *
-     * @return Users
+     * @return UserRepo
      */
     function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new Users($mongoDb, $collection, $persistable);
+        return new UserRepo($mongoDb, $collection, $persistable);
     }
 }

@@ -41,7 +41,8 @@ class UserHydrate
     // Mobile Identifier
     function setMobile($mobile)
     {
-        $this->mobileIdentifier = $mobile;
+        if (is_array($mobile) && isset($mobile['number']) && !$mobile['number'] == '')
+            $this->mobileIdentifier = $mobile;
     }
 
     // Email Identifier

@@ -1,5 +1,5 @@
 <?php
-namespace Module\OAuth2\Model\Mongo;
+namespace Module\OAuth2\Model\Driver\Mongo;
 
 use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Interfaces\Model\iValidation;
@@ -12,7 +12,8 @@ use MongoDB\BSON\UTCDatetime;
  *       db.oauth.users.validation_codes.createIndex({"date_mongo_expiration": 1}, {expireAfterSeconds: 0});
  *
  */
-class ValidationCodes extends aRepository
+class ValidationRepo
+    extends aRepository
     implements iRepoValidationCodes
 {
     /**
@@ -21,7 +22,7 @@ class ValidationCodes extends aRepository
      */
     protected function __init()
     {
-        $this->setModelPersist(new ValidationCode);
+        $this->setModelPersist(new ValidationEntity);
     }
 
     /**
@@ -36,7 +37,7 @@ class ValidationCodes extends aRepository
      */
     function insert(iValidation $validationCode)
     {
-        $e = new ValidationCode; // use object model persist
+        $e = new ValidationEntity; // use object model persist
         $e  ->setUserIdentifier($validationCode->getUserIdentifier())
             ->setValidationCode($validationCode->getValidationCode())
             ->setAuthCodes($validationCode->getAuthCodes())

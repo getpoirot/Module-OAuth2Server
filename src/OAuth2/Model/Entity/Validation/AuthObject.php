@@ -1,11 +1,11 @@
 <?php
-namespace Module\OAuth2\Model;
+namespace Module\OAuth2\Model\Entity\Validation;
 
 use Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
 
-class ValidationAuthCodeObject
+class AuthObject
     extends DataOptionsOpen
     implements iValidationAuthCodeObject
 {

@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
-use Module\OAuth2\Model\Mongo\AccessTokens;
+use Module\OAuth2\Model\Driver\Mongo\AccessTokenRepo;
 use Module\OAuth2\Services\BuildServices;
 
 
@@ -20,10 +20,10 @@ class ServiceRepoAccessTokens
      * @param string             $collection
      * @param string|object|null $persistable
      *
-     * @return AccessTokens
+     * @return AccessTokenRepo
      */
     function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new AccessTokens($mongoDb, $collection, $persistable);
+        return new AccessTokenRepo($mongoDb, $collection, $persistable);
     }
 }

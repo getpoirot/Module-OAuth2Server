@@ -1,12 +1,10 @@
 <?php
-namespace Module\OAuth2\Actions\User;
+namespace Module\OAuth2\Actions\Users;
 
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
-use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
-use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
@@ -51,16 +49,16 @@ class RegisterRequest
         
         /** @var iUserIdentifierObject $ident */
         $validate = []; $ids = [];
-        foreach ($user->getIdentifiers() as $ident) 
+        foreach ($user->getIdentifiers() as $ident)
         {
             $ids[$ident->getType()] = $ident->getValue();
-            
-            if ($ident->isValidated()) 
+
+            if ($ident->isValidated())
                 continue;
-            
+
             $validate[] = $ident->getType();
         }
-        
+
         $validationCode = $this->Register()->giveUserValidationCode($user, $continue);
 
 

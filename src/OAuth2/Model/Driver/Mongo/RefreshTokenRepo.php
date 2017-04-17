@@ -1,16 +1,17 @@
 <?php
-namespace Module\OAuth2\Model\Mongo;
+namespace Module\OAuth2\Model\Driver\Mongo;
 
 use Module\MongoDriver\Model\Repository\aRepository;
 
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
-use Poirot\OAuth2\Interfaces\Server\Repository\iRepoAccessTokens;
-use Poirot\OAuth2\Model\AccessToken as BaseAccessToken;
+use Poirot\OAuth2\Interfaces\Server\Repository\iEntityRefreshToken;
+use Poirot\OAuth2\Interfaces\Server\Repository\iRepoRefreshTokens;
+use Poirot\OAuth2\Model\RefreshToken as BaseRefreshToken;
 
 
-class AccessTokens
+class RefreshTokenRepo
     extends aRepository
-    implements iRepoAccessTokens
+    implements iRepoRefreshTokens
 {
     /**
      * Initialize Object
@@ -18,36 +19,38 @@ class AccessTokens
      */
     protected function __init()
     {
-        $this->setModelPersist(new AccessToken);
+        $this->setModelPersist(new RefreshTokenEntity);
     }
 
     /**
      * Insert New Token
      *
-     * @param iEntityAccessToken $token
+     * @param iEntityRefreshToken $token
      *
      * @return iEntityAccessToken include insert id
      */
-    function insert(iEntityAccessToken $token)
+    function insert(iEntityRefreshToken $token)
     {
-        $accToken = new AccessToken;
-        $accToken
-            ->setIdentifier(\Poirot\OAuth2\generateUniqueIdentifier(20))
+        $rToken = new RefreshTokenEntity;
+        $rToken
+            ->setIdentifier(\Poirot\OAuth2\generateUniqueIdentifier(30))
+            ->setAccessTokenIdentifier($token->getAccessTokenIdentifier())
             ->setClientIdentifier($token->getClientIdentifier())
             ->setDateTimeExpiration($token->getDateTimeExpiration())
             ->setScopes($token->getScopes())
             ->setOwnerIdentifier($token->getOwnerIdentifier())
         ;
 
-        $r = $this->_query()->insertOne($accToken);
+        $r = $this->_query()->insertOne($rToken);
 
-        $return = new BaseAccessToken;
+        $return = new BaseRefreshToken;
         $return
-            ->setIdentifier($accToken->getIdentifier())
-            ->setClientIdentifier($accToken->getClientIdentifier())
-            ->setDateTimeExpiration($accToken->getDateTimeExpiration())
-            ->setScopes($accToken->getScopes())
-            ->setOwnerIdentifier($accToken->getOwnerIdentifier())
+            ->setIdentifier($rToken->getIdentifier())
+            ->setAccessTokenIdentifier($rToken->getAccessTokenIdentifier())
+            ->setClientIdentifier($rToken->getClientIdentifier())
+            ->setDateTimeExpiration($rToken->getDateTimeExpiration())
+            ->setScopes($rToken->getScopes())
+            ->setOwnerIdentifier($rToken->getOwnerIdentifier())
         ;
 
         return $return;
@@ -60,11 +63,11 @@ class AccessTokens
      *
      * @param string $tokenIdentifier
      *
-     * @return iEntityAccessToken|false
+     * @return iEntityRefreshToken|false
      */
     function findByIdentifier($tokenIdentifier)
     {
-        /** @var AccessToken $r */
+        /** @var AccessTokenEntity $r */
         $r = $this->_query()->findOne([
             'identifier' => $tokenIdentifier,
         ]);

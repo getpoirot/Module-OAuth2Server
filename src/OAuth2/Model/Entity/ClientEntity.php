@@ -1,5 +1,5 @@
 <?php
-namespace Module\OAuth2\Model;
+namespace Module\OAuth2\Model\Entity;
 
 use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthClient;
 use Poirot\Std\Struct\DataOptionsOpen;

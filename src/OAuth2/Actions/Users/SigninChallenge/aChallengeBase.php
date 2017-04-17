@@ -7,7 +7,7 @@ use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Mongo\Users;
-use Module\OAuth2\Model\ValidationAuthCodeObject;
+use Module\OAuth2\Model\AuthObject;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
@@ -60,7 +60,7 @@ abstract class aChallengeBase
 
             # Create Auth Codes Based On Identifier:
             $authCodes = [
-                ValidationAuthCodeObject::newByIdentifier( $this->_getChallengeIdentifierObject() )
+                AuthObject::newByIdentifier( $this->_getChallengeIdentifierObject() )
             ];
 
             $validationCode = \Module\OAuth2\Actions\Users\IOC::validationGenerator($userUID, $authCodes, $continue);
@@ -91,7 +91,7 @@ abstract class aChallengeBase
             if (isset($_post['confirm_code']))
             {
                 // check whether codes are equal?!!
-                /** @var ValidationAuthCodeObject $ac */
+                /** @var AuthObject $ac */
                 foreach ($r->getAuthCodes() as $ac) {
                     if ($ac->getType() !== static::CHALLENGE_TYPE)
                         continue;

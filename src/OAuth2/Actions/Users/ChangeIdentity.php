@@ -7,7 +7,7 @@ use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Mongo\Users;
 use Module\OAuth2\Model\UserIdentifierObject;
-use Module\OAuth2\Model\ValidationAuthCodeObject;
+use Module\OAuth2\Model\AuthObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;

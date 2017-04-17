@@ -1,5 +1,5 @@
 <?php
-namespace Module\OAuth2\Model\Mongo\Users;
+namespace Module\OAuth2\Model\Driver\Mongo\Users;
 
 use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
@@ -20,7 +20,7 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthUser;
 }
 */
 
-class ApprovedClients
+class ApprovedClientRepo
     extends aRepository
     implements iRepoUsersApprovedClients
 {

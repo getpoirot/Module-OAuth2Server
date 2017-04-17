@@ -6,7 +6,7 @@
 return [
     'services' => [
         'RegisterPage'          => \Module\OAuth2\Actions\User\RegisterPage::class,
-        'Register'              => \Module\OAuth2\Actions\Users\Register::class,
+        'Register'              => \Module\OAuth2\Actions\User\Register::class,
 
 
         'MadeUserIdentifierValidationState' => \Module\OAuth2\Actions\Validation\MadeUserIdentifierValidationState::class,
@@ -33,7 +33,7 @@ return [
         => [\Poirot\Ioc\Container\BuildContainer::NAME => 'SigninNewPassPage'],
 
 
-        \Module\OAuth2\Actions\User\RegisterRequest::class
+        \Module\OAuth2\Actions\Users\RegisterRequest::class
         => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterRequest'],
 
         \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::class

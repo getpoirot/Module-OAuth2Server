@@ -38,7 +38,10 @@ class MobileObject
         return $this->number;
     }
 
-
+    function __toString()
+    {
+        return $this->getCountryCode().' '.$this->getNumber();
+    }
 
     // ..
 

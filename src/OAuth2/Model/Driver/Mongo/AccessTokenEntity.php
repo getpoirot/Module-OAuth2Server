@@ -1,14 +1,19 @@
 <?php
-namespace Module\OAuth2\Model\Mongo;
+namespace Module\OAuth2\Model\Driver\Mongo;
 
+use Module\MongoDriver\Model\tPersistable;
 use MongoDB\BSON\Persistable;
 use MongoDB\BSON\UTCDatetime;
+use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 
-class ValidationCode
-    extends \Module\OAuth2\Model\ValidationEntity
-    implements Persistable
+
+class AccessTokenEntity
+    extends \Poirot\OAuth2\Model\AccessToken
+    implements iEntityAccessToken
+    , Persistable
 {
     use tPersistable;
+
 
     /**
      * Set Created Date
@@ -37,11 +42,9 @@ class ValidationCode
 
     /**
      * @override Ignore from persistence
-     *
-     * Expiration DateTime
      * @ignore
      *
-     * @return \DateTime
+     * @inheritdoc
      */
     function getDateTimeExpiration()
     {

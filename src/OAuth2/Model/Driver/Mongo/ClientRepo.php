@@ -1,5 +1,5 @@
 <?php
-namespace Module\OAuth2\Model\Mongo;
+namespace Module\OAuth2\Model\Driver\Mongo;
 
 use Module\MongoDriver\Model\Repository\aRepository;
 
@@ -7,7 +7,8 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthClient;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoClients;
 
 
-class Clients extends aRepository
+class ClientRepo
+    extends aRepository
     implements iRepoClients
 {
     /**
@@ -16,7 +17,7 @@ class Clients extends aRepository
      */
     protected function __init()
     {
-        $this->setModelPersist(new Client);
+        $this->setModelPersist(new ClientEntity);
     }
     
     /**
@@ -29,7 +30,7 @@ class Clients extends aRepository
      */
     function insert(iOAuthClient $client)
     {
-        $clientInsert = new Client();
+        $clientInsert = new ClientEntity();
         $clientInsert
             ->setIdentifier($client->getIdentifier())
             ->setClientType($client->getClientType())

@@ -160,13 +160,9 @@ class UserEntity
         // clear previous contacts
         $this->identifiers = array();
 
-        foreach ($identifiers as $c) {
-            if (!$c instanceof iUserIdentifierObject)
-                // TODO when get from persistence object will unserialize this and remove from here
-                $c = new IdentifierObject($c);
-
+        foreach ($identifiers as $c)
             $this->addIdentifier($c);
-        }
+
 
         return $this;
     }

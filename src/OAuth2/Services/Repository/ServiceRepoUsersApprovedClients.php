@@ -2,7 +2,8 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
-use Module\OAuth2\Model\Mongo\Users\ApprovedClients;
+use Module\OAuth2\Model\Driver\Mongo\Users\ApprovedClientRepo;
+
 
 class ServiceRepoUsersApprovedClients
     extends aServiceRepository
@@ -18,10 +19,10 @@ class ServiceRepoUsersApprovedClients
      * @param string             $collection
      * @param string|object|null $persistable
      *
-     * @return ApprovedClients
+     * @return ApprovedClientRepo
      */
     function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new ApprovedClients($mongoDb, $collection, $persistable);
+        return new ApprovedClientRepo($mongoDb, $collection, $persistable);
     }
 }

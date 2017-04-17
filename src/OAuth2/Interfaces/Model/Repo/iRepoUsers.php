@@ -63,11 +63,11 @@ interface iRepoUsers
     /**
      * Find Match With Exact Identifier Value
      *
-     * @param mixed $identifier
+     * @param string|array|\Traversable $value
      *
      * @return iOAuthUser|false
      */
-    function findOneHasIdentifierWithValue($identifier);
+    function findOneHasIdentifierWithValue($value);
 
     /**
      * Update Identifier Type Of Given User to Validated

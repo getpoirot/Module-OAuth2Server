@@ -3,12 +3,12 @@ namespace Module\OAuth2\Actions;
 
 use Module\Authorization\Actions\AuthenticatorAction;
 use Module\OAuth2\Actions\Helper\AttainUsername;
-use Module\OAuth2\Actions\Users\Register;
-use Module\OAuth2\Actions\User\RegisterRequest;
+use Module\OAuth2\Actions\User\Register;
+use Module\OAuth2\Actions\Users\RegisterRequest;
 use Module\OAuth2\Events\EventHeap;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
-use Module\OAuth2\Model\ValidationEntity;
+use Module\OAuth2\Model\Entity\ValidationEntity;
 use Module\OAuth2\Module;
 use Poirot\AuthSystem\Authenticate\Authenticator;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
@@ -26,12 +26,13 @@ use Psr\Http\Message\ResponseInterface;
  * @see                        AttainUsername
  * @method string              AttainUsername(iOAuthUser $user)
  * ..........................................................................................................
- * @see                        MadeUserIdentifierValidationState
+ * @see                          MadeUserIdentifierValidationState
  * @method ValidationEntity|null MadeUserIdentifierValidationState(iOAuthUser $user, $continue = null)
  * ..........................................................................................................
  * @see                        GenIdentifierAuthCode
  * @method string              GenIdentifierAuthCode(iUserIdentifierObject $ident = null)
  * ...........................................................................................................
+ * @see                        Register
  * @method Register            Register()
  * ...........................................................................................................
  *

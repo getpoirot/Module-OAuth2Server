@@ -5,7 +5,7 @@ use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
-use Module\OAuth2\Model\ValidationEntity;
+use Module\OAuth2\Model\Entity\ValidationEntity;
 
 
 /**

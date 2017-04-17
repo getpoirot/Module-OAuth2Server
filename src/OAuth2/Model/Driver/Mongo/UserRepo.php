@@ -1,16 +1,18 @@
 <?php
-namespace Module\OAuth2\Model\Mongo;
+namespace Module\OAuth2\Model\Driver\Mongo;
 
 use Module\MongoDriver\Model\Repository\aRepository;
 
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\Std\Interfaces\Struct\iData;
 
 
-class Users extends aRepository
+class UserRepo
+    extends aRepository
     implements iRepoUsers
     , iProviderIdentityData
 {
@@ -20,11 +22,22 @@ class Users extends aRepository
      */
     protected function __init()
     {
-        $this->setModelPersist(new User);
+        $this->setModelPersist(new UserEntity);
     }
 
     
-    // Implements iRepoUser:
+    /**
+     * Generate next unique identifier to persist
+     * data with
+     *
+     * @param null|string $id
+     *
+     * @return mixed
+     */
+    function attainNextIdentifier($id = null)
+    {
+        // TODO: Implement attainNextIdentifier() method.
+    }
 
     /**
      * Used When Persistence want to store credential
@@ -51,7 +64,7 @@ class Users extends aRepository
      */
     function insert(\Module\OAuth2\Interfaces\Model\iOAuthUser $user)
     {
-        $e = new User; // use object model persist
+        $e = new UserEntity; // use object model persist
         $e
             ->setUID($user->getUID())
             ->setFullName($user->getFullName())
@@ -97,7 +110,11 @@ class Users extends aRepository
                     , \Poirot\Std\flatten($id)
                 ));
 
-            $or[] = [ 'type' =>  $id->getType(), 'value' => $id->getValue()];
+            $val = $id->getValue();
+            if ($val instanceof \Traversable)
+                $val = \Poirot\Std\cast($val)->toArray();
+
+            $or[] = [ 'type' =>  $id->getType(), 'value' => $val ];
         }
 
 
@@ -108,7 +125,7 @@ class Users extends aRepository
         ];
 
 
-        /** @var iOAuthUser|User $r */
+        /** @var iOAuthUser|UserEntity $r */
         $r = $this->_query()->findOne($query);
         
         $return = [];
@@ -172,22 +189,26 @@ class Users extends aRepository
     /**
      * Find Match With Exact Identifier Value
      *
-     * @param mixed $identifier
+     * @param string|array|\Traversable $value
      *
      * @return iOAuthUser|false
      */
-    function findOneHasIdentifierWithValue($identifier)
+    function findOneHasIdentifierWithValue($value)
     {
+        if ($value instanceof \Traversable)
+            // Identifier may is an object
+            // exp. Mobile: ['country_code': xx, 'number': xx]
+            $value = \Poirot\Std\cast($value)->toArray();
+
         /** @var iUserIdentifierObject $arg */
             $match[] = [
                 '$match' => [],
             ];
 
-
         $r = $this->_query()->findOne([
             'identifiers' => [
                 '$elemMatch' => [
-                    'value'     => strtolower($identifier)
+                    'value'     => $value
                 ],
             ],
         ]);
@@ -397,12 +418,12 @@ class Users extends aRepository
             case 'uid':
                 return $this->findOneByUID($value);
             case 'email':
-                $userIdentifier = new UserIdentifierObject(['type' => 'email', 'value' => $value]);
+                $userIdentifier = new IdentifierObject(['type' => 'email', 'value' => $value]);
                 $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;
             case 'username':
-                $userIdentifier = new UserIdentifierObject(['type' => 'username', 'value' => $value]);
+                $userIdentifier = new IdentifierObject(['type' => 'username', 'value' => $value]);
                 $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;

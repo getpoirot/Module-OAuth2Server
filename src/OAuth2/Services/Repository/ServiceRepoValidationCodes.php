@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Services\Repository;
 
 use Module\MongoDriver\Services\aServiceRepository;
-use Module\OAuth2\Model\Mongo\ValidationCodes;
+use Module\OAuth2\Model\Driver\Mongo\ValidationRepo;
 use Module\OAuth2\Services\BuildServices;
 
 
@@ -20,10 +20,10 @@ class ServiceRepoValidationCodes
      * @param string             $collection
      * @param string|object|null $persistable
      *
-     * @return ValidationCodes
+     * @return ValidationRepo
      */
     function newRepoInstance($mongoDb, $collection, $persistable = null)
     {
-        return new ValidationCodes($mongoDb, $collection, $persistable);
+        return new ValidationRepo($mongoDb, $collection, $persistable);
     }
 }

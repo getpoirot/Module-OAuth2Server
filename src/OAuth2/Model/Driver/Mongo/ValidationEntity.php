@@ -1,19 +1,16 @@
 <?php
-namespace Module\OAuth2\Model\Mongo;
+namespace Module\OAuth2\Model\Driver\Mongo;
 
+use Module\MongoDriver\Model\tPersistable;
 use MongoDB\BSON\Persistable;
 use MongoDB\BSON\UTCDatetime;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityRefreshToken;
 
 
-class RefreshToken
-    extends \Poirot\OAuth2\Model\RefreshToken
-    implements iEntityRefreshToken
-    , Persistable
+class ValidationEntity
+    extends \Module\OAuth2\Model\Entity\ValidationEntity
+    implements Persistable
 {
     use tPersistable;
-
 
     /**
      * Set Created Date
@@ -42,9 +39,11 @@ class RefreshToken
 
     /**
      * @override Ignore from persistence
+     *
+     * Expiration DateTime
      * @ignore
      *
-     * @inheritdoc
+     * @return \DateTime
      */
     function getDateTimeExpiration()
     {

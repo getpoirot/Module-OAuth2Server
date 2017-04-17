@@ -28,7 +28,7 @@ return [
                 BuildServices::USERS_APPROVED_CLIENTS => Services\Repository\ServiceRepoUsersApprovedClients::class,
                 BuildServices::VALIDATION_CODES       => Services\Repository\ServiceRepoValidationCodes::class,
                 BuildServices::ACCESS_TOKENS          => [
-                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokens::class,
+                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokenRepo::class,
                     // options:
                     'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                 ],

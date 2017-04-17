@@ -3,7 +3,7 @@ namespace Module\OAuth2\Actions\Validation;
 
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Model\Entity\User\MobileObject;
-use Module\OAuth2\Model\ValidationAuthCodeObject;
+use Module\OAuth2\Model\Entity\Validation\AuthObject;
 
 
 /**
@@ -22,7 +22,7 @@ class GenIdentifierAuthCode
      *
      * @param iUserIdentifierObject $ident
      *
-     * @return ValidationAuthCodeObject Self when no arguments passed
+     * @return AuthObject Self when no arguments passed
      * @throws \Exception
      */
     function __invoke(iUserIdentifierObject $ident = null)
@@ -51,11 +51,11 @@ class GenIdentifierAuthCode
      * @param string $value
      * @param bool   $validated
      *
-     * @return ValidationAuthCodeObject
+     * @return AuthObject
      */
     function newEmailAuthCode($value, $validated = false)
     {
-        $authCode = new ValidationAuthCodeObject;
+        $authCode = new AuthObject;
         $authCode->setType('email');
         $authCode->setCode(\Module\OAuth2\generateCode(
             5,
@@ -73,11 +73,11 @@ class GenIdentifierAuthCode
      * @param MobileObject $value
      * @param bool         $validated
      *
-     * @return ValidationAuthCodeObject
+     * @return AuthObject
      */
     function newMobileAuthCode(MobileObject $value, $validated = false)
     {
-        $authCode = new ValidationAuthCodeObject;
+        $authCode = new AuthObject;
         $authCode->setType('mobile');
         $authCode->setCode(\Module\OAuth2\generateCode(
             4, // length is used somewhere else like validation; be aware

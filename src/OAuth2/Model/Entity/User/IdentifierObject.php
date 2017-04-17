@@ -85,10 +85,14 @@ class IdentifierObject
         return $this->is_validated;
     }
 
+    function __toString()
+    {
+        return (string) $this->getValue();
+    }
 
     // ..
 
-    static function newIdentifierByName($name, $value, $validated = null)
+    static function newIdentifierByType($name, $value, $validated = null)
     {
         switch ($name) {
             case self::IDENTITY_EMAIL:
@@ -118,7 +122,7 @@ class IdentifierObject
     {
         $self = new self;
         $self->setType(self::IDENTITY_EMAIL);
-        $self->setValue($value);
+        $self->setValue( (string) $value);
         
         if ($validated !== null)
             $self->setValidated($validated);
@@ -157,7 +161,7 @@ class IdentifierObject
     {
         $self = new self;
         $self->setType(self::IDENTITY_USERNAME);
-        $self->setValue($value);
+        $self->setValue( (string) $value);
         $self->setValidated(); // username is always validated and not require validation send
         
         return $self;

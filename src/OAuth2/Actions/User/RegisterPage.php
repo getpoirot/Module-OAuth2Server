@@ -7,6 +7,7 @@ use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
+use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
@@ -41,8 +42,10 @@ class RegisterPage
         $request = $this->request;
 
         # Persist Registration Request:
-        if ( MethodType::_($request)->isPost() )
-            return $this->_handleRegisterRequest($request);
+        if ( MethodType::_($request)->isPost() ) {
+            $r = $this->_handleRegisterRequest($request);
+            goto response;
+        }
 
 
         # Is Exists Account Identifier When Registering?
@@ -72,7 +75,8 @@ class RegisterPage
                 'user' => [
                     'uid'      => $u->getUID(),
                     'fullname' => $u->getFullName(),
-                    #'avatar'  => $userAvatarUrl
+                    #'avatar'  => $userAvatarUrl,
+                    'identifier_exists' => $existsIdentifiers['value']->value,
                 ],
                 '_link' => \Module\Foundation\Actions\IOC::url(
                     'main/oauth/members/signin_challenge'
@@ -80,8 +84,13 @@ class RegisterPage
                 ),
             ];
         }
-        
-        return $r;
+
+
+response:
+
+        return [
+            ListenerDispatch::RESULT_DISPATCH => $r
+        ];
     }
 
     /**

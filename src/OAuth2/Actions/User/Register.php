@@ -1,5 +1,5 @@
 <?php
-namespace Module\OAuth2\Actions\Users;
+namespace Module\OAuth2\Actions\User;
 
 use Module\Foundation\Actions\Helper\UrlAction;
 use Module\OAuth2\Actions\aAction;
@@ -9,8 +9,8 @@ use Module\OAuth2\Interfaces\Model\iValidation;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
-use Module\OAuth2\Model\Mongo\User;
-use Module\OAuth2\Model\ValidationAuthCodeObject;
+use Module\OAuth2\Model\Entity\UserEntity;
+use Module\OAuth2\Model\Entity\Validation\AuthObject;
 
 
 class Register
@@ -79,7 +79,7 @@ class Register
         $validationHash = $this->giveUserValidationCode($entity, $continue);
 
         # Then Persist User Entity:
-        /** @var User|iOAuthUser $user */
+        /** @var UserEntity|iOAuthUser $user */
         $user = $repoUsers->insert($entity);
 
         return array( $user, $validationHash );
@@ -104,7 +104,7 @@ class Register
         $validationHash = null;
 
         if ( $validationEntity = $this->MadeUserIdentifierValidationState($user, $continue) ) {
-            /** @var ValidationAuthCodeObject $authCodeObject */
+            /** @var AuthObject $authCodeObject */
             foreach ($validationEntity->getAuthCodes() as $authCodeObject)
                 $_ = $this->sendAuthCodeByMediumType($validationEntity, $authCodeObject->getType());
 
@@ -132,7 +132,7 @@ class Register
     function sendAuthCodeByMediumType(iValidation $validation, $mediumType)
     {
         $authToSend = null;
-        /** @var ValidationAuthCodeObject $authCode */
+        /** @var AuthObject $authCode */
         foreach ($validation->getAuthCodes() as $authCode) {
             if ($authCode->getType() === $mediumType) {
                 $authToSend = $authCode;
@@ -170,11 +170,11 @@ class Register
      * Send SMS To Mobile Medium
      *
      * @param iValidation               $validationCode
-     * @param ValidationAuthCodeObject  $authCode
+     * @param AuthObject  $authCode
      *
      * @return int
      */
-    protected function _sendMobileValidation(iValidation $validationCode, ValidationAuthCodeObject $authCode)
+    protected function _sendMobileValidation(iValidation $validationCode, AuthObject $authCode)
     {
         if ( $lastTimeStampSent = $authCode->getTimestampSent() ) {
             $expiry = $this->__getTimeExpiryInterval( $lastTimeStampSent, new \DateInterval('PT2M') );
@@ -213,11 +213,11 @@ class Register
      * Send Email
      *
      * @param iValidation              $validationCode
-     * @param ValidationAuthCodeObject $authCode
+     * @param AuthObject $authCode
      *
      * @return int
      */
-    protected function _sendEmailValidation(iValidation $validationCode, ValidationAuthCodeObject $authCode)
+    protected function _sendEmailValidation(iValidation $validationCode, AuthObject $authCode)
     {
         if ( $lastTimeStampSent = $authCode->getTimestampSent() ) {
             $expiry = $this->__getTimeExpiryInterval($lastTimeStampSent, new \DateInterval('PT1M'));
