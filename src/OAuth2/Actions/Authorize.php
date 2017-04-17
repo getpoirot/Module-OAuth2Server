@@ -8,7 +8,7 @@ use Poirot\Http\HttpRequest;
 use Poirot\Http\HttpResponse;
 use Poirot\Http\Psr\ResponseBridgeInPsr;
 use Poirot\Http\Psr\ServerRequestBridgeInPsr;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
+use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthClient;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\aGrant;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
@@ -47,7 +47,7 @@ class Authorize extends aAction
 
         $_post = PhpServer::_($request)->getPost();
 
-        /** @var iEntityClient $client */
+        /** @var iOAuthClient $client */
         $client = $grant->assertClient(false);
         list($scopeRequested, $scopes) = $grant->assertScopes($client->getScope());
 

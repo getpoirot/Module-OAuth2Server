@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Exception;
 
-use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
+use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 
 
 class exIdentifierExists
@@ -15,7 +15,7 @@ class exIdentifierExists
     /**
      * exIdentifierExists constructor.
      * 
-     * @param iEntityUserIdentifierObject[] $identifiers
+     * @param iUserIdentifierObject[] $identifiers
      * @param string $message
      * @param \Exception|null $previous
      */
@@ -36,7 +36,7 @@ class exIdentifierExists
     /**
      * Get List Of Identifiers
      * 
-     * @return array|\Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject[]
+     * @return \Module\OAuth2\Interfaces\Model\iUserIdentifierObject[]
      */
     function listIdentifiers()
     {

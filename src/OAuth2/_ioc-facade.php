@@ -1,14 +1,16 @@
 <?php
 namespace Module\OAuth2\Actions
 {
+    use Module\OAuth2\Actions\User\RegisterPage;
     use Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser;
-    use Module\OAuth2\Model\User;
+    use Module\OAuth2\Model\UserEntity;
 
 
     /**
-     * @property  RetrieveAuthenticatedUser $RetrieveAuthenticatedUser
+     * @property RegisterPage              $RegisterPage
+     * @property RetrieveAuthenticatedUser $RetrieveAuthenticatedUser
      *
-     * @method static User  RetrieveAuthenticatedUser()
+     * @method static UserEntity  RetrieveAuthenticatedUser()
      * @method static mixed ValidationGenerator($uid = null, array $authCodes = null, $continue = null)
      */
     class IOC extends \IOC

@@ -22,7 +22,153 @@ return [
     'oauth'  => [
         'routes' => [
 
-            ## API
+            ## OAuth2 Specific EndPoints -----------------------------------------------------------------\
+            'authorize' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/auth',
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Authorize',
+                ],
+            ],
+            'token' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/auth/token',
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RespondToRequest',
+                ],
+            ],
+
+            ## Register User / Login ---------------------------------------------------------------------\
+            'register' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/register',
+                    'match_whole' => true,
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => [
+                        \Module\OAuth2\Actions\IOC::bareService()->RegisterPage,
+                    ],
+                ],
+            ],
+            'login' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/login',
+                    'match_whole' => true,
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LoginPage',
+                ],
+            ],
+            'logout' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/logout',
+                    'match_whole' => true,
+                ],
+                'params'  => [
+                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LogoutPage',
+                ],
+            ],
+
+            ## User Area ---------------------------------------------------------------------------------\
+            'me' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/me',
+                    'match_whole' => false,
+                ],
+                'routes' => [
+                    'profile' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => function() { return []; },
+                        ],
+                    ],
+
+                ],
+            ],
+
+
+            ## Members Validation / Login Challenge ------------------------------------------------------\
+            'members' => [
+                'route' => 'RouteSegment',
+                'options' => [
+                    'criteria'    => '/members',
+                    'match_whole' => false,
+                ],
+                'routes' => [
+                    'validate' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            // also "validation_code" exists in params and pass through actions as argument
+                            'criteria'    => '/validate/:validation_code{{\w+}}',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
+                        ],
+                    ],
+                    'validate_resend' => [
+                        // TODO force render strategy by router; when error happen the ajax requests also must response in ?json
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            // also "validation_code" exists in params and pass through actions as argument
+                            'criteria'    => '/validate/resend/:validation_code{{\w+}}/:identifier_type{{\w+}}',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidationResendAuthCode',
+                        ],
+                    ],
+
+                    'signin_recognize' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            // also "validation_code" exists in params and pass through actions as argument
+                            'criteria'    => '/recognize',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninRecognizePage',
+                        ],
+                    ],
+
+                    'signin_challenge' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/challenge/:uid{{\w+}}[/:identifier{{\w+}}]',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninChallengePage',
+                        ],
+                    ],
+
+                    'pick_new_password' => [
+                        'route' => 'RouteSegment',
+                        'options' => [
+                            'criteria'    => '/newpass/:validation_code{{\w+}}/:token{{\w+}}',
+                            'match_whole' => true,
+                        ],
+                        'params'  => [
+                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninNewPassPage',
+                        ],
+                    ],
+                ],
+            ],
+
+
+            ## API ---------------------------------------------------------------------------------------\
             'api' => [
                 'route' => 'RouteSegment',
                 'options' => [
@@ -65,7 +211,7 @@ return [
                                 'params'  => [
                                     ListenerDispatch::CONF_KEY => [
                                         \Module\OAuth2\Actions\Users\GetUserInfo::functorParseUidFromToken(),
-                                        function() { return ['checkIsValidID' => true];}, // 
+                                        function() { return ['checkIsValidID' => true];}, //
                                         '/module/oauth2/actions/users/GetUserInfo'
                                     ],
                                 ],
@@ -197,152 +343,7 @@ return [
                 ],
             ],
 
-            'me' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/me',
-                    'match_whole' => false,
-                ],
-                'routes' => [
-                    'profile' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            'criteria'    => '/',
-                            'match_whole' => true,
-                        ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => function() { return []; },
-                        ],
-                    ],
 
-                ],
-            ],
-
-            ## members
-            'members' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/members',
-                    'match_whole' => false,
-                ],
-                'routes' => [
-                    'validate' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            // also "validation_code" exists in params and pass through actions as argument
-                            'criteria'    => '/validate/:validation_code{\w+}',
-                            'match_whole' => true,
-                        ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
-                        ],
-                    ],
-                    'validate_resend' => [
-                        // TODO force render strategy by router; when error happen the ajax requests also must response in ?json
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            // also "validation_code" exists in params and pass through actions as argument
-                            'criteria'    => '/validate/resend/:validation_code{\w+}/:identifier_type{\w+}',
-                            'match_whole' => true,
-                        ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidationResendAuthCode',
-                        ],
-                    ],
-
-                    'signin_recognize' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            // also "validation_code" exists in params and pass through actions as argument
-                            'criteria'    => '/signin/recognize',
-                            'match_whole' => true,
-                        ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninRecognizePage',
-                        ],
-                    ],
-
-                    'signin_challenge' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            'criteria'    => '/signin/challenge/:uid{\w+}[/:identifier{\w+}]',
-                            'match_whole' => true,
-                        ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninChallengePage',
-                        ],
-                    ],
-
-                    'pick_new_password' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            'criteria'    => '/signin/newpass/:validation_code{\w+}/:token{\w+}',
-                            'match_whole' => true,
-                        ],
-                        'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninNewPassPage',
-                        ],
-                    ],
-
-                ],
-            ],
-
-
-            ##
-            'register' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/register',
-                    'match_whole' => true,
-                ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/RegisterPage',
-                ],
-            ],
-            'login' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/login',
-                    'match_whole' => true,
-                ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LoginPage',
-                ],
-            ],
-            'logout' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/logout',
-                    'match_whole' => true,
-                ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LogoutPage',
-                ],
-            ],
-
-
-
-            ## OAuth2 EndPoints:
-
-            'authorize' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/auth',
-                ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Authorize',
-                ],
-            ],
-            'token' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/auth/token',
-                ],
-                'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RespondToRequest',
-                ],
-            ],
-
-        ],
+        ], // end oauth routes
     ],
 ];

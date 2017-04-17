@@ -2,12 +2,12 @@
 namespace Module\OAuth2\Model\Authenticate;
 
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
+use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthUser;
 
 
 class IdentityFulfillmentLazy
     extends \Poirot\AuthSystem\Authenticate\Identity\IdentityFulfillmentLazy
-    implements iEntityUser
+    implements iOAuthUser
 {
     protected $uid;
     protected $credential;
@@ -39,7 +39,7 @@ class IdentityFulfillmentLazy
      *
      * !! Identifier Must Be Unique
      *
-     * @return string|int
+     * @return mixed
      */
     function getUID()
     {

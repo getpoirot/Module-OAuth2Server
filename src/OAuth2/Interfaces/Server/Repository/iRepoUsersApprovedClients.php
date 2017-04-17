@@ -1,45 +1,45 @@
 <?php
 namespace Module\OAuth2\Interfaces\Server\Repository;
 
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityClient;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser;
+use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthClient;
+use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthUser;
 
 interface iRepoUsersApprovedClients
 {
     /**
      * User Approve Client 
      * 
-     * @param iEntityUser   $user
-     * @param iEntityClient $client
+     * @param iOAuthUser   $user
+     * @param iOAuthClient $client
      * 
      * @return void
      */
-    function approveClient(iEntityUser $user, iEntityClient $client);
+    function approveClient(iOAuthUser $user, iOAuthClient $client);
 
     /**
-     * @param iEntityUser $user
-     * @param iEntityClient $client
+     * @param iOAuthUser $user
+     * @param iOAuthClient $client
      * 
      * @return boolean
      */
-    function isUserApprovedClient(iEntityUser $user, iEntityClient $client);
+    function isUserApprovedClient(iOAuthUser $user, iOAuthClient $client);
     
     /**
      * User Remove Client Approval
      *
-     * @param iEntityUser   $user
-     * @param iEntityClient $client
+     * @param iOAuthUser   $user
+     * @param iOAuthClient $client
      *
      * @return void
      */
-    function removeClient(iEntityUser $user, iEntityClient $client);
+    function removeClient(iOAuthUser $user, iOAuthClient $client);
 
     /**
      * List Approved Clients By User
      *
-     * @param iEntityUser $user
+     * @param iOAuthUser $user
      *
      * @return
      */
-    function listClients(iEntityUser $user);
+    function listClients(iOAuthUser $user);
 }

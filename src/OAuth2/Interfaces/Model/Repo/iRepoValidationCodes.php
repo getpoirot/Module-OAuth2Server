@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Interfaces\Model\Repo;
 
-use Module\OAuth2\Interfaces\Model\iEntityValidationCode;
+use Module\OAuth2\Interfaces\Model\iValidation;
 
 
 interface iRepoValidationCodes
@@ -12,11 +12,11 @@ interface iRepoValidationCodes
      * note: each user must has one validation code persistence at time
      *       "user_identifier" is unique
      *
-     * @param iEntityValidationCode $validationCode
+     * @param iValidation $validationCode
      *
-     * @return iEntityValidationCode
+     * @return iValidation
      */
-    function insert(iEntityValidationCode $validationCode);
+    function insert(iValidation $validationCode);
 
     /**
      * Find Match By Given Validation Code
@@ -25,7 +25,7 @@ interface iRepoValidationCodes
      *
      * @param string $validationCode
      *
-     * @return iEntityValidationCode|false
+     * @return iValidation|false
      */
     function findOneByValidationCode($validationCode);
 
@@ -36,7 +36,7 @@ interface iRepoValidationCodes
      *
      * @param string $userIdentifier
      *
-     * @return iEntityValidationCode|false
+     * @return iValidation|false
      */
     function findOneByUserIdentifier($userIdentifier);
 
@@ -49,7 +49,7 @@ interface iRepoValidationCodes
      * @param string $userIdentifier
      * @param string $identifierType
      *
-     * @return false|iEntityValidationCode
+     * @return false|iValidation
      */
     function findOneHasAuthCodeMatchUserType($userIdentifier, $identifierType);
 

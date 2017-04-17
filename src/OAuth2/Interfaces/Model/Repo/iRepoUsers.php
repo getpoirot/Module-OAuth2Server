@@ -1,9 +1,9 @@
 <?php
 namespace Module\OAuth2\Interfaces\Model\Repo;
 
-use Module\OAuth2\Interfaces\Model\iEntityUser;
-use Module\OAuth2\Interfaces\Model\iEntityUserIdentifierObject;
-use Poirot\OAuth2\Interfaces\Server\Repository\iEntityUser as BaseEntityUser;
+use Module\OAuth2\Interfaces\Model\iOAuthUser;
+use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
+use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthUser as BaseEntityUser;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoUsers as BaseRepoUsers;
 
 
@@ -11,13 +11,14 @@ interface iRepoUsers
     extends BaseRepoUsers
 {
     /**
-     * Attain Next Username From Given Fullname
+     * Generate next unique identifier to persist
+     * data with
      *
-     * @param string $fullname
+     * @param null|string $id
      *
-     * @return string
+     * @return mixed
      */
-    function attainNextUsername($fullname = null);
+    function attainNextIdentifier($id = null);
 
     /**
      * Used When Persistence want to store credential
@@ -34,11 +35,11 @@ interface iRepoUsers
     /**
      * Insert User Entity
      *
-     * @param iEntityUser $user
+     * @param iOAuthUser $user
      *
      * @return BaseEntityUser
      */
-    function insert(iEntityUser $user);
+    function insert(iOAuthUser $user);
 
     /**
      * Has Identifier Existed?
@@ -53,9 +54,9 @@ interface iRepoUsers
     /**
      * Find Match With Exact Identifiers?
      *
-     * @param iEntityUserIdentifierObject[] $identifiers
+     * @param iUserIdentifierObject[] $identifiers
      *
-     * @return iEntityUser|false
+     * @return iOAuthUser|false
      */
     function findOneMatchByIdentifiers(array $identifiers);
 
@@ -64,7 +65,7 @@ interface iRepoUsers
      *
      * @param mixed $identifier
      *
-     * @return iEntityUser|false
+     * @return iOAuthUser|false
      */
     function findOneHasIdentifierWithValue($identifier);
 
