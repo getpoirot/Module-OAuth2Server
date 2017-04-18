@@ -11,7 +11,7 @@ return [
             'match_whole' => true,
         ),
         'params'  => array(
-            ListenerDispatch::CONF_KEY => function() {
+            ListenerDispatch::ACTIONS => function() {
                 return new \Module\Foundation\HttpSapi\Response\ResponseRedirect(
                     \Module\Foundation\Actions\IOC::url('main/oauth/login')
                 );
@@ -29,7 +29,7 @@ return [
                     'criteria'    => '/auth',
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Authorize',
+                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/Authorize',
                 ],
             ],
             'token' => [
@@ -38,7 +38,7 @@ return [
                     'criteria'    => '/auth/token',
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/RespondToRequest',
+                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/RespondToRequest',
                 ],
             ],
 
@@ -50,7 +50,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => [
+                    ListenerDispatch::ACTIONS => [
                         \Module\OAuth2\Actions\IOC::bareService()->RegisterPage,
                     ],
                 ],
@@ -62,7 +62,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LoginPage',
+                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/LoginPage',
                 ],
             ],
             'logout' => [
@@ -72,7 +72,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/LogoutPage',
+                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/LogoutPage',
                 ],
             ],
 
@@ -91,7 +91,7 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::CONF_KEY => function() { return []; },
+                            ListenerDispatch::ACTIONS => function() { return []; },
                         ],
                     ],
 
@@ -115,11 +115,12 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidatePage',
+                            ListenerDispatch::ACTIONS => [
+                                \Module\OAuth2\Actions\IOC::bareService()->ValidatePage,
+                            ],
                         ],
                     ],
                     'validate_resend' => [
-                        // TODO force render strategy by router; when error happen the ajax requests also must response in ?json
                         'route' => 'RouteSegment',
                         'options' => [
                             // also "validation_code" exists in params and pass through actions as argument
@@ -127,7 +128,9 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/ValidationResendAuthCode',
+                            ListenerDispatch::ACTIONS => [
+                                \Module\OAuth2\Actions\IOC::bareService()->ResendAuthCodeRequest,
+                            ],
                         ],
                     ],
 
@@ -139,7 +142,7 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninRecognizePage',
+                            ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/SigninRecognizePage',
                         ],
                     ],
 
@@ -150,7 +153,7 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninChallengePage',
+                            ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/SigninChallengePage',
                         ],
                     ],
 
@@ -161,7 +164,7 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::CONF_KEY => '/module/oauth2/actions/Users/SigninNewPassPage',
+                            ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/SigninNewPassPage',
                         ],
                     ],
                 ],
@@ -184,7 +187,7 @@ return [
                      *    [1] => routes defined callable
                      *     ...
                      */
-                    ListenerDispatch::CONF_KEY => [
+                    ListenerDispatch::ACTIONS => [
                         function ($request = null) {
                             $token = \Module\OAuth2\assertAuthToken($request);
                             return ['token' => $token];
@@ -209,7 +212,7 @@ return [
                                     'match_whole' => true,
                                 ],
                                 'params'  => [
-                                    ListenerDispatch::CONF_KEY => [
+                                    ListenerDispatch::ACTIONS => [
                                         \Module\OAuth2\Actions\Users\GetUserInfo::functorParseUidFromToken(),
                                         function() { return ['checkIsValidID' => true];}, //
                                         '/module/oauth2/actions/users/GetUserInfo'
@@ -232,7 +235,7 @@ return [
                                             'match_whole' => true,
                                         ],
                                         'params'  => [
-                                            ListenerDispatch::CONF_KEY => [
+                                            ListenerDispatch::ACTIONS => [
                                                 \Module\OAuth2\Actions\Users\ChangePassword::functorGetParsedUIDFromToken(),
                                                 \Module\OAuth2\Actions\Users\ChangePassword::functorGetParsedRequestData(),
                                                 '/module/oauth2/actions/users/ChangePassword',
@@ -258,7 +261,7 @@ return [
                                             'match_whole' => true,
                                         ],
                                         'params'  => [
-                                            ListenerDispatch::CONF_KEY => [
+                                            ListenerDispatch::ACTIONS => [
                                                 \Module\OAuth2\Actions\Users\ChangeIdentity::functorGetParsedRequestData(),
                                                 \Module\OAuth2\Actions\Users\ChangeIdentity::functorGetParsedUIDFromToken(),
                                                 '/module/oauth2/actions/users/ChangeIdentity',
@@ -274,9 +277,9 @@ return [
                                         ],
                                         'params'  => [
                                             // TODO separate Page with API func.
-                                            ListenerDispatch::CONF_KEY => [
+                                            ListenerDispatch::ACTIONS => [
                                                 '/module/oauth2/actions/Users/ValidatePage',
-                                                \Module\OAuth2\Actions\Users\ValidatePage::prepareApiResultClosure(),
+                                                // \Module\OAuth2\Actions\Users\ValidatePage::prepareApiResultClosure(),
                                             ],
                                         ],
                                     ],
@@ -300,7 +303,7 @@ return [
                                     'match_whole' => true,
                                 ],
                                 'params'  => [
-                                    ListenerDispatch::CONF_KEY => [
+                                    ListenerDispatch::ACTIONS => [
                                         \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::functorGetParsedRequestData(),
                                         '/module/oauth2/actions/users/isExistsUserWithIdentifier',
                                     ],
@@ -313,7 +316,7 @@ return [
                                     'match_whole' => true,
                                 ],
                                 'params'  => [
-                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/WhoisRequest',
+                                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/users/WhoisRequest',
                                 ],
                             ],
                             'profile' => [
@@ -323,7 +326,7 @@ return [
                                     'match_whole' => true,
                                 ],
                                 'params'  => [
-                                    ListenerDispatch::CONF_KEY => '/module/oauth2/actions/users/GetUserInfo',
+                                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/users/GetUserInfo',
                                 ],
                             ],
                             // Register New User Request By POST
@@ -333,7 +336,7 @@ return [
                                     'method' => 'POST',
                                 ],
                                 'params'  => [
-                                    ListenerDispatch::CONF_KEY => [
+                                    ListenerDispatch::ACTIONS => [
                                         '/module/oauth2/actions/users/RegisterRequest',
                                     ],
                                 ],

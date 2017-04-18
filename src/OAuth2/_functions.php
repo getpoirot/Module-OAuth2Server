@@ -57,12 +57,11 @@ namespace Module\OAuth2
      */
     function truncateIdentifierValue($value, $type = null, $threshold = 4)
     {
-        if ($value instanceof \Traversable)
-            $value = \Poirot\Std\cast($value)->toArray();
+        $value = (string) $value;
 
         switch ($type) {
             case 'mobile':
-                return $value[0].' '.truncateIdentifierValue($value[1]);
+                return truncateIdentifierValue($value);
                 break;
             default:
         }

@@ -317,10 +317,10 @@ class UserRepo
      *
      * !! delete and add new identifier
      *
-     * @param string $uid User Identifier
-     * @param string $identifierType
-     * @param mixed  $value
-     * @param bool   $validated
+     * @param string              $uid User Identifier
+     * @param string              $identifierType
+     * @param array|\Traversable  $value
+     * @param bool                $validated
      *
      * @return int Affected Rows
      */
@@ -338,6 +338,11 @@ class UserRepo
                 ]
             ]
         );
+
+        if ($value instanceof \Traversable)
+            // Identifier may is an object
+            // exp. Mobile: ['country_code': xx, 'number': xx]
+            $value = \Poirot\Std\cast($value)->toArray();
 
         $r = $this->_query()->updateMany(
             [
@@ -428,12 +433,12 @@ class UserRepo
             case 'uid':
                 return $this->findOneByUID($value);
             case 'email':
-                $userIdentifier = new IdentifierObject(['type' => 'email', 'value' => $value]);
+                $userIdentifier = IdentifierObject::newEmailIdentifier($value);
                 $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;
             case 'username':
-                $userIdentifier = new IdentifierObject(['type' => 'username', 'value' => $value]);
+                $userIdentifier = IdentifierObject::newUsernameIdentifier($value);
                 $user = $this->findOneMatchByIdentifiers( [$userIdentifier] );
                 // TODO return iData interface
                 return $user;

@@ -96,11 +96,11 @@ class IdentifierObject
     {
         switch ($name) {
             case self::IDENTITY_EMAIL:
-                return self::newEmailIdentifier($value, $validated);
+                return static::newEmailIdentifier($value, $validated);
             case self::IDENTITY_MOBILE:
-                return self::newMobileIdentifier($value, $validated);
+                return static::newMobileIdentifier($value, $validated);
             case self::IDENTITY_USERNAME:
-                return self::newUsernameIdentifier($value);
+                return static::newUsernameIdentifier($value);
         }
 
         throw new \Exception(sprintf(
@@ -116,11 +116,11 @@ class IdentifierObject
      * @param string $value
      * @param null   $validated
      *
-     * @return IdentifierObject
+     * @return static
      */
     static function newEmailIdentifier($value, $validated = null)
     {
-        $self = new self;
+        $self = new static;
         $self->setType(self::IDENTITY_EMAIL);
         $self->setValue( (string) $value);
         
@@ -136,14 +136,17 @@ class IdentifierObject
      * @param MobileObject $value
      * @param null         $validated
      *
-     * @return IdentifierObject
+     * @return static
      */
     static function newMobileIdentifier($value, $validated = null)
     {
-        $self = new self;
+        $self = new static;
         $self->setType(self::IDENTITY_MOBILE);
-        $self->setValue( new MobileObject($value) );
-        
+
+        if ( $value && !empty($value) ) {
+            $self->setValue( new MobileObject($value) );
+        }
+
         if ($validated !== null)
             $self->setValidated($validated);
         
@@ -155,11 +158,11 @@ class IdentifierObject
      *
      * @param string $value
      *
-     * @return IdentifierObject
+     * @return static
      */
     static function newUsernameIdentifier($value)
     {
-        $self = new self;
+        $self = new static();
         $self->setType(self::IDENTITY_USERNAME);
         $self->setValue( (string) $value);
         $self->setValidated(); // username is always validated and not require validation send

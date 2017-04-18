@@ -59,7 +59,7 @@ class ValidationRepo
     function insert(iValidation $validationCode)
     {
         $e = new ValidationEntity; // use object model persist
-        $e  ->setUserIdentifier( $this->attainNextIdentifier($validationCode->getUserIdentifier()) )
+        $e  ->setUserUid( $this->attainNextIdentifier($validationCode->getUserUid()) )
             ->setValidationCode($validationCode->getValidationCode())
             ->setAuthCodes($validationCode->getAuthCodes())
             ->setDateTimeExpiration($validationCode->getDateTimeExpiration())

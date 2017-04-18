@@ -18,14 +18,16 @@ interface iUserIdentifierObject
     extends iDataOptions // let it to hydrate to array
 {
     /**
-     * Set Type
+     * Set Medium Type
      * @param string $type
      * @return $this
      */
     function setType($type);
 
     /**
-     * Get Contact Type
+     * Get Auth Code Medium Type
+     * exp. mobile | email | ...
+     *
      * @return string
      */
     function getType();

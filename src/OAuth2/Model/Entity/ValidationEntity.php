@@ -26,7 +26,7 @@ class ValidationEntity
      *
      * @return $this
      */
-    function setUserIdentifier($identifier)
+    function setUserUid($identifier)
     {
         $this->userIdentifier = $identifier;
         return $this;
@@ -37,7 +37,7 @@ class ValidationEntity
      *
      * @return string
      */
-    function getUserIdentifier()
+    function getUserUid()
     {
         return $this->userIdentifier;
     }
@@ -78,13 +78,8 @@ class ValidationEntity
     function setAuthCodes($authCodes)
     {
         $this->authCodes = [];
-        foreach ($authCodes as $code) {
-            if (!$code instanceof iValidationAuthCodeObject)
-                // Usually constructed from bson unseriallized objects
-                $code = new AuthObject($code);
-
+        foreach ($authCodes as $code)
             $this->addAuthCode($code);
-        }
 
         return $this;
     }

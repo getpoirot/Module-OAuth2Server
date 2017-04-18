@@ -8,6 +8,8 @@ return [
         'RegisterPage'          => \Module\OAuth2\Actions\User\RegisterPage::class,
         'Register'              => \Module\OAuth2\Actions\User\Register::class,
 
+        'ValidatePage'          => \Module\OAuth2\Actions\Validation\ValidatePage::class,
+        'ResendAuthCodeRequest' => \Module\OAuth2\Actions\Validation\ResendAuthCodeRequest::class,
 
         'MadeUserIdentifierValidationState' => \Module\OAuth2\Actions\Validation\MadeUserIdentifierValidationState::class,
         'GenIdentifierAuthCode'             => \Module\OAuth2\Actions\Validation\GenIdentifierAuthCode::class,
@@ -51,12 +53,6 @@ return [
 
         \Module\OAuth2\Actions\Users\ChangeIdentity::class
         => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ChangeIdentity'],
-
-        \Module\OAuth2\Actions\Users\ValidatePage::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidatePage'],
-        \Module\OAuth2\Actions\Users\ValidationResendAuthCodeAction::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ValidationResendAuthCode'],
-
 
         \Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class
         => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RetrieveAuthenticatedUser'],

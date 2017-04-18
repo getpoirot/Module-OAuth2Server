@@ -79,7 +79,7 @@ abstract class aChallengeBase
         if (false === ( $r = $this->repoValidationCodes->findOneByValidationCode($validationCode)) )
             throw new exRouteNotMatch('Validation Code Is Expired.');
 
-        if ( $r->getUserIdentifier() !== $this->user->getUid())
+        if ( $r->getUserUid() !== $this->user->getUid())
             throw new \RuntimeException('Invalid Request.');
 
 
@@ -121,10 +121,10 @@ abstract class aChallengeBase
 
                 ## VALIDATE_USER_IDENTIFIER
                 ## Update User Identifier To Validated With Current Value
-                $this->repoUsers->setUserIdentifier($r->getUserIdentifier(), $ac->getType(), $ac->getValue(), true);
+                $this->repoUsers->setUserIdentifier($r->getUserUid(), $ac->getType(), $ac->getValue(), true);
 
                 ## Login User, Generate Hash Session Token, Redirect To Pick New Password
-                $this->__loginUser($r->getUserIdentifier(), $r->getContinueFollowRedirection());
+                $this->__loginUser($r->getUserUid(), $r->getContinueFollowRedirection());
 
                 ### generate token hash session
                 $token = Module\OAuth2\Actions\Users\SigninNewPassPage::generateAndRememberToken($validationCode);

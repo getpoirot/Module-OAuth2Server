@@ -1,5 +1,8 @@
 <?php
-namespace Module\OAuth2\Actions\Users;
+namespace Module\OAuth2\Actions\Validation;
+
+use Module;
+use Poirot\Http\HttpMessage\Request\Plugin;
 
 use Module\Authorization\Actions\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
@@ -9,20 +12,17 @@ use Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 
-use Module;
-use Module\OAuth2\Model\Mongo\Users;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
-use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
-use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Storage\Gateway\DataStorageSession;
 
-// TODO implement commit/rollback; maybe momento|aggregate design pattern or something is useful here
+
 class ValidatePage
     extends aAction
 {
+    // session realm to check user validation and login
     const SESSION_REALM = 'ValidatePage';
 
     /** @var iRepoValidationCodes */
@@ -33,32 +33,44 @@ class ValidatePage
 
     /**
      * ValidatePage constructor.
+     *
      * @param iRepoValidationCodes $validationCodes @IoC /module/oauth2/services/repository/
      * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
+     * @param iHttpRequest         $request         @IoC /
      */
-    function __construct(iRepoValidationCodes $validationCodes, iRepoUsers $users)
+    function __construct(iRepoValidationCodes $validationCodes, iRepoUsers $users, iHttpRequest $request)
     {
         $this->repoValidationCodes = $validationCodes;
         $this->repoUsers = $users;
+
+        parent::__construct($request);
     }
 
 
-    function __invoke($validation_code = null, iHttpRequest $request = null)
+    /**
+     * Validation Page
+     *
+     * @param null $validation_code Validation hash from uri
+     *
+     * @return array|ResponseRedirect|null
+     */
+    function __invoke($validation_code = null)
     {
         $repoValidationCodes = $this->repoValidationCodes;
-        if (!$vc = $repoValidationCodes->findOneByValidationCode($validation_code))
-            throw new exRouteNotMatch();
+        if (! $validationEntity = $repoValidationCodes->findOneByValidationCode($validation_code) )
+            // Validation By Given Hash Not Found Or Expired!!
+            throw new exRouteNotMatch;
 
 
         # Handle Params Sent With Request Message If Has!!!
-        $this->_handleValidate($vc, $request);
+        $this->_handleValidate($validationEntity);
 
 
         # Prepare Output Values:
 
         /** @var iValidationAuthCodeObject $ac */
         $vAuthCodes = []; $isAllValidated = true;
-        foreach ($vc->getAuthCodes() as $ac) {
+        foreach ($validationEntity->getAuthCodes() as $ac) {
             $isAllValidated &= $isValid = $ac->isValidated();
             $vAuthCodes[$ac->getType()]['is_validated'] = $isValid;
             $v = \Module\OAuth2\truncateIdentifierValue($ac->getValue(), $ac->getType());
@@ -68,20 +80,24 @@ class ValidatePage
 
         # All Is Validated? Handle Login
         if ($isAllValidated) {
-            if ($r = $this->_handleLogin($vc, $request))
-                return $r;
+            if ($r = $this->_handleLogin($validationEntity))
+                return [
+                    // Login User ....
+                    ListenerDispatch::RESULT_DISPATCH => $r
+                ];
         }
 
 
         # Build View Params
         return [
-            // TODO almost the params that build this request will present as self to response !!!
-            'self' => [
-                'validation_code' => $validation_code,
-            ],
+            ListenerDispatch::RESULT_DISPATCH => [
+                'is_validated'  => (boolean) $isAllValidated,
+                'verifications' => $vAuthCodes,
 
-            'is_validated'  => (boolean) $isAllValidated,
-            'verifications' => $vAuthCodes,
+                '_self' => [
+                    'validation_code' => $validation_code,
+                ],
+            ],
         ];
     }
 
@@ -93,14 +109,15 @@ class ValidatePage
      *   carried with http message.
      *   exp. email: x134code
      *
+     *
      * @param iValidation $validationCode
-     * @param iHttpRequest          $request
      *
      * @return string|false Token if valid something
      */
-    protected function _handleValidate(iValidation $validationCode, iHttpRequest $request)
+    protected function _handleValidate(iValidation $validationCode)
     {
-        $data  = ParseRequestData::_($request)->parse();
+        $request = $this->request;
+        $data    = Plugin\ParseRequestData::_($request)->parse();
 
         $authCodes = $validationCode->getAuthCodes();
         foreach ($data as $requestAuthType => $requestAuthCode) {
@@ -109,6 +126,8 @@ class ValidatePage
                 if ($ac->isValidated())
                     // This Auth Code is Validated.
                     continue;
+
+                // TODO implement commit/rollback; maybe momento|aggregate design pattern or something is useful here
 
                 if ($ac->getType() == $requestAuthType && $ac->getCode() == $requestAuthCode) {
                     // Given Code Match; Update To Validated!!!
@@ -123,7 +142,7 @@ class ValidatePage
                     ## VALIDATE_USER_IDENTIFIER
                     ## Update User Identifier To Validated With Current Value
                     $this->repoUsers->setUserIdentifier(
-                        $validationCode->getUserIdentifier()
+                        $validationCode->getUserUid()
                         , $ac->getType()
                         , $ac->getValue()
                         , true
@@ -147,41 +166,49 @@ class ValidatePage
      * Handle Login When Verification is Complete
      *
      * @param iValidation $validationCode
-     * @param iHttpRequest          $request
+     *
      * @return ResponseRedirect|null
      */
-    protected function _handleLogin(iValidation $validationCode, iHttpRequest $request)
+    protected function _handleLogin(iValidation $validationCode)
     {
-        if (!MethodType::_($request)->isPost())
+        $request = $this->request;
+
+        if (! Plugin\MethodType::_($request)->isPost() )
             // Nothing To Do !!!
             return null;
 
-        $reqParams = ParseRequestData::_($request)->parseBody();
-        if (!isset($reqParams['login']) || $reqParams['login'] !== 'login')
+
+        $reqParams = Plugin\ParseRequestData::_($request)->parseBody();
+        if (! isset($reqParams['login']) || $reqParams['login'] !== 'login' )
             // It's not login button!!
             return null;
 
 
         ## User must redirect to Login Page to Authenticate then Continue
         $continue = $validationCode->getContinueFollowRedirection();
-        $redirect = \Module\Foundation\Actions\IOC::url('main/oauth/login');
+        $redirect = $this->withModule('foundation')->url('main/oauth/login');
         (!$continue) ?: $redirect = $redirect->uri()->withQuery(sprintf('continue=%s', $continue));
 
 
-        if ( self::hasTokenBind($validationCode->getValidationCode()) ) {
+        if ( self::hasTokenBind($validationCode->getValidationCode()) )
+        {
             // User Itself Validated this Validation Auth Codes
             // @see self::_handleValidate
             ## Sign-in User, Then Redirect To Login Page
-            /** @var Users $repoUsers */
+
+            /** @var Module\OAuth2\Model\Driver\Mongo\UserRepo $repoUsers */
             $repoUsers = $this->repoUsers;
-            $user      = $repoUsers->findOneByUID($validationCode->getUserIdentifier());
+            $user      = $repoUsers->findOneByUID( $validationCode->getUserUid() );
             // Identity From Credential Authenticator
             /** @see RepoUserPassCredential::doFindIdentityMatch */
-            $user      = __( new IdentityOpen() )->setUID($user->getUid());
+            // (string) because serialize of mongodb ObjectID not allowed!!!
+            $user      = __( new IdentityOpen )->setUID( (string) $user->getUid() );
 
+            // Then Login User Manually
             /** @var AuthenticatorAction $authenticator */
             $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
-            $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
+            $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)
+                ->authenticate($user);
             $identifier->signIn();
 
 
@@ -197,6 +224,22 @@ class ValidatePage
     }
 
 
+    // Helpers Chain:
+
+    static function prepareApiResultClosure()
+    {
+        return function ($self = null, $is_validated = null, $verifications = null) {
+            return [
+                ListenerDispatch::RESULT_DISPATCH => [
+                    'self' => $self,
+                    'is_validated' => $is_validated,
+                    'verifications' => $verifications,
+                ]
+            ];
+        };
+    }
+
+
     // Helpers:
 
     /**
@@ -209,7 +252,7 @@ class ValidatePage
      */
     static function hasTokenBind($validationCode)
     {
-        $storage = new DataStorageSession(self::SESSION_REALM);
+        $storage = new DataStorageSession( self::SESSION_REALM );
         $vToken  = $storage->get($validationCode);
 
         return $vToken;
@@ -231,18 +274,5 @@ class ValidatePage
         $storage = new DataStorageSession(self::SESSION_REALM);
         $storage->set($validationCode, $token);
         return $token;
-    }
-
-    static function prepareApiResultClosure()
-    {
-        return function ($self = null, $is_validated = null, $verifications = null) {
-            return [ 
-                ListenerDispatch::RESULT_DISPATCH => [
-                    'self' => $self,
-                    'is_validated' => $is_validated,
-                    'verifications' => $verifications,
-                ] 
-            ];
-        };
     }
 }

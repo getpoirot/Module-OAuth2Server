@@ -98,7 +98,7 @@ class SigninNewPassPage
         if (!$vc) 
             throw new exRouteNotMatch;
         
-        $uid = $vc->getUserIdentifier();
+        $uid = $vc->getUserUid();
 
         $this->repoUsers->updateGrantTypeValue($uid, 'password', $newPass);
 

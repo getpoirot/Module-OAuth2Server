@@ -10,14 +10,14 @@ interface iValidation
      *
      * @return $this
      */
-    function setUserIdentifier($identifier);
+    function setUserUid($identifier);
 
     /**
      * Get User Identifier That Validation Is Belong To
      *
      * @return string
      */
-    function getUserIdentifier();
+    function getUserUid();
 
     /**
      * Set Validation Code

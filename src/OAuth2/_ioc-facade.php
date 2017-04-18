@@ -3,12 +3,16 @@ namespace Module\OAuth2\Actions
 {
     use Module\OAuth2\Actions\User\RegisterPage;
     use Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser;
-    use Module\OAuth2\Model\UserEntity;
+    use Module\OAuth2\Actions\Validation\ValidatePage;
+    use Module\OAuth2\Actions\Validation\ResendAuthCodeRequest;
+    use Module\OAuth2\Model\Entity\UserEntity;
 
 
     /**
-     * @property RegisterPage              $RegisterPage
-     * @property RetrieveAuthenticatedUser $RetrieveAuthenticatedUser
+     * @property RegisterPage                   $RegisterPage
+     * @property ValidatePage                   $ValidatePage
+     * @property ResendAuthCodeRequest $ResendAuthCodeRequest
+     * @property RetrieveAuthenticatedUser      $RetrieveAuthenticatedUser
      *
      * @method static UserEntity  RetrieveAuthenticatedUser()
      * @method static mixed ValidationGenerator($uid = null, array $authCodes = null, $continue = null)

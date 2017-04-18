@@ -67,7 +67,7 @@ class MadeUserIdentifierValidationState
         $validationCode = new ValidationEntity;
         $validationCode
             ->setValidationCode( \Poirot\Std\generateUniqueIdentifier(30) )
-            ->setUserIdentifier($user->getUid())
+            ->setUserUid($user->getUid())
             ->setAuthCodes($authCodes)
             ->setContinueFollowRedirection($continue) // used by oauth registration follow
         ;
