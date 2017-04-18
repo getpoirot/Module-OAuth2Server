@@ -31,7 +31,7 @@ class RespondToRequest extends aAction
         $requestPsr  = new ServerRequestBridgeInPsr($request);
 
         /** @var GrantAggregateGrants $aggregateGrant */
-        $aggregateGrant = $this->IoC()->get('services/GrantResponder');
+        $aggregateGrant = $this->moduleServices()->get('services/GrantResponder');
 
         try {
             if (!$grant = $aggregateGrant->canRespondToRequest($requestPsr))

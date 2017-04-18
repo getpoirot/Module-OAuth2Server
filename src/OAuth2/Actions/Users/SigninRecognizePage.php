@@ -56,7 +56,7 @@ class SigninRecognizePage
         $identifier    = $authenticator->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)->hasAuthenticated();
         if (false !== $identifier) {
             // Some user is logged in
-            if ( $identifier->withIdentity()->getUID() == $user->getUID() ) {
+            if ( $identifier->withIdentity()->getUID() == $user->getUid() ) {
                 // The Same User is found
                 $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
                 return new ResponseRedirect($continue);
@@ -69,7 +69,7 @@ class SigninRecognizePage
         return [
             // Tell Template View To Display Recognition.
             'user' => [
-                'uid'      => $user->getUID(),
+                'uid'      => $user->getUid(),
                 'fullname' => $user->getFullName(),
                 #'avatar' => $userAvatarUrl
             ]
@@ -109,7 +109,7 @@ class SigninRecognizePage
 
 
         $url = $url->uri();
-        $url = \Poirot\Psr7\modifyUri($url, ['query' => \Poirot\Psr7\buildQuery(['u' => $u->getUID()]) ]);
+        $url = \Poirot\Psr7\modifyUri($url, ['query' => \Poirot\Psr7\buildQuery(['u' => $u->getUid()]) ]);
         return new ResponseRedirect((string) $url);
     }
 }

@@ -47,7 +47,7 @@ abstract class aChallengeBase
 
     protected function _handleStartAction(iHttpRequest $request)
     {
-        $userUID = $this->user->getUID();
+        $userUID = $this->user->getUid();
 
         # Check that user may have currently active validation code generated for this challenge!!
         if ($r = $this->repoValidationCodes->findOneHasAuthCodeMatchUserType($userUID, static::CHALLENGE_TYPE)) {
@@ -79,7 +79,7 @@ abstract class aChallengeBase
         if (false === ( $r = $this->repoValidationCodes->findOneByValidationCode($validationCode)) )
             throw new exRouteNotMatch('Validation Code Is Expired.');
 
-        if ( $r->getUserIdentifier() !== $this->user->getUID())
+        if ( $r->getUserIdentifier() !== $this->user->getUid())
             throw new \RuntimeException('Invalid Request.');
 
 

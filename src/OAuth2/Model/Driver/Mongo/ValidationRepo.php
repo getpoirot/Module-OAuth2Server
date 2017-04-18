@@ -4,6 +4,7 @@ namespace Module\OAuth2\Model\Driver\Mongo;
 use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Interfaces\Model\iValidation;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
+use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\UTCDatetime;
 
 
@@ -26,6 +27,26 @@ class ValidationRepo
     }
 
     /**
+     * Generate next unique identifier to persist
+     * data with
+     *
+     * @param null|string $id
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    function attainNextIdentifier($id = null)
+    {
+        try {
+            $objectId = ($id !== null) ? new ObjectID( (string)$id ) : new ObjectID;
+        } catch (\Exception $e) {
+            throw new \Exception(sprintf('Invalid Persist (%s) Id is Given.', $id));
+        }
+
+        return $objectId;
+    }
+
+    /**
      * Insert Validation Code
      *
      * note: each user must has one validation code persistence at time
@@ -38,7 +59,7 @@ class ValidationRepo
     function insert(iValidation $validationCode)
     {
         $e = new ValidationEntity; // use object model persist
-        $e  ->setUserIdentifier($validationCode->getUserIdentifier())
+        $e  ->setUserIdentifier( $this->attainNextIdentifier($validationCode->getUserIdentifier()) )
             ->setValidationCode($validationCode->getValidationCode())
             ->setAuthCodes($validationCode->getAuthCodes())
             ->setDateTimeExpiration($validationCode->getDateTimeExpiration())
@@ -63,7 +84,7 @@ class ValidationRepo
     function findOneByValidationCode($validationCode)
     {
         $r = $this->_query()->findOne([
-            'validation_code'       => $validationCode,
+            'validation_code'       => (string) $validationCode,
             /// there may be a delay between the time a document expires and the time
             //- that MongoDB removes the document from the database.
             /* Disabled To Avoid Using Compound Indexes
@@ -113,7 +134,7 @@ class ValidationRepo
     function findOneHasAuthCodeMatchUserType($userIdentifier, $identifierType)
     {
         $r = $this->_query()->findOne([
-            'user_identifier'       => $userIdentifier,
+            'user_identifier'       => $this->attainNextIdentifier($userIdentifier),
             'auth_codes' => [
                 '$elemMatch' => [
                     'validated' => false,
@@ -141,7 +162,7 @@ class ValidationRepo
     function deleteByValidationCode($validationCode)
     {
         $r = $this->_query()->deleteMany([
-            'validation_code' => $validationCode
+            'validation_code' => (string) $validationCode
         ]);
 
         return $r->getDeletedCount();
@@ -160,7 +181,7 @@ class ValidationRepo
     {
         $r = $this->_query()->updateMany(
             [
-                'validation_code' => $vid,
+                'validation_code' => (string) $vid,
                 'auth_codes.type' => $authType,
             ],
             [
@@ -186,7 +207,7 @@ class ValidationRepo
     {
         $r = $this->_query()->updateMany(
             [
-                'validation_code' => $validationCode,
+                'validation_code' => (string) $validationCode,
                 'auth_codes.type' => $authType,
             ],
             [

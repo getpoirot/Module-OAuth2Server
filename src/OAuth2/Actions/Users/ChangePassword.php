@@ -26,7 +26,7 @@ class ChangePassword
     function __invoke($uid = null, $newpass = null, $currpass = null)
     {
         /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->moduleServices()->get('services/repository/Users');
 
         // Current password must match
         $u = $repoUsers->findOneByUID($uid);

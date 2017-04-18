@@ -1,6 +1,8 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
+use Poirot\Http\HttpMessage\Request\Plugin;
+use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
@@ -8,8 +10,6 @@ use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
-use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
-use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Std\Exceptions\exUnexpectedValue;
 
@@ -42,7 +42,7 @@ class RegisterPage
         $request = $this->request;
 
         # Persist Registration Request:
-        if ( MethodType::_($request)->isPost() ) {
+        if ( Plugin\MethodType::_($request)->isPost() ) {
             $r = $this->_handleRegisterRequest($request);
             goto response;
         }
@@ -73,14 +73,14 @@ class RegisterPage
         if (isset($u)) {
             $r['recovery_flow'] = [
                 'user' => [
-                    'uid'      => $u->getUID(),
+                    'uid'      => $u->getUid(),
                     'fullname' => $u->getFullName(),
                     #'avatar'  => $userAvatarUrl,
                     'identifier_exists' => $existsIdentifiers['value']->value,
                 ],
                 '_link' => \Module\Foundation\Actions\IOC::url(
                     'main/oauth/members/signin_challenge'
-                    , [ 'uid' => $u->getUID() ]
+                    , [ 'uid' => $u->getUid() ]
                 ),
             ];
         }
@@ -94,7 +94,7 @@ response:
     }
 
     /**
-     * POST: Handle Register Request When
+     * POST: Handle Register Request
      *
      * @param iHttpRequest $request
      *
@@ -109,8 +109,12 @@ response:
         try
         {
             $entityUser  = new Entity\UserEntity($hydrateUser);
-            // TODO CONFIG to give users default username on registration
-            if (! $entityUser->getUsername() ) {
+
+            // check allow server to pick a username automatically if not given!!
+            $config  = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
+            $isAllow = (boolean) $config['allow_server_pick_username'];
+
+            if (! $entityUser->getUsername() && $isAllow) {
                 // Give Registered User Default Username On Registration
                 $username = $this->AttainUsername($entityUser);
                 $entityUser->setUsername($username);
@@ -122,7 +126,7 @@ response:
             # Register User:
 
             // Continue Used to OAuth Registration Follow!!!
-            $queryParams    = ParseRequestData::_($request)->parseQueryParams();
+            $queryParams    = Plugin\ParseRequestData::_($request)->parseQueryParams();
             $continue       = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
 
             list($_, $validationHash) = $this->Register()->persistUser($entityUser, $continue);
@@ -152,6 +156,10 @@ response:
                 , 'flash_exception'
             );
         }
+        catch (exRegistration $e) {
+            $flash = \Module\Foundation\Actions\IOC::flashMessage(self::FLASH_MESSAGE_ID);
+            $flash->error( $e->getMessage() );
+        }
         catch (\Exception $e) {
             \Module\Foundation\Actions\IOC::flashMessage(self::FLASH_MESSAGE_ID)
                 ->error('سرور در حال حاضر قادر به انجام درخواست شما نیست. لطفا مجدد تلاش کنید.');
@@ -159,7 +167,6 @@ response:
         }
 
 
-        // redirect to validation page
         if (!isset($r)) {
             // Redirect Refresh
             $r = (string) \Module\Foundation\Actions\IOC::url(null, null, true);

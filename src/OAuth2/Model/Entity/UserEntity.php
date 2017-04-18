@@ -33,7 +33,7 @@ class UserEntity
      *
      * @return mixed
      */
-    function getUID()
+    function getUid()
     {
         return $this->identifier;
     }
@@ -45,7 +45,7 @@ class UserEntity
      *
      * @return $this
      */
-    function setUID($identifier)
+    function setUid($identifier)
     {
         $this->identifier = $identifier;
         return $this;

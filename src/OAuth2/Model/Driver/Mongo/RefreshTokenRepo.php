@@ -33,7 +33,7 @@ class RefreshTokenRepo
     {
         $rToken = new RefreshTokenEntity;
         $rToken
-            ->setIdentifier(\Poirot\OAuth2\generateUniqueIdentifier(30))
+            ->setIdentifier(\Poirot\Std\generateUniqueIdentifier(30))
             ->setAccessTokenIdentifier($token->getAccessTokenIdentifier())
             ->setClientIdentifier($token->getClientIdentifier())
             ->setDateTimeExpiration($token->getDateTimeExpiration())

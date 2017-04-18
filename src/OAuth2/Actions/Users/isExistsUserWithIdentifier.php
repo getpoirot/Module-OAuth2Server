@@ -23,7 +23,7 @@ class isExistsUserWithIdentifier
     function __invoke(array $identifiers = null)
     {
         /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->moduleServices()->get('services/repository/Users');
 
         /** @var iUserIdentifierObject $ident */
         $return = [];

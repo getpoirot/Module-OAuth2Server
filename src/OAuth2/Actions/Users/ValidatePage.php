@@ -177,7 +177,7 @@ class ValidatePage
             $user      = $repoUsers->findOneByUID($validationCode->getUserIdentifier());
             // Identity From Credential Authenticator
             /** @see RepoUserPassCredential::doFindIdentityMatch */
-            $user      = __( new IdentityOpen() )->setUID($user->getUID());
+            $user      = __( new IdentityOpen() )->setUID($user->getUid());
 
             /** @var AuthenticatorAction $authenticator */
             $authenticator = \Module\Authorization\Actions\IOC::Authenticator();

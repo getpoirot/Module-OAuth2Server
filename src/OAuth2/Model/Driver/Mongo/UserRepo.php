@@ -1,12 +1,15 @@
 <?php
 namespace Module\OAuth2\Model\Driver\Mongo;
 
+use Module\OAuth2\Model\Entity;
+
 use Module\MongoDriver\Model\Repository\aRepository;
 
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
+use MongoDB\BSON\ObjectID;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\Std\Interfaces\Struct\iData;
 
@@ -25,7 +28,7 @@ class UserRepo
         $this->setModelPersist(new UserEntity);
     }
 
-    
+
     /**
      * Generate next unique identifier to persist
      * data with
@@ -33,10 +36,17 @@ class UserRepo
      * @param null|string $id
      *
      * @return mixed
+     * @throws \Exception
      */
     function attainNextIdentifier($id = null)
     {
-        // TODO: Implement attainNextIdentifier() method.
+        try {
+            $objectId = ($id !== null) ? new ObjectID( (string)$id ) : new ObjectID;
+        } catch (\Exception $e) {
+            throw new \Exception(sprintf('Invalid Persist (%s) Id is Given.', $id));
+        }
+
+        return $objectId;
     }
 
     /**
@@ -66,7 +76,7 @@ class UserRepo
     {
         $e = new UserEntity; // use object model persist
         $e
-            ->setUID($user->getUID())
+            ->setUid($user->getUid())
             ->setFullName($user->getFullName())
             ->setIdentifiers($user->getIdentifiers())
             ->setGrants($user->getGrants())
@@ -77,9 +87,9 @@ class UserRepo
 
         $r = $this->_query()->insertOne($e);
 
-        $u = new BaseUser; // Don`t contains specific Repo Entity Model Fields such as date specific
+        $u = new Entity\UserEntity; // Don`t contains specific Repo Entity Model Fields such as date specific
         $u
-            ->setUID($e->getUID())
+            ->setUid($e->getUid())
             ->setFullName($e->getFullName())
             ->setIdentifiers($e->getIdentifiers())
             ->setGrants($e->getGrants())
@@ -226,7 +236,7 @@ class UserRepo
     function findOneByUID($uid)
     {
         $r = $this->_query()->findOne([
-            'uid' => (string) $uid,
+            'uid' => $this->attainNextIdentifier($uid),
         ]);
 
         return $r ? $r : false;
@@ -285,7 +295,7 @@ class UserRepo
     {
         $r = $this->_query()->updateMany(
             [
-                'uid' => $uid,
+                'uid' => $this->attainNextIdentifier($uid),
                 'identifiers' => [
                     '$elemMatch' => [
                         'type'  => $identifierType,
@@ -318,7 +328,7 @@ class UserRepo
     {
         $r = $this->_query()->updateMany(
             [
-                'uid' => $uid,
+                'uid' => $this->attainNextIdentifier($uid),
             ],
             [
                 '$pull' => [
@@ -331,7 +341,7 @@ class UserRepo
 
         $r = $this->_query()->updateMany(
             [
-                'uid' => $uid,
+                'uid' => $this->attainNextIdentifier($uid),
             ],
             [
                 '$addToSet' => [
@@ -366,7 +376,7 @@ class UserRepo
 
         $r = $this->_query()->updateMany(
             [
-                'uid' => $uid,
+                'uid' => $this->attainNextIdentifier($uid),
                 'grants' => [
                     '$elemMatch' => [
                         'type'  => $grantType,
@@ -394,7 +404,7 @@ class UserRepo
     function deleteByUID($uid, $validated)
     {
         $r = $this->_query()->deleteMany([
-            'uid' => $uid
+            'uid' => $this->attainNextIdentifier($uid)
         ]);
 
         return $r->getDeletedCount();

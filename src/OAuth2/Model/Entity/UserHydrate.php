@@ -67,7 +67,7 @@ class UserHydrate
      *
      * @return mixed
      */
-    function getUID()
+    function getUid()
     {
         // Not Implemented
     }

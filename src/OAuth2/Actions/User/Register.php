@@ -4,6 +4,7 @@ namespace Module\OAuth2\Actions\User;
 use Module\Foundation\Actions\Helper\UrlAction;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
+use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iValidation;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
@@ -11,6 +12,9 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Module\OAuth2\Model\Entity\UserEntity;
 use Module\OAuth2\Model\Entity\Validation\AuthObject;
+use Poirot\Sms\Entity\SMSMessage;
+use Poirot\Sms\Interfaces\iClientOfSMS;
+use Poirot\Sms\Interfaces\iSentMessage;
 
 
 class Register
@@ -20,6 +24,8 @@ class Register
     protected $repoUsers;
     /** @var iRepoValidationCodes */
     protected $repoValidationCodes;
+    /** @var iClientOfSMS */
+    protected $sms;
 
 
     /**
@@ -27,11 +33,16 @@ class Register
      *
      * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/Users
      * @param iRepoValidationCodes $validationCodes @IoC /module/oauth2/services/repository/ValidationCodes
+     * @param iClientOfSMS         $sms             @IoC /module/smsclients/services/Sms
      */
-    function __construct(iRepoUsers $users, iRepoValidationCodes $validationCodes)
-    {
+    function __construct(
+        iRepoUsers $users
+        , iRepoValidationCodes $validationCodes
+        , iClientOfSMS $sms
+    ) {
         $this->repoUsers = $users;
         $this->repoValidationCodes = $validationCodes;
+        $this->sms = $sms;
     }
 
 
@@ -72,6 +83,10 @@ class Register
         if (!empty($identifiers))
             throw new exIdentifierExists($identifiers);
 
+
+        if (! $entity->getUid() )
+            // User must have identifier when validation code generated
+            $entity->setUid( $repoUsers->attainNextIdentifier() );
 
         // TODO implement commit/rollback; maybe momento/aggregate design pattern or something is useful here
 
@@ -177,6 +192,7 @@ class Register
     protected function _sendMobileValidation(iValidation $validationCode, AuthObject $authCode)
     {
         if ( $lastTimeStampSent = $authCode->getTimestampSent() ) {
+            // TODO configurable time interval
             $expiry = $this->__getTimeExpiryInterval( $lastTimeStampSent, new \DateInterval('PT2M') );
 
             # Check last sent datetime to avoid attacks
@@ -189,15 +205,21 @@ class Register
         /*
          * [ "+98", "9355497674" ]
          */
-        $mobileNo = $authCode->getValue();
-        $this->__postData('/sms', array(
-            'to'   => '0'.$mobileNo[1],
-            'body' => sprintf(
-                'کد فعال سازی شما %s'
-                , $authCode->getCode()
-            )
-        ));
+        $mobileNo    = (string) $authCode->getValue();
+        $messageBody = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
+        $messageBody = $messageBody['mediums']['mobile']['message_verification'];
 
+        $sentMessage = $this->sms->sendTo(
+            [ (string) $mobileNo ]
+            , new SMSMessage( sprintf($messageBody, $authCode->getCode()) )
+        );
+
+        $sentMessage = current($sentMessage);
+
+        if ($sentMessage->getStatus() === iSentMessage::STATUS_BANNED)
+            throw new exRegistration(
+                'سیستم قادر به ارسال پیامک فعال سازی نیست، دریافت سرویس های پیامکی توسط شما لغو شده است.'
+            );
 
         # Update Last Sent Validation Code Datetime
         $this->repoValidationCodes->updateAuthTimestampSent(
@@ -239,6 +261,9 @@ class Register
             'email' => $authCode->getCode()
         )));
 
+
+        // TODO send verification email
+        /*
         $this->__postData('/email', array(
             'subject' => '.....',
             'to'   => $authCode->getValue(),
@@ -248,6 +273,7 @@ class Register
                 , $this->withModule('foundation')->path('$serverUrl').$urlString
             )
         ));
+        */
 
 
         # Update Last Sent Validation Code Datetime

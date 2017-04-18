@@ -28,7 +28,7 @@ class IdentityFulfillmentLazy
      * @param string $uid
      * @return $this
      */
-    function setUID($uid)
+    function setUid($uid)
     {
         $this->uid = $uid;
         return $this;
@@ -41,7 +41,7 @@ class IdentityFulfillmentLazy
      *
      * @return mixed
      */
-    function getUID()
+    function getUid()
     {
         return $this->uid;
     }

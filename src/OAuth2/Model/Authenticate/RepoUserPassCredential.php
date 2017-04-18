@@ -41,7 +41,7 @@ class RepoUserPassCredential
 
         if ($user) {
             $identity = new IdentityOpen;
-            $identity->setUID($user->getUID());
+            $identity->setUID($user->getUid());
         }
 
         return $identity;

@@ -24,8 +24,39 @@ return [
                     => OAuth2\Services\Grant\ServiceExtensionValidation::class
             ],
         ],
+
+        # extra config
+        // Server Automatically Choose a Username For Registered User If Not Sent
+        'allow_server_pick_username' => true,
+
+        'mediums' => [
+            'mobile' => [
+                // Path to Template file or String
+                'message_verification' => 'کد فعال سازی شما %s',
+            ],
+            'email' => [
+                // Path to Template file or String
+                'message_verification' => '',
+            ],
+        ],
     ],
 
+
+    # SmsClients:
+
+    \Module\SmsClients\Module::CONF_KEY => [
+        \Module\SmsClients\Services\ServiceSmsClient::CONF_CLIENT => [
+            'service' => new \Poirot\Ioc\instance(
+                \Poirot\Sms\Driver\KavehNegar\Sms::class
+                , [
+                    'api_key'  => '752B6370356635416C4F31503074446E7051336868413D3D',
+                    'platform' => new \Poirot\Ioc\instance(
+                        \Poirot\Sms\Driver\KavehNegar\Rest\PlatformRest::class
+                    )
+                ]
+            ),
+        ],
+    ],
 
     # Authorization:
 

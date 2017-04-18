@@ -76,7 +76,7 @@ abstract class aChallenge
         $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)->hasAuthenticated();
         if (false !== $identifier) {
             // Some user is logged in
-            if ( $identifier->withIdentity()->getUID() == $user->getUID() ) {
+            if ( $identifier->withIdentity()->getUID() == $user->getUid() ) {
                 // The Same User is found
                 $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
                 return new ResponseRedirect($continue);

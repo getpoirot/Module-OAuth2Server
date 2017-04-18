@@ -23,7 +23,7 @@ class LogoutPage extends aAction
         $query = ParseRequestData::_($request)->parseQueryParams();
         if (isset($query['client_id']) && isset($query['redirect_uri'])) {
             /** @var Clients $clientModel */
-            $clientModel = $this->IoC()->get('services/repository/Clients');
+            $clientModel = $this->moduleServices()->get('services/repository/Clients');
 
             $clientId    = $query['client_id'];
             $redirectUri = rtrim($query['redirect_uri'], '/');

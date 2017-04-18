@@ -28,7 +28,7 @@ class ValidationEntity
      */
     function setUserIdentifier($identifier)
     {
-        $this->userIdentifier = (string) $identifier;
+        $this->userIdentifier = $identifier;
         return $this;
     }
 
@@ -62,11 +62,6 @@ class ValidationEntity
      */
     function getValidationCode()
     {
-        if (!$this->validationCode) {
-            $validationCode = md5(uniqid());
-            $this->setValidationCode($validationCode);
-        }
-
         return $this->validationCode;
     }
 

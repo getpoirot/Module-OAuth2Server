@@ -19,6 +19,7 @@ use Poirot\Router\BuildRouterStack;
 use Poirot\Router\Interfaces\iRouterStack;
 
 use Poirot\Std\Interfaces\Struct\iDataEntity;
+use Poirot\View\Interfaces\iViewRenderer;
 
 
 class Module implements iSapiModule
@@ -73,6 +74,10 @@ class Module implements iSapiModule
         if (!$moduleManager->hasLoaded('Authorization'))
             // Authorization Module Is Required.
             $moduleManager->loadModule('Authorization');
+
+        if (!$moduleManager->hasLoaded('SmsClients'))
+            // SMS Client Module Is Required.
+            $moduleManager->loadModule('SmsClients');
 
     }
 

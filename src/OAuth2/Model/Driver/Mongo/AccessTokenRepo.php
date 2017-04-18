@@ -32,7 +32,7 @@ class AccessTokenRepo
     {
         $accToken = new AccessTokenEntity;
         $accToken
-            ->setIdentifier(\Poirot\OAuth2\generateUniqueIdentifier(20))
+            ->setIdentifier(\Poirot\Std\generateUniqueIdentifier(20))
             ->setClientIdentifier($token->getClientIdentifier())
             ->setDateTimeExpiration($token->getDateTimeExpiration())
             ->setScopes($token->getScopes())

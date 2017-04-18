@@ -57,7 +57,7 @@ class ApprovedClientRepo
     {
         $r = $this->_query()->findOneAndUpdate(
             [
-                'user_identifier' => $user->getUID(),
+                'user_identifier' => $user->getUid(),
             ]
             , [
                 '$addToSet' => [
@@ -94,7 +94,7 @@ class ApprovedClientRepo
      */
     function isUserApprovedClient(iOAuthUser $user, iOAuthClient $client)
     {
-        $userIdentifier   = $user->getUID();
+        $userIdentifier   = $user->getUid();
         $clientIdentifier = $client->getIdentifier();
         
         $r = $this->_query()->findOne([

@@ -20,7 +20,7 @@ class GetUserInfo extends aAction
     function __invoke($uid = null, $checkIsValidID = null)
     {
         /** @var Users $repoUsers */
-        $repoUsers = $this->IoC()->get('services/repository/Users');
+        $repoUsers = $this->moduleServices()->get('services/repository/Users');
         /** @var iOAuthUser $u */
         if ( ($uid == null) || !($u = $repoUsers->findOneByUID($uid)) )
             throw new exRouteNotMatch('User not Found.');

@@ -72,7 +72,7 @@ class WhoisRequest
         }
 
         return array(
-            'uid' => $u->getUID(),
+            'uid' => $u->getUid(),
             'profile' => [
                 'fullname' => $u->getFullName(),
                 'username' => $u->getUsername(),
