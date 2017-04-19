@@ -1,17 +1,18 @@
 <?php
-namespace Module\OAuth2\Actions\Users;
+namespace Module\OAuth2\Actions\Recover;
 
 use Module\Foundation\Actions\Helper\UrlAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
-use Module\OAuth2\Actions\Users\SigninChallenge\aChallenge;
-use Module\OAuth2\Actions\Users\SigninChallenge\ChallengeEmail;
-use Module\OAuth2\Actions\Users\SigninChallenge\ChallengeFine;
-use Module\OAuth2\Actions\Users\SigninChallenge\ChallengeMobile;
+use Module\OAuth2\Actions\Recover\SigninChallenge\aChallenge;
+use Module\OAuth2\Actions\Recover\SigninChallenge\ChallengeEmail;
+use Module\OAuth2\Actions\Recover\SigninChallenge\ChallengeFine;
+use Module\OAuth2\Actions\Recover\SigninChallenge\ChallengeMobile;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
-use Module\OAuth2\Model\UserIdentifierObject;
+use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Application\Exception\exRouteNotMatch;
+use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Ioc\instance;
 use Poirot\View\Interfaces\iViewModelPermutation;
@@ -31,27 +32,31 @@ class SigninChallengePage
 
     /**
      * Constructor.
-     * @param iRepoUsers            $users     @IoC /module/oauth2/services/repository/
+     *
+     * @param iRepoUsers            $users     @IoC /module/oauth2/services/repository/Users
      * @param iViewModelPermutation $viewModel @IoC /
+     * @param iHttpRequest          $request   @IoC /
      */
-    function __construct(iRepoUsers $users, iViewModelPermutation $viewModel)
+    function __construct(iRepoUsers $users, iViewModelPermutation $viewModel, iHttpRequest $request)
     {
+        parent::__construct($request);
+
         $this->repoUsers = $users;
         $this->viewModel = $viewModel;
     }
 
+
     /**
      * @param string       $uid        User UID
-     * @param string       $identifier Identifier type; exp. "email"
-     * @param iHttpRequest $request
+     * @param string       $identifier Identifier medium type; exp. "email"
      *
-     * @return ResponseRedirect|iViewModelPermutation
+     * @return ResponseRedirect[]|iViewModelPermutation[]
      */
-    function __invoke($uid = null, $identifier = null, iHttpRequest $request = null)
+    function __invoke($uid = null, $identifier = null)
     {
         /** @var iOAuthUser $user */
         $user = $this->repoUsers->findOneByUID($uid);
-        if (!$user)
+        if (! $user )
             throw new exRouteNotMatch;
 
 
@@ -61,13 +66,17 @@ class SigninChallengePage
 
 
         # Issue Challenge
+        /** @var aChallenge $challenge */
         $challenge = $this->_newChallenge($identifier, $user);
-        if (!$challenge)
+        if (! $challenge )
             // Given Challenge is not valid pick another!
             return $this->_pickAChallengeForUser($user);
 
 
-        return call_user_func($challenge, $user, $request);
+        // Run challenge
+        return [
+            ListenerDispatch::RESULT_DISPATCH => call_user_func($challenge, $user, $this->request)
+        ];
     }
 
 
@@ -78,7 +87,7 @@ class SigninChallengePage
      *
      * @param iOAuthUser $user
      *
-     * @return ResponseRedirect
+     * @return array
      */
     protected function _pickAChallengeForUser($user)
     {
@@ -86,9 +95,9 @@ class SigninChallengePage
 
         $challengeType = 'fine';
 
-        /** @var UserIdentifierObject $idnt */
+        /** @var IdentifierObject $idnt */
         foreach ($userIdentifiers as $idnt) {
-            if ($this->_canHandleChallengeForIdentifier($idnt->getType())) {
+            if ($this->_canHandleChallengeForIdentifier( $idnt->getType() )) {
                 $challengeType = $idnt->getType();
                 break;
             }
@@ -97,12 +106,14 @@ class SigninChallengePage
 
         # build redirect uri point to challenge
         $redirect = $this->withModule('foundation')->url(
-            'main/oauth/members/signin_challenge'
+            'main/oauth/recover/signin_challenge'
             , ['uid' => $user->getUid(), 'identifier' => $challengeType]
             , true
         );
 
-        return new ResponseRedirect($redirect);
+        return [
+            ListenerDispatch::RESULT_DISPATCH => new ResponseRedirect($redirect)
+        ];
     }
 
     /**
@@ -125,11 +136,9 @@ class SigninChallengePage
                 $challenge = \Poirot\Ioc\newInitIns(new instance(ChallengeMobile::class));
                 break;
 
-            default: throw new \Exception(sprintf(
-                'Challenge (%s) is not specified.'
-                , $identifier_type
-            ));
+            default: return null;
         }
+
 
         if (!$challenge instanceof aChallenge)
             throw new \Exception(sprintf(
@@ -137,14 +146,15 @@ class SigninChallengePage
                 , $identifier_type, \Poirot\Std\flatten($challenge)
             ));
 
+
         // Generate next challenge link and inject to challenge abstract
 
         // attain next identifier and create link to challenge it!
-        /** @var UserIdentifierObject $idnt */
+        /** @var IdentifierObject $idnt */
         $nextChallengeType = 'fine';
         $userIdentifiers = $user->getIdentifiers();
         do {
-            /** @var UserIdentifierObject $currIdentifier */
+            /** @var IdentifierObject $currIdentifier */
             $currIdentifier = current($userIdentifiers);
             if ($currIdentifier->getType() === $identifier_type) {
                 // achieve self challenge try next
@@ -164,7 +174,7 @@ class SigninChallengePage
         $foundation = $this->withModule('foundation');
         $uid = $user->getUid();
         $nextUrl = $foundation->url(
-            'main/oauth/members/signin_challenge'
+            'main/oauth/recover/signin_challenge'
             , ['uid' => $uid, 'identifier' => $nextChallengeType]
             , true
         );
@@ -174,8 +184,8 @@ class SigninChallengePage
         return $challenge;
     }
 
-    protected function _canHandleChallengeForIdentifier($type)
+    protected function _canHandleChallengeForIdentifier($challengeType)
     {
-        return in_array($type, ['email', 'mobile']);
+        return in_array($challengeType, ['email', 'mobile']);
     }
 }

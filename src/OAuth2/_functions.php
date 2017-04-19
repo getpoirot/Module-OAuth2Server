@@ -5,6 +5,7 @@ namespace Module\OAuth2
     use Poirot\Http\Psr\ServerRequestBridgeInPsr;
     use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
     use Poirot\OAuth2\Resource\Validation\AuthorizeByInternalServer;
+    use Poirot\Storage\Gateway\DataStorageSession;
 
 
     const GENERATE_CODE_NUMBERS       = 2;
@@ -27,8 +28,48 @@ namespace Module\OAuth2
         $repoAccessTokens = \Module\OAuth2\Services\Repository\IOC::AccessTokens();
         $validator        = new AuthorizeByInternalServer($repoAccessTokens);
 
+        $token = $validator->parseTokenFromRequest($requestPsr);
         // pass token as collector result chain to other action
-        return $validator->hasValidated($requestPsr);
+        return $validator->assertToken($token);
+    }
+
+    // Helpers:
+
+    /**
+     * Check The Given Token, Validation Code Pair is Valid
+     * by check the session storage equality
+     *
+     * @param string $hash
+     *
+     * @return bool
+     */
+    function hasTokenBind($hash, $token = null)
+    {
+        $storage = new DataStorageSession( 'SESSION_REALM_TOKEN_BIND' );
+        $vToken  = $storage->get($hash);
+
+        if ($token !== null)
+            return $token === $vToken;
+
+        return $vToken;
+    }
+
+    /**
+     * Generate Token and store to session as bind with given
+     * validation code
+     *
+     * - it will gather in pages for valid requests assertion
+     *
+     * @param string $hash
+     *
+     * @return string
+     */
+    function generateAndRememberToken($hash)
+    {
+        $token   = \Poirot\Std\generateShuffleCode(16);
+        $storage = new DataStorageSession( 'SESSION_REALM_TOKEN_BIND' );
+        $storage->set($hash, $token);
+        return $token;
     }
 
     /**
@@ -81,5 +122,20 @@ namespace Module\OAuth2
         $return .= substr($value, -1*($chrNum));
 
         return $return;
+    }
+
+
+    /**
+     * Is Valid Mobile Number?
+     *
+     * @param string $mobileNumber
+     * @param null   $matches
+     *
+     * @return bool
+     */
+    function isValidMobileNum($mobileNumber, &$matches = null)
+    {
+        $pattern = '/^[- .\(\)]?((?P<country_code>(98)|(\+98)|(0098)|0){1}[- .\(\)]{0,3})(?P<number>((91)|(93)){1}[0-9]{8})$/';
+        return preg_match($pattern, (string) $mobileNumber, $matches);
     }
 }

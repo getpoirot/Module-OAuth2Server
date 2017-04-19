@@ -1,30 +1,31 @@
 <?php
-namespace Module\OAuth2\Actions\Users\SigninChallenge;
+namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Http\Interfaces\iHttpResponse;
 use Poirot\View\Interfaces\iViewModelPermutation;
 use Poirot\View\ViewModelTemplate;
 
 
 // TODO resend validation code as button
-class ChallengeEmail
+class ChallengeMobile
     extends aChallengeBase
 {
-    const CHALLENGE_TYPE = 'email';
-    const FLASH_MESSAGE_ID = 'ChallengeEmail';
+    const CHALLENGE_TYPE = 'mobile';
+    const FLASH_MESSAGE_ID = 'ChallengeMobile';
 
 
     /**
      * @param iHttpRequest $request
      *
-     * @return iViewModelPermutation|ViewModelTemplate
+     * @return iViewModelPermutation|ViewModelTemplate|iHttpResponse
      */
     function doInvoke(iHttpRequest $request = null)
     {
         $_request_params = ParseRequestData::_($request)->parse();
         if (isset($_request_params['a']) && $_request_params['a'] == 'start')
-            // Create Validation and Send Email Code
+            // Create Validation and Send SMS Code
             // Redirect to Input Given Code From User
             return $this->_handleStartAction($request);
 
@@ -36,10 +37,10 @@ class ChallengeEmail
         # Build View
         $v = $this->_getChallengeIdentifierObject()->getValue();
         return $this->viewModel
-            ->setTemplate('main/oauth/members/challenge/email')
+            ->setTemplate('main/oauth/recover/challenge/mobile')
             ->setVariables([
                 'url_next_challenge' => (string) $this->getNextUserChallengeUrl(),
-                'email_truncate'     => \Module\OAuth2\truncateIdentifierValue($v),
+                'mobile_truncate'     => \Module\OAuth2\truncateIdentifierValue((string) $v, null, 4),
             ])
         ;
     }

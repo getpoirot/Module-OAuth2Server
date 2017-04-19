@@ -62,7 +62,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/LoginPage',
+                    ListenerDispatch::ACTIONS => \Module\OAuth2\Actions\IOC::bareService()->LoginPage,
                 ],
             ],
             'logout' => [
@@ -72,7 +72,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/LogoutPage',
+                    ListenerDispatch::ACTIONS => \Module\OAuth2\Actions\IOC::bareService()->LogoutPage,
                 ],
             ],
 
@@ -100,10 +100,10 @@ return [
 
 
             ## Members Validation / Login Challenge ------------------------------------------------------\
-            'members' => [
+            'recover' => [
                 'route' => 'RouteSegment',
                 'options' => [
-                    'criteria'    => '/members',
+                    'criteria'    => '/recover',
                     'match_whole' => false,
                 ],
                 'routes' => [
@@ -142,7 +142,9 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/SigninRecognizePage',
+                            ListenerDispatch::ACTIONS => [
+                                \Module\OAuth2\Actions\IOC::bareService()->SigninRecognizePage,
+                            ],
                         ],
                     ],
 
@@ -153,7 +155,9 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/SigninChallengePage',
+                            ListenerDispatch::ACTIONS => [
+                                \Module\OAuth2\Actions\IOC::bareService()->SigninChallengePage,
+                            ],
                         ],
                     ],
 
@@ -164,7 +168,9 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::ACTIONS => '/module/oauth2/actions/Users/SigninNewPassPage',
+                            ListenerDispatch::ACTIONS => [
+                                \Module\OAuth2\Actions\IOC::bareService()->SigninNewPassPage,
+                            ],
                         ],
                     ],
                 ],

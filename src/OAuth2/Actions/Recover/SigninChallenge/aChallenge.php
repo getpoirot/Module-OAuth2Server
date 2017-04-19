@@ -1,10 +1,9 @@
 <?php
-namespace Module\OAuth2\Actions\Users\SigninChallenge;
+namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
-use Module\Authorization\Module\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
-use Module\OAuth2\Model\UserIdentifierObject;
+use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Http\Interfaces\iHttpResponse;
 use Poirot\View\Interfaces\iViewModelPermutation;
@@ -50,6 +49,7 @@ abstract class aChallenge
             // if so redirect to login page
             return $redirectResponse;
 
+
         return $this->doInvoke($request);
     }
 
@@ -71,12 +71,13 @@ abstract class aChallenge
      */
     protected function _assertUser($user)
     {
-        /** @var AuthenticatorAction $authorization */
-        $authorization = \IOC::GetIoC()->get('/module/authorization');
-        $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)->hasAuthenticated();
+        $authorization = \Module\Authorization\Actions\IOC::Authenticator();
+        $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)
+            ->hasAuthenticated();
+
         if (false !== $identifier) {
             // Some user is logged in
-            if ( $identifier->withIdentity()->getUID() == $user->getUid() ) {
+            if ( $identifier->withIdentity()->getUid() == $user->getUid() ) {
                 // The Same User is found
                 $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
                 return new ResponseRedirect($continue);
@@ -89,14 +90,14 @@ abstract class aChallenge
     /**
      * Get Current Challenge Identifier Object
      *
-     * @return UserIdentifierObject
+     * @return IdentifierObject
      * @throws \Exception
      */
     protected function _getChallengeIdentifierObject()
     {
         $user = $this->user;
 
-        /** @var UserIdentifierObject $idnt */
+        /** @var IdentifierObject $idnt */
         foreach ($user->getIdentifiers() as $idnt) {
             if ($idnt->getType() === static::CHALLENGE_TYPE) {
                 $find = $idnt;

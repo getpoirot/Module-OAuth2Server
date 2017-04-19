@@ -1,19 +1,16 @@
 <?php
-namespace Module\OAuth2\Actions\Users\SigninChallenge;
+namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
 use Module;
-use Module\Authorization\Module\AuthenticatorAction;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
-use Module\OAuth2\Model\Mongo\Users;
-use Module\OAuth2\Model\AuthObject;
+use Module\OAuth2\Model\Entity\Validation\AuthObject;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
-use Poirot\Storage\Gateway\DataStorageSession;
 use Poirot\View\Interfaces\iViewModelPermutation;
 
 
@@ -37,49 +34,69 @@ abstract class aChallengeBase
      */
     function __construct(iRepoValidationCodes $validationCodes, iViewModelPermutation $viewModel, iRepoUsers $users)
     {
+        parent::__construct($viewModel);
+
         $this->repoValidationCodes = $validationCodes;
         $this->repoUsers = $users;
-        parent::__construct($viewModel);
     }
 
 
     // ...
 
+    /**
+     * When User Send Start Challenge Request
+     *
+     * @param iHttpRequest $request
+     *
+     * @return ResponseRedirect
+     */
     protected function _handleStartAction(iHttpRequest $request)
     {
-        $userUID = $this->user->getUid();
+        $user = $this->user;
 
-        # Check that user may have currently active validation code generated for this challenge!!
-        if ($r = $this->repoValidationCodes->findOneHasAuthCodeMatchUserType($userUID, static::CHALLENGE_TYPE)) {
-            $validationCode = $r->getValidationCode();
-            // TODO what if continue redirect attribute has changed??
-        } else {
-            // Generate validation code
-            $_get     = ParseRequestData::_($request)->parseQueryParams();
-            $continue = isset($_get['continue']) ? $_get['continue'] : null;
+        // Generate validation code
+        $_get     = ParseRequestData::_($request)->parseQueryParams();
+        $continue = isset($_get['continue']) ? $_get['continue'] : null;
 
-            # Create Auth Codes Based On Identifier:
-            $authCodes = [
-                AuthObject::newByIdentifier( $this->_getChallengeIdentifierObject() )
-            ];
 
-            $validationCode = \Module\OAuth2\Actions\Users\IOC::validationGenerator($userUID, $authCodes, $continue);
-        }
+        # Create Auth Codes Based On Identifier:
+
+        $identifierObject = $this->_getChallengeIdentifierObject();
+        $identifierObject->setValidated(false); // ensure validation made it!!
+
+
+        $validationEntity = \Module\OAuth2\Actions\IOC::Validation()
+            ->madeValidationChallenge($user, [ $identifierObject ], $continue);
+
+
+        # Send Auth Code To Medium
+        \Module\OAuth2\Actions\IOC::Validation()
+            ->sendAuthCodeByMediumType($validationEntity, static::CHALLENGE_TYPE);
+
 
         $redirect = \Module\Foundation\Actions\IOC::url();
-        $redirect = $redirect->uri()->withQuery( http_build_query(['a'=>'confirm', 'vc'=> $validationCode ]) );
-        return new ResponseRedirect($redirect);
+        $redirect = $redirect->uri()
+            ->withQuery( http_build_query(['a'=>'confirm', 'vc'=> $validationEntity->getValidationCode() ]) );
+
+        return new ResponseRedirect((string) $redirect);
     }
 
+    /**
+     * Confirm Auth Code Sent To User For Validation
+     *
+     * @param iHttpRequest $request
+     *
+     * @return ResponseRedirect|iViewModelPermutation
+     */
     protected function _handleConfirm(iHttpRequest $request)
     {
         $_request_params = ParseRequestData::_($request)->parse();
         $validationCode  = $_request_params['vc'];
 
-        if (false === ( $r = $this->repoValidationCodes->findOneByValidationCode($validationCode)) )
+        if ( false === ( $validationEntity = $this->repoValidationCodes->findOneByValidationCode($validationCode)) )
             throw new exRouteNotMatch('Validation Code Is Expired.');
 
-        if ( $r->getUserUid() !== $this->user->getUid())
+        if ( (string) $validationEntity->getUserUid() !==  (string) $this->user->getUid())
             throw new \RuntimeException('Invalid Request.');
 
 
@@ -90,14 +107,23 @@ abstract class aChallengeBase
             $_post = ParseRequestData::_($request)->parseBody();
             if (isset($_post['confirm_code']))
             {
-                // check whether codes are equal?!!
+                \Module\OAuth2\Actions\IOC::Validation()
+                    ->validateAuthCodes(
+                        $validationEntity
+                        , [ static::CHALLENGE_TYPE => trim($_post['confirm_code']) ]
+                    );
+
+
+                // check whether auth code is validated from validation entity?
+
                 /** @var AuthObject $ac */
-                foreach ($r->getAuthCodes() as $ac) {
+                foreach ($validationEntity->getAuthCodes() as $ac)
+                {
                     if ($ac->getType() !== static::CHALLENGE_TYPE)
+                        // Try next identifier ...
                         continue;
 
-                    if ($ac->getCode() != trim($_post['confirm_code']))
-                    {
+                    if (! $ac->isValidated() ) {
                         // Invalid code provided!
                         \Module\Foundation\Actions\IOC::flashMessage(static::FLASH_MESSAGE_ID)
                             ->error('کد ارسال شده صحیح نیست.');
@@ -108,36 +134,31 @@ abstract class aChallengeBase
                     }
 
 
-                    ## update value to validated
-                    $this->repoValidationCodes->updateAuthAsValidated($validationCode, $ac->getType());
+                    // Determine that user itself has validate code on page, used to login user automatically
+                    $token = Module\OAuth2\generateAndRememberToken( $validationEntity->getValidationCode() );
+
                     $done = true;
                     break;
                 }
 
-                if (!isset($done))
+                if (! isset($done) )
                     // Given Challenge is not as same as challenge type!!
                     throw new \RuntimeException('Invalid Request.');
 
 
-                ## VALIDATE_USER_IDENTIFIER
-                ## Update User Identifier To Validated With Current Value
-                $this->repoUsers->setUserIdentifier($r->getUserUid(), $ac->getType(), $ac->getValue(), true);
-
                 ## Login User, Generate Hash Session Token, Redirect To Pick New Password
-                $this->__loginUser($r->getUserUid(), $r->getContinueFollowRedirection());
 
-                ### generate token hash session
-                $token = Module\OAuth2\Actions\Users\SigninNewPassPage::generateAndRememberToken($validationCode);
+                $this->__loginUser( $validationEntity->getUserUid() );
 
-                ### redirect to change password
+
+                ## redirect to change password
+
                 $redirect = \Module\Foundation\Actions\IOC::url(
-                    'main/oauth/members/pick_new_password'
-                    , [
-                        'validation_code' => $validationCode,
-                        'token'           => $token,
-                    ]
+                    'main/oauth/recover/pick_new_password'
+                    , [ 'validation_code' => $validationCode, 'token' => $token]
                 );
-                return new ResponseRedirect($redirect);
+
+                return new ResponseRedirect((string) $redirect);
             } // end post
         }
 
@@ -147,7 +168,7 @@ abstract class aChallengeBase
         $v = $this->_getChallengeIdentifierObject()->getValue();
         $v = (is_array($v)) ? $v[1] : $v; // maybe cell phone number ['+98', '9355497674']
         return $this->viewModel
-            ->setTemplate('main/oauth/members/challenge/'.static::CHALLENGE_TYPE.'_confirm')
+            ->setTemplate('main/oauth/recover/challenge/'.static::CHALLENGE_TYPE.'_confirm')
             ->setVariables([
                 'self' => [
                     'validation_code' => $validationCode,
@@ -157,19 +178,20 @@ abstract class aChallengeBase
         ;
     }
 
-    protected function __loginUser($userUID, $continue = null)
+    protected function __loginUser($userUID)
     {
         ## Sign-in User, Then Redirect To Login Page
-        /** @var Users $repoUsers */
+        /** @var Module\OAuth2\Model\Driver\Mongo\UserRepo $repoUsers */
         $repoUsers = $this->repoUsers;
         $user      = $repoUsers->findOneByUID($userUID);
         // Identity From Credential Authenticator
         /** @see RepoUserPassCredential::doFindIdentityMatch */
-        $user      = __( new IdentityOpen() )->setUID($userUID);
+        $user      = __( new IdentityOpen() )->setUid((string) $userUID);
 
-        /** @var AuthenticatorAction $authenticator */
-        $authenticator = \IOC::GetIoC()->get('/module/authorization');
-        $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)->authenticate($user);
+        $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
+        $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)
+            ->authenticate($user);
+
         $identifier->signIn();
     }
 }

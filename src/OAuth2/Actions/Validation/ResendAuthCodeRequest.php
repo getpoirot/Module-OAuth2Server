@@ -44,7 +44,7 @@ class ResendAuthCodeRequest
 
         # Build Response
 
-        $expiry = $this->Register()->sendAuthCodeByMediumType($validationEntity, $identifier_type);
+        $expiry = $this->Validation()->sendAuthCodeByMediumType($validationEntity, $identifier_type);
         return [
             ListenerDispatch::RESULT_DISPATCH => [
                 'resend' => $expiry

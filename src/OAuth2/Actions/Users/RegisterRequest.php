@@ -73,7 +73,7 @@ class RegisterRequest
         (!$validationCode) ?: $r += [
             '_link' => [
                 'next_validate' => (string) $this->withModule('foundation')->url(
-                    'main/oauth/members/validate'
+                    'main/oauth/recover/validate'
                     , ['validation_code' => $validationCode]
                 ),
             ],

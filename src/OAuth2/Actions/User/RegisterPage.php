@@ -79,7 +79,7 @@ class RegisterPage
                     'identifier_exists' => $existsIdentifiers['value']->value,
                 ],
                 '_link' => \Module\Foundation\Actions\IOC::url(
-                    'main/oauth/members/signin_challenge'
+                    'main/oauth/recover/signin_challenge'
                     , [ 'uid' => $u->getUid() ]
                 ),
             ];
@@ -133,7 +133,7 @@ response:
 
             // Redirect To Validation Page
             $r = $this->withModule('foundation')->url(
-                'main/oauth/members/validate'
+                'main/oauth/recover/validate'
                 , ['validation_code' => $validationHash]
             );
 

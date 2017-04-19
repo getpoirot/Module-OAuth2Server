@@ -1,21 +1,33 @@
 <?php
 namespace Module\OAuth2\Actions
 {
+
+    use Module\OAuth2\Actions\Recover\SigninChallengePage;
+    use Module\OAuth2\Actions\Recover\SigninNewPassPage;
+    use Module\OAuth2\Actions\Recover\SigninRecognizePage;
+    use Module\OAuth2\Actions\User\LoginPage;
+    use Module\OAuth2\Actions\User\LogoutPage;
     use Module\OAuth2\Actions\User\RegisterPage;
     use Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser;
     use Module\OAuth2\Actions\Validation\ValidatePage;
     use Module\OAuth2\Actions\Validation\ResendAuthCodeRequest;
+    use Module\OAuth2\Actions\Validation\Validation;
     use Module\OAuth2\Model\Entity\UserEntity;
 
 
     /**
      * @property RegisterPage                   $RegisterPage
+     * @property LoginPage                      $LoginPage
+     * @property LogoutPage                     $LogoutPage
      * @property ValidatePage                   $ValidatePage
-     * @property ResendAuthCodeRequest $ResendAuthCodeRequest
+     * @property SigninRecognizePage            $SigninRecognizePage
+     * @property SigninChallengePage            $SigninChallengePage
+     * @property SigninNewPassPage              $SigninNewPassPage
+     * @property ResendAuthCodeRequest          $ResendAuthCodeRequest
      * @property RetrieveAuthenticatedUser      $RetrieveAuthenticatedUser
      *
      * @method static UserEntity  RetrieveAuthenticatedUser()
-     * @method static mixed ValidationGenerator($uid = null, array $authCodes = null, $continue = null)
+     * @method static Validation  Validation()
      */
     class IOC extends \IOC
     { }

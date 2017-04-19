@@ -5,6 +5,7 @@ use Module\Authorization\Actions\AuthenticatorAction;
 use Module\OAuth2\Actions\Helper\AttainUsername;
 use Module\OAuth2\Actions\User\Register;
 use Module\OAuth2\Actions\Users\RegisterRequest;
+use Module\OAuth2\Actions\Validation\Validation;
 use Module\OAuth2\Events\EventHeap;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
@@ -26,19 +27,18 @@ use Psr\Http\Message\ResponseInterface;
  * @see                        AttainUsername
  * @method string              AttainUsername(iOAuthUser $user)
  * ..........................................................................................................
- * @see                          MadeUserIdentifierValidationState
- * @method ValidationEntity|null MadeUserIdentifierValidationState(iOAuthUser $user, $continue = null)
- * ..........................................................................................................
  * @see                        GenIdentifierAuthCode
  * @method string              GenIdentifierAuthCode(iUserIdentifierObject $ident = null)
  * ...........................................................................................................
  * @see                        Register
  * @method Register            Register()
  * ...........................................................................................................
+ * @see                        Validation
+ * @method Validation          Validation()
+ * ...........................................................................................................
  *
  * @method ResponseInterface   RespondToRequest(HttpRequest $request, HttpResponse $response)
  * @method iOAuthUser          RetrieveAuthenticatedUser()
- * @method RegisterRequest     RegisterRequest(iHttpRequest $request = null)
  *
  */
 abstract class aAction

@@ -7,7 +7,7 @@ use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthClient;
 
 
 class ClientEntity
-    extends \Module\OAuth2\Model\ClientEntity
+    extends \Module\OAuth2\Model\Entity\ClientEntity
     implements iOAuthClient
     , Persistable
 {

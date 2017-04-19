@@ -86,11 +86,11 @@ class ChangeIdentity
         (!$validationCode)
             ?: $r['_link'] = array(
                 'next_validate' => (string) $this->withModule('foundation')->url(
-                    'main/oauth/members/validate'
+                    'main/oauth/recover/validate'
                     , array('validation_code' => $validationCode)
                 ),
                 'next_validate_alter' => (string) $this->withModule('foundation')->url(
-                    'main/oauth/members/validate'
+                    'main/oauth/recover/validate'
                     , array('validation_code' => $validationCode)
                 ),
             );

@@ -1,19 +1,21 @@
 <?php
-namespace Module\OAuth2\Actions\Users;
+namespace Module\OAuth2\Actions\User;
 
+use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Poirot\AuthSystem\Authenticate\Credential\CredentialUserPass;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;
-use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
-use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Std\Exceptions\exUnexpectedValue;
 
 
 class LoginPage
     extends aAction
 {
     const FLASH_MESSAGE_ID = 'message.login';
+
 
     function __invoke()
     {
@@ -22,28 +24,42 @@ class LoginPage
         # Check Current User:
         if ( $this->_authenticator()->hasAuthenticated() ) {
             // User Is Logged In; Continue Redirection
-            $queryParams = ParseRequestData::_($request)->parseQueryParams();
+            $queryParams = Plugin\ParseRequestData::_($request)->parseQueryParams();
             $continue    = (isset($queryParams['continue']))
                 ? $queryParams['continue']
                 : (string) $this->withModule('foundation')->url('main/oauth/me/profile')
             ;
 
-            return new ResponseRedirect($continue);
+            return [
+                ListenerDispatch::RESULT_DISPATCH => new ResponseRedirect($continue)
+            ];
         }
 
 
         # Login Request:
-        if (MethodType::_($request)->isPost()) {
+        if ( Plugin\MethodType::_($request)->isPost() ) {
             try {
                 $this->_login($request);
-
-            } catch (exAuthentication $e) {
+            }
+            catch (exUnexpectedValue $e) {
+                $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
+                    ->error( $e->getMessage() );
+                ;
+            }
+            catch (exAuthentication $e) {
                 ## Invalid Credential !!!
-
                 $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
                     ->error('نام کاربری و یا کلمه عبور اشتباه است.');
                 ;
             }
+            catch (\Exception $e) {
+                // TODO Log Critical Error
+
+                $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
+                    ->error('سیستم در حال حاضر قادر به پاسخگویی نیست.');
+                ;
+            }
+
 
             // redirect to itself (matchedRoute)
             return new ResponseRedirect( $this->withModule('foundation')->url(null, null, true) );
@@ -57,10 +73,15 @@ class LoginPage
         );
     }
 
+    /**
+     * Handle Login Request
+     *
+     * @param iHttpRequest $request
+     */
     protected function _login(iHttpRequest $request)
     {
         # Validate Sent Data:
-        $post = ParseRequestData::_($request)->parseBody();
+        $post = Plugin\ParseRequestData::_($request)->parseBody();
         $post = $this->_assertValidData($post);
 
         $identifier = $this->_authenticator()->authenticate(
@@ -90,8 +111,11 @@ class LoginPage
     protected function _assertValidData(array $post)
     {
         # Validate Data:
+        if ( !isset($post['username']) || !isset($post['password']) )
+            throw new exUnexpectedValue('پارامتر های ورودی را کامل وارد نکرده اید.');
 
         # Sanitize Data:
+        $post['username'] = trim($post['username']);
 
         return $post;
     }

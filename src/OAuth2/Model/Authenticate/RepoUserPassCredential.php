@@ -39,9 +39,13 @@ class RepoUserPassCredential
         $identity = false;
         $user = $this->repoUsers->findOneByUserPass($username, $password);
 
+
+        // TODO check if user is banned or not activated or .... here and throw exAuthentication exception
+
         if ($user) {
             $identity = new IdentityOpen;
-            $identity->setUID($user->getUid());
+            // (string) because Mongo ObjectID can't serialized
+            $identity->setUid( (string) $user->getUid());
         }
 
         return $identity;
