@@ -1,7 +1,8 @@
 <?php
+use Module\OAuth2;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
-use Module\OAuth2;
+use Module\OAuth2Client\Actions\ServiceAssertTokenAction;
 
 return [
 
@@ -38,6 +39,26 @@ return [
                 // Path to Template file or String
                 'message_verification' => '',
             ],
+        ],
+    ],
+
+
+    ## ----------------------------------- ##
+    ## OAuth2Client Module Must Configured ##
+    ## to assert tokens ...                ##
+    ## ----------------------------------- ##
+
+    \Module\OAuth2Client\Module::CONF_KEY => [
+        ServiceAssertTokenAction::CONF_KEY => [
+            'debug_mode' => [
+                // Not Connect to OAuth Server and Used Asserted Token With OwnerObject Below
+                'enabled' => false,
+            ],
+        ],
+
+        // Service Used By AssertToken To Authorize Given Request
+        \Module\OAuth2Client\Services\ServiceAuthorizeToken::CONF_KEY => [
+            'service' => '/module/oauth2/services/AuthorizeToken',
         ],
     ],
 

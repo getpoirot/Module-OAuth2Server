@@ -108,7 +108,7 @@ class ValidationRepo
     function findOneByUserIdentifier($userIdentifier)
     {
         $r = $this->_query()->findOne([
-            'user_identifier'       => $userIdentifier,
+            'user_identifier'       => $this->attainNextIdentifier($userIdentifier),
             /// there may be a delay between the time a document expires and the time
             //- that MongoDB removes the document from the database.
             /* Disabled To Avoid Using Compound Indexes
@@ -128,18 +128,23 @@ class ValidationRepo
      *
      * @param string $userIdentifier
      * @param string $identifierType
+     * @param null   $value
      *
      * @return false|iValidation
      */
-    function findOneHasAuthCodeMatchUserType($userIdentifier, $identifierType)
+    function findOneHasAuthCodeValidation($userIdentifier, $identifierType, $value = null)
     {
+        if ($value instanceof \Traversable)
+            $value = \Poirot\Std\cast($value)->toArray();
+
+
         $r = $this->_query()->findOne([
             'user_identifier'       => $this->attainNextIdentifier($userIdentifier),
             'auth_codes' => [
                 '$elemMatch' => [
                     'validated' => false,
                     'type'      => $identifierType,
-                ]
+                ] + ( ($value !== null) ? $value : [])
             ]
             /// there may be a delay between the time a document expires and the time
             //- that MongoDB removes the document from the database.

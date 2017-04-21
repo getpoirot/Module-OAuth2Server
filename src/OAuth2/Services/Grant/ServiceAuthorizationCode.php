@@ -22,6 +22,7 @@ class ServiceAuthorizationCode
             ->setTtlAccessToken(new \DateInterval('PT1H'))
 
             ->setRepoUser( \Module\OAuth2\Services\Repository\IOC::Users() )
+            ->setRepoClient( \Module\OAuth2\Services\Repository\IOC::Clients() )
             ->setRepoAuthCode( \Module\OAuth2\Services\Repository\IOC::AuthCodes() )
             ->setRepoRefreshToken( \Module\OAuth2\Services\Repository\IOC::RefreshTokens() )
             ->setRepoAccessToken( \Module\OAuth2\Services\Repository\IOC::AccessTokens() )

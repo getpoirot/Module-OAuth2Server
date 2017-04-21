@@ -17,7 +17,14 @@ use Poirot\Ioc\Container\BuildContainer;
 return [
     'services' => [
         // Default Authenticator Used By Authorize Module as Authenticators Registered Service
-        BuildServices::AUTHENTICATOR => Services\ServiceAuthenticatorDefault::class
+        BuildServices::AUTHENTICATOR => Services\ServiceAuthenticatorDefault::class,
+
+        // Authorize Token By OAuthClient Token Assertion
+        'AuthorizeToken' => Services\ServiceAuthorizeToken::class,
+
+        // Available Grants Types Used By Grant Responder
+        // defined in BuildServices by default
+        #'ContainerGrants' => Services\ServiceGrantsContainer::class,
     ],
     'nested' => [
         'repository' => [

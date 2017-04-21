@@ -76,7 +76,7 @@ class UserEntity
                     $preIdents[] = IdentifierObject::newIdentifierByType(
                         $identifier['type']
                         , $identifier['value']
-                        , $identifier['validated']
+                        , isset($identifier['validated']) ? $identifier['validated'] : null
                     );
                 }
             }

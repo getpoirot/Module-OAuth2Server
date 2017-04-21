@@ -48,10 +48,11 @@ interface iRepoValidationCodes
      *
      * @param string $userIdentifier
      * @param string $identifierType
+     * @param null   $value
      *
      * @return false|iValidation
      */
-    function findOneHasAuthCodeMatchUserType($userIdentifier, $identifierType);
+    function findOneHasAuthCodeValidation($userIdentifier, $identifierType, $value = null);
 
     /**
      * Delete Entity By Identifier

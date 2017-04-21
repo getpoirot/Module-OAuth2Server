@@ -18,42 +18,23 @@ return [
         'SigninChallengePage'   => \Module\OAuth2\Actions\Recover\SigninChallengePage::class,
         'SigninNewPassPage'     => \Module\OAuth2\Actions\Recover\SigninNewPassPage::class,
 
-        'GenIdentifierAuthCode'             => \Module\OAuth2\Actions\Validation\GenIdentifierAuthCode::class,
+
+        'AuthorizePage'             => \Module\OAuth2\Actions\AuthorizePage::class,
+        'RespondToTokenRequest'     => \Module\OAuth2\Actions\RespondToTokenRequest::class,
+
+        'GrantResponder'            => \Module\OAuth2\Actions\GrantResponder::class,
+        'RetrieveAuthenticatedUser' => \Module\OAuth2\Actions\User\RetrieveAuthenticatedUser::class,
+        'AttainUsername'            => \Module\OAuth2\Actions\Helper\AttainUsername::class,
+        'GenIdentifierAuthCode'     => \Module\OAuth2\Actions\Validation\GenIdentifierAuthCode::class,
 
 
-        'AttainUsername'        => \Module\OAuth2\Actions\Helper\AttainUsername::class,
+        'RegisterRequest'          => \Module\OAuth2\Actions\Api\RegisterRequest::class,
+        'GetUserInfoRequest'       => \Module\OAuth2\Actions\Api\GetUserInfoRequest::class,
+        'ChangePasswordRequest'    => \Module\OAuth2\Actions\Api\ChangePasswordRequest::class,
+        'ChangeIdentityRequest'    => \Module\OAuth2\Actions\Api\ChangeIdentityRequest::class,
+        'ConfirmValidationRequest' => \Module\OAuth2\Actions\Api\ConfirmValidationRequest::class,
+        'WhoisRequest'             => \Module\OAuth2\Actions\Api\WhoisRequest::class,
+        'isExistsUserWithIdentifierRequest' => \Module\OAuth2\Actions\Api\isExistsUserWithIdentifierRequest::class,
 
-
-
-        \Module\OAuth2\Actions\Users\RegisterRequest::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RegisterRequest'],
-
-        \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'isExistsUserWithIdentifier'],
-
-        \Module\OAuth2\Actions\Users\WhoisRequest::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'WhoisRequest'],
-
-
-        \Module\OAuth2\Actions\Users\GetUserInfo::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'GetUserInfo'],
-
-        \Module\OAuth2\Actions\Users\ChangePassword::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ChangePassword'],
-
-        \Module\OAuth2\Actions\Users\ChangeIdentity::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'ChangeIdentity'],
-
-        \Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RetrieveAuthenticatedUser'],
-
-
-
-
-        \Module\OAuth2\Actions\Authorize::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'Authorize'],
-
-        \Module\OAuth2\Actions\RespondToRequest::class
-        => [\Poirot\Ioc\Container\BuildContainer::NAME => 'RespondToRequest'],
     ],
 ];

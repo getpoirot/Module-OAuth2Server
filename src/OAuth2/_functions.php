@@ -15,27 +15,6 @@ namespace Module\OAuth2
 
 
     /**
-     * Assert Authorization Token From Request
-     *
-     * @param iHttpRequest $request
-     *
-     * @return iEntityAccessToken
-     */
-    function assertAuthToken(iHttpRequest $request)
-    {
-        $requestPsr = new ServerRequestBridgeInPsr($request);
-
-        $repoAccessTokens = \Module\OAuth2\Services\Repository\IOC::AccessTokens();
-        $validator        = new AuthorizeByInternalServer($repoAccessTokens);
-
-        $token = $validator->parseTokenFromRequest($requestPsr);
-        // pass token as collector result chain to other action
-        return $validator->assertToken($token);
-    }
-
-    // Helpers:
-
-    /**
      * Check The Given Token, Validation Code Pair is Valid
      * by check the session storage equality
      *

@@ -1,10 +1,10 @@
 <?php
-namespace Module\OAuth2\Actions\Users;
+namespace Module\OAuth2\Actions\User;
 
-use Module\Authorization\Module\AuthenticatorAction;
 
+use Module\Authorization\Actions\AuthenticatorAction;
 use Module\OAuth2\Actions\aAction;
-use Module\OAuth2\Model\UserEntity;
+use Module\OAuth2\Model\Entity\UserEntity;
 use Module\OAuth2\Module;
 
 
@@ -26,7 +26,7 @@ class RetrieveAuthenticatedUser
         $identity = $identifier->withIdentity();
 
         $user = new UserEntity($identity);
-        if ($user->getUID() === null)
+        if ($user->getUid() === null)
             throw new \Exception(sprintf(
                 'Identifier (%s) With Identity (%s) not fulfilled OAuth Entity User on "identifier" property.'
                 , get_class($identifier), get_class($identity)

@@ -103,6 +103,7 @@ response:
     protected function _handleRegisterRequest(iHttpRequest $request)
     {
         # Create User Entity From Http Request
+        #
         $hydrateUser = new Entity\UserHydrate(
             Entity\UserHydrate::parseWith($this->request) );
 

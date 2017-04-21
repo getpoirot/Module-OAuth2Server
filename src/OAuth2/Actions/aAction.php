@@ -4,20 +4,18 @@ namespace Module\OAuth2\Actions;
 use Module\Authorization\Actions\AuthenticatorAction;
 use Module\OAuth2\Actions\Helper\AttainUsername;
 use Module\OAuth2\Actions\User\Register;
-use Module\OAuth2\Actions\Users\RegisterRequest;
 use Module\OAuth2\Actions\Validation\Validation;
 use Module\OAuth2\Events\EventHeap;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
-use Module\OAuth2\Model\Entity\ValidationEntity;
 use Module\OAuth2\Module;
 use Poirot\AuthSystem\Authenticate\Authenticator;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
 use Poirot\Events\Interfaces\iEvent;
 use Poirot\Events\Interfaces\Respec\iEventProvider;
-use Poirot\Http\HttpRequest;
-use Poirot\Http\HttpResponse;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Http\Interfaces\iHttpResponse;
+use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 use Psr\Http\Message\ResponseInterface;
 
 
@@ -36,8 +34,10 @@ use Psr\Http\Message\ResponseInterface;
  * @see                        Validation
  * @method Validation          Validation()
  * ...........................................................................................................
- *
- * @method ResponseInterface   RespondToRequest(HttpRequest $request, HttpResponse $response)
+ * @see                         GrantResponder
+ * @method GrantAggregateGrants GrantResponder()
+ * ...........................................................................................................
+ * @method ResponseInterface   RespondToRequest(iHttpRequest $request, iHttpResponse $response)
  * @method iOAuthUser          RetrieveAuthenticatedUser()
  *
  */

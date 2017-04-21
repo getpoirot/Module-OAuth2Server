@@ -75,6 +75,10 @@ class Module implements iSapiModule
             // Authorization Module Is Required.
             $moduleManager->loadModule('Authorization');
 
+        if (!$moduleManager->hasLoaded('OAuth2Client'))
+            // Load OAuth2 Client To Assert Tokens.
+            $moduleManager->loadModule('OAuth2Client');
+
         if (!$moduleManager->hasLoaded('SmsClients'))
             // SMS Client Module Is Required.
             $moduleManager->loadModule('SmsClients');

@@ -19,6 +19,7 @@ class ServiceImplicit
         $grantType
             ->setTtlAccessToken(new \DateInterval('PT1H'))
 
+            ->setRepoClient( \Module\OAuth2\Services\Repository\IOC::Clients() )
             ->setRepoAccessToken( \Module\OAuth2\Services\Repository\IOC::AccessTokens() )
 
             ->setRetrieveUserCallback(

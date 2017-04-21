@@ -174,7 +174,7 @@ class UserRepo
                 '$match' => ['identifiers' => [
                     '$elemMatch' => \Poirot\Std\cast($arg)->toArray(function($val) {
                             return $val === null; // filter null values
-                        })
+                        }, true)
                         // iEntityUserIdentifierObject()
                         /*
                         'type'      => $arg->getType(),
@@ -190,8 +190,9 @@ class UserRepo
         $cursor = $this->_query()->aggregate($match);
 
         $r = false;
-        foreach ($cursor as $r)
+        foreach ($cursor as $r) {
             break;
+        }
 
         return $r;
     }

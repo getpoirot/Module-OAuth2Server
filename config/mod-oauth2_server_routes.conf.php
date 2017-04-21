@@ -29,7 +29,7 @@ return [
                     'criteria'    => '/auth',
                 ],
                 'params'  => [
-                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/Authorize',
+                    ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/AuthorizePage' ],
                 ],
             ],
             'token' => [
@@ -38,7 +38,7 @@ return [
                     'criteria'    => '/auth/token',
                 ],
                 'params'  => [
-                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/RespondToRequest',
+                    ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/RespondToTokenRequest' ],
                 ],
             ],
 
@@ -178,179 +178,8 @@ return [
 
 
             ## API ---------------------------------------------------------------------------------------\
-            'api' => [
-                'route' => 'RouteSegment',
-                'options' => [
-                    'criteria'    => '/api/v1',
-                    'match_whole' => false,
-                ],
-                'params'  => [
-                    // This Action Run First In Chains and Assert Validate Token
-                    //! define array allow actions on matched routes chained after this action
-                    /*
-                     * [
-                     *    [0] => Callable Defined HERE
-                     *    [1] => routes defined callable
-                     *     ...
-                     */
-                    ListenerDispatch::ACTIONS => [
-                        function ($request = null) {
-                            $token = \Module\OAuth2\assertAuthToken($request);
-                            return ['token' => $token];
-                        }
-                    ],
-                ],
-                'routes' => [
-                    ## me
-                    'me' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            'criteria'    => '/me',
-                            'match_whole' => false,
-                        ],
-                        // TODO only tokens that has owner identifier
-                        'routes' => [
-                            ##Profile:
-                            'profile' => [
-                                'route' => 'RouteSegment',
-                                'options' => [
-                                    'criteria'    => '/profile',
-                                    'match_whole' => true,
-                                ],
-                                'params'  => [
-                                    ListenerDispatch::ACTIONS => [
-                                        \Module\OAuth2\Actions\Users\GetUserInfo::functorParseUidFromToken(),
-                                        function() { return ['checkIsValidID' => true];}, //
-                                        '/module/oauth2/actions/users/GetUserInfo'
-                                    ],
-                                ],
-                            ],
-                            ## Identifiers:
-                            'grants' => [
-                                'route' => 'RouteSegment',
-                                'options' => [
-                                    'criteria'    => '/grants',
-                                    'match_whole' => false,
-                                ],
-                                'routes' => [
-                                    // Change Password:
-                                    'password' => [
-                                        'route' => 'RouteSegment',
-                                        'options' => [
-                                            'criteria'    => '/password',
-                                            'match_whole' => true,
-                                        ],
-                                        'params'  => [
-                                            ListenerDispatch::ACTIONS => [
-                                                \Module\OAuth2\Actions\Users\ChangePassword::functorGetParsedUIDFromToken(),
-                                                \Module\OAuth2\Actions\Users\ChangePassword::functorGetParsedRequestData(),
-                                                '/module/oauth2/actions/users/ChangePassword',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                            ## Identifiers:
-                            'identifiers' => [
-                                'route' => 'RouteSegment',
-                                'options' => [
-                                    'criteria'    => '/identifiers',
-                                    'match_whole' => false,
-                                ],
-                                'routes' => [
-                                    // Identifiers:
-                                    // Change Identity (email, mobile, ..):
-                                    'change' => [
-                                        'route' => 'RouteSegment',
-                                        'options' => [
-                                            'criteria'    => '/change',
-                                            'match_whole' => true,
-                                        ],
-                                        'params'  => [
-                                            ListenerDispatch::ACTIONS => [
-                                                \Module\OAuth2\Actions\Users\ChangeIdentity::functorGetParsedRequestData(),
-                                                \Module\OAuth2\Actions\Users\ChangeIdentity::functorGetParsedUIDFromToken(),
-                                                '/module/oauth2/actions/users/ChangeIdentity',
-                                            ]
-                                        ],
-                                    ],
-                                    // Confirm Identity Validation:
-                                    'confirm' => [
-                                        'route' => 'RouteSegment',
-                                        'options' => [
-                                            'criteria'    => '/change/confirm/:validation_code{\w+}',
-                                            'match_whole' => true,
-                                        ],
-                                        'params'  => [
-                                            // TODO separate Page with API func.
-                                            ListenerDispatch::ACTIONS => [
-                                                '/module/oauth2/actions/Users/ValidatePage',
-                                                // \Module\OAuth2\Actions\Users\ValidatePage::prepareApiResultClosure(),
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-
-                    ## members
-                    'members' => [
-                        'route' => 'RouteSegment',
-                        'options' => [
-                            'criteria'    => '/members',
-                            'match_whole' => false,
-                        ],
-                        'routes' => [
-                            'exists' => [
-                                'route' => 'RouteSegment',
-                                'options' => [
-                                    'criteria'    => '/exists',
-                                    'match_whole' => true,
-                                ],
-                                'params'  => [
-                                    ListenerDispatch::ACTIONS => [
-                                        \Module\OAuth2\Actions\Users\isExistsUserWithIdentifier::functorGetParsedRequestData(),
-                                        '/module/oauth2/actions/users/isExistsUserWithIdentifier',
-                                    ],
-                                ],
-                            ],
-                            'whois' => [
-                                'route' => 'RouteSegment',
-                                'options' => [
-                                    'criteria'    => '/whois',
-                                    'match_whole' => true,
-                                ],
-                                'params'  => [
-                                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/users/WhoisRequest',
-                                ],
-                            ],
-                            'profile' => [
-                                'route' => 'RouteSegment',
-                                'options' => [
-                                    'criteria'    => '/profile/:uid{\w+}',
-                                    'match_whole' => true,
-                                ],
-                                'params'  => [
-                                    ListenerDispatch::ACTIONS => '/module/oauth2/actions/users/GetUserInfo',
-                                ],
-                            ],
-                            // Register New User Request By POST
-                            'post' => [
-                                'route'   => 'RouteMethod',
-                                'options' => [
-                                    'method' => 'POST',
-                                ],
-                                'params'  => [
-                                    ListenerDispatch::ACTIONS => [
-                                        '/module/oauth2/actions/users/RegisterRequest',
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ]
-                ],
-            ],
+            // TODO default renderer strategy for this routes
+            'api' => include __DIR__.'/routes/api-routes.php',
 
 
         ], // end oauth routes

@@ -1,11 +1,10 @@
 <?php
-namespace Module\OAuth2\Actions\Users;
+namespace Module\OAuth2\Actions\Api;
 
-use Module\OAuth2\Actions\aAction;
+use Module\OAuth2\Actions\aApiAction;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
-use Module\OAuth2\Model\UserIdentifierObject;
-use Poirot\Application\Exception\exRouteNotMatch;
+use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\HttpResponse;
@@ -13,70 +12,70 @@ use Poirot\Http\Interfaces\iHttpRequest;
 
 
 class WhoisRequest
-    extends aAction
+    extends aApiAction
 {
+    protected $tokenMustHaveOwner  = false;
+    protected $tokenMustHaveScopes = array(
+
+    );
+
     /** @var iRepoUsers */
     protected $repoUsers;
 
 
     /**
-     * Constructor.
-     * @param iRepoUsers $users @IoC /module/oauth2/services/repository/
+     * @param iRepoUsers           $users               @IoC /module/oauth2/services/repository/Users
+     * @param iHttpRequest         $request             @IoC /
      */
-    function __construct(iRepoUsers $users)
+    function __construct(iRepoUsers $users, iHttpRequest $request)
     {
         $this->repoUsers = $users;
+
+        parent::__construct($request);
     }
 
-    function __invoke(iHttpRequest $request = null)
-    {
-        if ($request === null)
-            // Method inside can be used by others
-            return $this;
 
-        return array(
-            ListenerDispatch::RESULT_DISPATCH => $this->handleRequest($request),
-        );
-    }
-
-    /**
-     * Handle Register Post Request
-     *
-     * @param iHttpRequest $request
-     *
-     * @return array|null
-     */
-    function handleRequest(iHttpRequest $request)
+    function __invoke($token = null)
     {
+        # Assert Token
+        #
+        $this->assertTokenByOwnerAndScope($token);
+
+
         # Validate Sent Data:
-        $post = ParseRequestData::_($request)->parse();
+        #
+        $post = ParseRequestData::_($this->request)->parse();
         $post = $this->_assertValidData($post);
 
+
         # Get Identifier Match
-        $identifier = new UserIdentifierObject;
-        $identifier->setType(key($post));
-        $identifier->setValue(current($post));
-
-        $repoUsers = $this->repoUsers;
-        /** @var iOAuthUser $u */
-        $u = $repoUsers->findOneMatchByIdentifiers([$identifier]);
+        #
+        $identifier = IdentifierObject::newIdentifierByType(key($post), current($post));
 
 
-        # make response data
+        /** @var iOAuthUser $userEntity */
+        $userEntity = $this->repoUsers->findOneMatchByIdentifiers([ $identifier ]);
 
-        if (!$u) {
+
+        # Build Response
+        #
+        if (!$userEntity) {
             // Indicate no Content
             $response = new HttpResponse;
             $response->setStatusCode(204);
             return $response;
         }
 
-        return array(
-            'uid' => $u->getUid(),
+        $r = array(
+            'uid' => (string) $userEntity->getUid(),
             'profile' => [
-                'fullname' => $u->getFullName(),
-                'username' => $u->getUsername(),
+                'fullname' => $userEntity->getFullName(),
+                'username' => $userEntity->getUsername(),
             ],
+        );
+
+        return array(
+            ListenerDispatch::RESULT_DISPATCH => $r,
         );
     }
 
