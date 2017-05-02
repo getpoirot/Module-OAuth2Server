@@ -20,7 +20,7 @@ return [
         BuildServices::AUTHENTICATOR => Services\ServiceAuthenticatorDefault::class,
 
         // Authorize Token By OAuthClient Token Assertion
-        'AuthorizeToken' => Services\ServiceAuthorizeToken::class,
+        'AssertToken' => Services\ServiceAssertToken::class,
 
         // Available Grants Types Used By Grant Responder
         // defined in BuildServices by default

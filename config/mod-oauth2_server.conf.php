@@ -48,17 +48,16 @@ return [
     ## to assert tokens ...                ##
     ## ----------------------------------- ##
 
-    \Module\OAuth2Client\Module::CONF_KEY => [
-        ServiceAssertTokenAction::CONF_KEY => [
+    \Module\OAuth2Client\Module::CONF => [
+        ServiceAssertTokenAction::CONF => [
             'debug_mode' => [
-                // Not Connect to OAuth Server and Used Asserted Token With OwnerObject Below
                 'enabled' => false,
             ],
-        ],
 
-        // Service Used By AssertToken To Authorize Given Request
-        \Module\OAuth2Client\Services\ServiceAuthorizeToken::CONF_KEY => [
-            'service' => '/module/oauth2/services/AuthorizeToken',
+            /** @see OAuth2\Services\ServiceAssertToken */
+            // aAssertion Instance Or Registered Service
+            // Service Used By AssertToken To Assert Given Request
+            'assertion_rig' => '/module/oauth2/services/AssertToken',
         ],
     ],
 

@@ -28,10 +28,9 @@ abstract class aApiAction
     protected function assertTokenByOwnerAndScope($token)
     {
         # Validate Access Token
-        \Module\OAuth2Client\validateGivenToken(
+        \Module\OAuth2Client\Assertion\validateAccessToken(
             $token
             , (object) ['mustHaveOwner' => $this->tokenMustHaveOwner, 'scopes' => $this->tokenMustHaveScopes ]
         );
-
     }
 }

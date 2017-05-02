@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Services;
 
 use Poirot\Ioc\Container\Service\aServiceContainer;
-use Poirot\OAuth2\Resource\Validation\AuthorizeByInternalServer;
+use Poirot\OAuth2Client\Assertion\AssertByInternalServer;
 
 
 class ServiceAuthorizeToken
@@ -14,12 +14,12 @@ class ServiceAuthorizeToken
     /**
      * Create Service
      *
-     * @return AuthorizeByInternalServer
+     * @return AssertByInternalServer
      */
     function newService()
     {
         $accessTokens  = $this->services()->get('/module/oauth2/services/repository/AccessTokens');
-        $authorizeToen = new AuthorizeByInternalServer($accessTokens);
+        $authorizeToen = new AssertByInternalServer($accessTokens);
         return $authorizeToen;
     }
 }
