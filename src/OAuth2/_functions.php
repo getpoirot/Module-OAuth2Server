@@ -1,6 +1,8 @@
 <?php
 namespace Module\OAuth2
 {
+
+    use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
     use Poirot\Http\Interfaces\iHttpRequest;
     use Poirot\Http\Psr\ServerRequestBridgeInPsr;
     use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
@@ -62,6 +64,25 @@ namespace Module\OAuth2
     function generateCode($length = 8, $contains = GENERATE_CODE_NUMBERS | GENERATE_CODE_STRINGS)
     {
         return \Poirot\Std\generateShuffleCode($length, $contains);
+    }
+
+    /**
+     * Get Specific Identifier From Identifiers List
+     *
+     * @param string                  $type
+     * @param iUserIdentifierObject[] $identifiers
+     *
+     * @return iUserIdentifierObject|null
+     * @throws \Exception
+     */
+    function getIdentifierFromList($type, $identifiers)
+    {
+        foreach ($identifiers as $identifier) {
+            if ($identifier->getType() === $type)
+                return $identifier;
+        }
+
+        return null;
     }
 
     /**

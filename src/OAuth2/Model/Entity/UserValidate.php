@@ -64,7 +64,7 @@ class UserValidate
 
 
         if ($this->must_have_email) {
-            $emailIdentifier = \Poirot\OAuth2\getIdentifierFromList(
+            $emailIdentifier = \Module\OAuth2\getIdentifierFromList(
                 IdentifierObject::IDENTITY_EMAIL
                 , $identifiers
             );

@@ -19,7 +19,6 @@ use Poirot\Router\BuildRouterStack;
 use Poirot\Router\Interfaces\iRouterStack;
 
 use Poirot\Std\Interfaces\Struct\iDataEntity;
-use Poirot\View\Interfaces\iViewRenderer;
 
 
 class Module implements iSapiModule

@@ -5,14 +5,11 @@ use Poirot\Ioc\Container\Service\aServiceContainer;
 use Poirot\OAuth2Client\Assertion\AssertByInternalServer;
 
 
-class ServiceAuthorizeToken
+class ServiceAssertToken
     extends aServiceContainer
 {
-    const CONF_KEY = 'AuthorizeToken';
-
-
     /**
-     * Create Service
+     * Assertion Token Directly Connect To DB Repo.
      *
      * @return AssertByInternalServer
      */
