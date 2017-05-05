@@ -59,20 +59,23 @@ class WhoisRequest
 
         # Build Response
         #
-        if (!$userEntity) {
+        if (! $userEntity ) {
             // Indicate no Content
             $response = new HttpResponse;
             $response->setStatusCode(204);
-            return $response;
+            $r = $response;
+
+        } else {
+
+            $r = array(
+                'uid' => (string) $userEntity->getUid(),
+                'profile' => [
+                    'fullname' => $userEntity->getFullName(),
+                    'username' => $userEntity->getUsername(),
+                ],
+            );
         }
 
-        $r = array(
-            'uid' => (string) $userEntity->getUid(),
-            'profile' => [
-                'fullname' => $userEntity->getFullName(),
-                'username' => $userEntity->getUsername(),
-            ],
-        );
 
         return array(
             ListenerDispatch::RESULT_DISPATCH => $r,
@@ -106,7 +109,7 @@ class WhoisRequest
 
         # Validate Data:
         if (count($post) > 1)
-            throw new \InvalidArgumentException('Too Many Parameters');
+            throw new \InvalidArgumentException('Too Many Parameters', 400);
 
         return $post;
     }
