@@ -65,8 +65,10 @@ class RegisterRequest
             $entityUser->setUsername($username);
         }
 
-        __( new Entity\UserValidate($entityUser, ['must_have_username' => true]) )
-            ->assertValidate();
+        __(new Entity\UserValidate($entityUser
+            , [ 'must_have_username' => true,
+                'must_have_email'    => false, ]
+        )) ->assertValidate();
 
         # Register User:
         #
