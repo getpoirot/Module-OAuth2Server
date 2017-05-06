@@ -62,34 +62,34 @@ class ChangeIdentityRequest
         /** @var iUserIdentifierObject $ident */
         if ($identifiers = $this->repoUsers->hasAnyIdentifiersRegistered($identifiersToChange)) {
             // Check weather current user is owner of this identifier?!!
-            if ($userEntity = $this->repoUsers->findOneMatchByIdentifiers($identifiers)) {
-                if ((string) $userEntity->getUid() !== (string) $token->getOwnerIdentifier() )
-                    // Identifier given to another user !!
-                    throw new exIdentifierExists($identifiers);
-                else {
-                    // Show user owner response:
-                    $r = array();
-                    $rIdentifiers = [];
-                    /** @var iUserIdentifierObject $id */
-                    foreach ($identifiersToChange as $id)
-                        $rIdentifiers[$id->getType()] = (boolean) $id->isValid();
+            $userEntity = $this->repoUsers->findOneMatchByIdentifiers($identifiers);
 
-                    $r['validated'] = $rIdentifiers;
-                    return [
-                        ListenerDispatch::RESULT_DISPATCH => $r
-                    ];
+            if ((string) $userEntity->getUid() !== (string) $token->getOwnerIdentifier() )
+                // Identifier given to another user !!
+                throw new exIdentifierExists($identifiers);
+
+
+            // Check which identifier has not to changed
+            /** @var iUserIdentifierObject $identifier */
+            foreach ($userEntity->getIdentifiers() as $identifier) {
+                /** @var iUserIdentifierObject $id */
+                foreach ($identifiersToChange as $i => $id) {
+                    if ($id->getType() == $identifier->getType())
+                        if ($id->getValue() == $identifier->getValue())
+                            unset($identifiersToChange[$i]);
                 }
             }
-
-            throw new exIdentifierExists($identifiers);
         }
 
 
         # Retrieve User Identifiers:
         #
-        /** @var iOAuthUser $userEntity */
-        if ( false === $userEntity = $this->repoUsers->findOneByUID($token->getOwnerIdentifier()) )
-            throw new \Exception('User not found.', 500);
+        if (! isset($userEntity) ) {
+            // User May Retrieved Above!! (From Existence Identifier)
+            /** @var iOAuthUser $userEntity */
+            if ( false === $userEntity = $this->repoUsers->findOneByUID($token->getOwnerIdentifier()) )
+                throw new \Exception('User not found.', 500);
+        }
 
 
         # Update User Identifiers With New Values
@@ -119,7 +119,9 @@ class ChangeIdentityRequest
 
         # Send Validation Code
         #
-        $validationCode = $this->Register()->giveUserValidationCode($userEntity);
+        $validationCode = null;
+        if (! empty($changedIdentifiers) )
+            $validationCode = $this->Register()->giveUserValidationCode($userEntity);
 
 
         # re-Set user identifiers with given value
@@ -147,7 +149,7 @@ class ChangeIdentityRequest
         $r = array();
         $r['validated'] = $rIdentifiers;
 
-        (!$validationCode)
+        (! $validationCode )
             ?: $r['_link'] = array(
                 'validate' => (string) $this->withModule('foundation')->url(
                     'main/oauth/api/me/identifiers/confirm'
@@ -193,6 +195,9 @@ class ChangeIdentityRequest
                 ));
             }
         }
+
+        if ( empty($identifiers) )
+            throw new \InvalidArgumentException('No Argument Provided', 400);
 
         return ['identifiers_changed' => $identifiers];
     }
