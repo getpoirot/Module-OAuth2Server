@@ -9,6 +9,7 @@ use Module\OAuth2\Actions\aApiAction;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Std\Exceptions\exUnexpectedValue;
 
 
 class RegisterRequest
@@ -48,27 +49,36 @@ class RegisterRequest
             throw new \Exception('Bad Request', 400);
 
 
-        # Create User Entity From Http Request
-        #
-        $hydrateUser = new Entity\UserHydrate(
-            Entity\UserHydrate::parseWith($this->request) );
+        try {
 
-        $entityUser  = new Entity\UserEntity($hydrateUser);
+            # Create User Entity From Http Request
+            #
+            $hydrateUser = new Entity\UserHydrate(
+                Entity\UserHydrate::parseWith($this->request) );
 
-        // check allow server to pick a username automatically if not given!!
-        $config  = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
-        $isAllow = (boolean) $config['allow_server_pick_username'];
+            $entityUser  = new Entity\UserEntity($hydrateUser);
 
-        if (! $entityUser->getUsername() && $isAllow) {
-            // Give Registered User Default Username On Registration
-            $username = $this->AttainUsername($entityUser);
-            $entityUser->setUsername($username);
+            // check allow server to pick a username automatically if not given!!
+            $config  = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
+            $isAllow = (boolean) $config['allow_server_pick_username'];
+
+            if (! $entityUser->getUsername() && $isAllow) {
+                // Give Registered User Default Username On Registration
+                $username = $this->AttainUsername($entityUser);
+                $entityUser->setUsername($username);
+            }
+
+            __(new Entity\UserValidate($entityUser
+                , [ 'must_have_username' => true,
+                    'must_have_email'    => false, ] // registration through 3rd parties do not restrict email
+            )) ->assertValidate();
+
+        } catch (exUnexpectedValue $e)
+        {
+            // TODO Handle Validation ...
+            throw $e;
         }
 
-        __(new Entity\UserValidate($entityUser
-            , [ 'must_have_username' => true,
-                'must_have_email'    => false, ]
-        )) ->assertValidate();
 
         # Register User:
         #
