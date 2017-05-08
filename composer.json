@@ -9,11 +9,10 @@
     , "require": {
         "poirot/skeleton": "dev-devel"
         , "poirot/oauth2": "dev-devel"
+        , "poirot/client-oauth2": "dev-devel"
         , "poirot/mod-driver_mongo": "dev-devel"
         , "poirot/mod-authorization": "dev-devel"
         , "poirot/sms-clients": "dev-devel"
-
-        , "wixel/gump": "dev-master"
     }
     , "autoload"  : {
         "psr-4": {
