@@ -50,7 +50,6 @@ class GetUserInfoRequest
         #
         $this->assertTokenByOwnerAndScope($token);
 
-
         if ($username !== null) {
             $username = trim($username);
             $userEntity = $this->repoUsers->findOneMatchByIdentifiers([
@@ -62,7 +61,10 @@ class GetUserInfoRequest
             $userEntity = $this->repoUsers->findOneByUID($userid);
         }
         else {
-            $userEntity = $this->repoUsers->findOneByUID( $token->getOwnerIdentifier() );
+            if (! $identifier = $token->getOwnerIdentifier())
+                throw new \Exception('Token Identifier is Empty!!');
+
+            $userEntity = $this->repoUsers->findOneByUID( $identifier );
         }
 
 
