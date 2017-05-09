@@ -1,7 +1,6 @@
 <?php
 namespace Module\OAuth2\Actions\Api;
 
-use Module\Foundation\Actions\Helper\UrlAction;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Model\Entity;
 use Poirot\Http\HttpMessage\Request\Plugin;
@@ -92,20 +91,31 @@ class RegisterRequest
 
         # Build Response:
         #
+        $userInfo = [];
+
+        $isValidAll = true; $validated = array();
+        foreach ($userEntity->getIdentifiers() as $identifier) {
+            // embed identifiers validity
+            $isValidAll &= $identifier->isValidated();
+            $validated[$identifier->getType()] = (boolean) $identifier->isValidated();
+
+            $userInfo[$identifier->getType()] = $identifier->getValue();
+        }
+
+        $userInfo['datetime_created']  = [
+            'datetime'  => $userEntity->getDateCreated(),
+            'timestamp' => $userEntity->getDateCreated()->getTimestamp(),
+        ];
+
         $r = [
             'user' => [
                 'uid'         => (string) $userEntity->getUid(),
                 'fullname'    => $userEntity->getFullName(),
-                'identifiers' => $userEntity->getIdentifiers(),
-                'datetime_created' => [
-                    'datetime'  => $userEntity->getDateCreated(),
-                    'timestamp' => $userEntity->getDateCreated()->getTimestamp(),
-                ],
-            ],
+            ] + $userInfo ,
         ];
 
 
-        $resendLinks = []; $validateLinks = [];
+        $resendLinks = [];
         foreach ($userEntity->getIdentifiers() as $ident)
         {
             if ($ident->isValidated())
