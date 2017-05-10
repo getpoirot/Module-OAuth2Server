@@ -7,12 +7,12 @@
         }
     ]
     , "require": {
-        "poirot/skeleton": "dev-devel"
-        , "poirot/oauth2": "dev-devel"
-        , "poirot/client-oauth2": "dev-devel"
-        , "poirot/mod-driver_mongo": "dev-devel"
-        , "poirot/mod-authorization": "dev-devel"
-        , "poirot/sms-clients": "dev-devel"
+        "poirot/skeleton": "dev-master"
+        , "poirot/oauth2": "dev-master"
+        , "poirot/client-oauth2": "dev-master"
+        , "poirot/mod-driver_mongo": "dev-master"
+        , "poirot/mod-authorization": "dev-master"
+        , "poirot/sms-clients": "dev-master"
     }
     , "autoload"  : {
         "psr-4": {
