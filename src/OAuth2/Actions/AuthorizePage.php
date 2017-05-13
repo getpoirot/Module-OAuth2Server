@@ -4,6 +4,7 @@ namespace Module\OAuth2\Actions;
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
+use Poirot\Http\HttpMessage\Response\BuildHttpResponse;
 use Poirot\Http\HttpResponse;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Http\Interfaces\iHttpResponse;
@@ -85,8 +86,9 @@ class AuthorizePage
                 $responsePsr = new ResponseBridgeInPsr($response);
                 $exception   = exOAuthServer::accessDenied($grant->newGrantResponse());
                 $responsePsr = $exception->buildResponse($responsePsr);
-                $responsePsr = \Poirot\Http\parseResponseFromPsr($responsePsr);
-                $response    = new HttpResponse($responsePsr);
+                $response    = new HttpResponse(
+                    new BuildHttpResponse( BuildHttpResponse::parseWith($responsePsr) )
+                );
                 return [
                     ListenerDispatch::RESULT_DISPATCH => $response
                 ];
@@ -113,8 +115,10 @@ class AuthorizePage
 
         // Client is resident or approved by user
         $responsePsr = $grant->respond( new ResponseBridgeInPsr($this->response) );
-        $responsePsr = \Poirot\Http\parseResponseFromPsr($responsePsr);
-        $response    = new HttpResponse($responsePsr);
+        $response    = new HttpResponse(
+            new BuildHttpResponse(BuildHttpResponse::parseWith($responsePsr))
+        );
+
         return [
             ListenerDispatch::RESULT_DISPATCH => $response
         ];

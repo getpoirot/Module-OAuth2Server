@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Actions;
 
 use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+use Poirot\Http\HttpMessage\Response\BuildHttpResponse;
 use Poirot\Http\HttpResponse;
 
 use Poirot\Http\Interfaces\iHttpRequest;
@@ -72,7 +73,10 @@ class RespondToTokenRequest
         # Build Response
 
         $responsePsr = \Poirot\Http\parseResponseFromPsr($responsePsr);
-        $response    = new HttpResponse($responsePsr);
+        $response    = new HttpResponse(
+            new BuildHttpResponse( BuildHttpResponse::parseWith($responsePsr) )
+        );
+
         return [
             ListenerDispatch::RESULT_DISPATCH => $response
         ];
