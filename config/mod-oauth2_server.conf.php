@@ -1,8 +1,11 @@
 <?php
+use Module\HttpRenderer\Services\RenderStrategy\DefaultStrategy\ListenerError;
+use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Module\OAuth2;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
 use Module\OAuth2Client\Actions\ServiceAssertTokenAction;
+use Module\Foundation\ServiceManager\ServiceViewModelResolver;
 
 return [
 
@@ -160,17 +163,16 @@ return [
 
     # View Renderer:
 
-    \Poirot\Application\Sapi\Server\Http\RenderStrategy\ListenersRenderDefaultStrategy::CONF_KEY
-    => [
-        \Poirot\Application\Sapi\Server\Http\Service\ServiceViewModelResolver::CONF_KEY => array(
-            'Poirot\Loader\LoaderNamespaceStack' => array(
-                // Use Default Theme Folder To Achieve Views
-                'main/oauth/' => __DIR__. '/../view/main/oauth',
-                'error/oauth/' => __DIR__ . '/../view/error/oauth', // Looks for Errors In This Folder
-            ),
+    ServiceViewModelResolver::CONF_KEY => array(
+        'Poirot\Loader\LoaderNamespaceStack' => array(
+            // Use Default Theme Folder To Achieve Views
+            'main/oauth/' => __DIR__. '/../view/main/oauth',
+            'error/oauth/' => __DIR__ . '/../view/error/oauth', // Looks for Errors In This Folder
         ),
-
-        \Poirot\Application\Sapi\Server\Http\RenderStrategy\DefaultStrategy\ListenerError::CONF_KEY => [
+    ),
+    
+    ListenersRenderDefaultStrategy::CONF_KEY => [
+        ListenerError::CONF_KEY => [
             // Display Authentication Exceptions Specific Template
             \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth/oauth-server',
         ],

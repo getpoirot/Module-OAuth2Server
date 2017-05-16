@@ -1,9 +1,9 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Poirot\AuthSystem\Authenticate\Credential\CredentialUserPass;
 use Poirot\AuthSystem\Authenticate\Exceptions\exAuthentication;

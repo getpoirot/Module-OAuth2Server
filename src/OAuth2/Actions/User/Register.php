@@ -1,20 +1,13 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
-use Module\Foundation\Actions\Helper\UrlAction;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
-use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
-use Module\OAuth2\Interfaces\Model\iValidation;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
-use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Module\OAuth2\Model\Entity\UserEntity;
 use Module\OAuth2\Model\Entity\Validation\AuthObject;
-use Poirot\Sms\Entity\SMSMessage;
-use Poirot\Sms\Interfaces\iClientOfSMS;
-use Poirot\Sms\Interfaces\iSentMessage;
 
 
 class Register

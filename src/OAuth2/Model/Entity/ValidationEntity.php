@@ -3,7 +3,6 @@ namespace Module\OAuth2\Model\Entity;
 
 use Module\OAuth2\Interfaces\Model\iValidation;
 use Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject;
-use Module\OAuth2\Model\Entity\Validation\AuthObject;
 use Poirot\Std\Struct\DataOptionsOpen;
 
 

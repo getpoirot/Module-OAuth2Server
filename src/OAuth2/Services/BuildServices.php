@@ -9,8 +9,6 @@ use Poirot\OAuth2\Interfaces\Server\Repository;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
 use Poirot\Ioc\Container\BuildContainer;
 
-use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
-
 
 class BuildServices
     extends BuildContainer

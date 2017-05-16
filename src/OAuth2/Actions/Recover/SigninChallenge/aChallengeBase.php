@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
 use Module;
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Entity\Validation\AuthObject;

@@ -1,15 +1,15 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity;
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Std\Exceptions\exUnexpectedValue;
 

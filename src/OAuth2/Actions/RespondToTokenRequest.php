@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions;
 
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Poirot\Http\HttpMessage\Response\BuildHttpResponse;
 use Poirot\Http\HttpResponse;
 

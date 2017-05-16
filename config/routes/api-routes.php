@@ -1,5 +1,5 @@
 <?php
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 
 return [
     'route' => 'RouteSegment',

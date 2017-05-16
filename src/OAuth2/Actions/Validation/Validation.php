@@ -3,7 +3,7 @@ namespace Module\OAuth2\Actions\Validation;
 
 use Module;
 
-use Module\Foundation\Actions\Helper\UrlAction;
+use Module\HttpFoundation\Actions\UrlAction;
 use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;

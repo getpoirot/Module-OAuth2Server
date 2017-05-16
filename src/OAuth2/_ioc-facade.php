@@ -8,7 +8,7 @@ namespace Module\OAuth2\Actions
     use Module\OAuth2\Actions\User\LoginPage;
     use Module\OAuth2\Actions\User\LogoutPage;
     use Module\OAuth2\Actions\User\RegisterPage;
-    use Module\OAuth2\Actions\Users\RetrieveAuthenticatedUser;
+    use Module\OAuth2\Actions\User\RetrieveAuthenticatedUser;
     use Module\OAuth2\Actions\Validation\ValidatePage;
     use Module\OAuth2\Actions\Validation\ResendAuthCodeRequest;
     use Module\OAuth2\Actions\Validation\Validation;

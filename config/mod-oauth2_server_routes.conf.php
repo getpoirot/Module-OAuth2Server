@@ -1,5 +1,6 @@
 <?php
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 
 return [
     /// Override Home Page Route
@@ -12,7 +13,7 @@ return [
         ),
         'params'  => array(
             ListenerDispatch::ACTIONS => function() {
-                return new \Module\Foundation\HttpSapi\Response\ResponseRedirect(
+                return new \Module\HttpRenderer\Response\ResponseRedirect(
                     \Module\Foundation\Actions\IOC::url('main/oauth/login')
                 );
             },

@@ -3,7 +3,6 @@ namespace Module\OAuth2\Model\Driver\Mongo;
 
 use Module\MongoDriver\Model\tPersistable;
 use Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject;
-use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Module\OAuth2\Model\Entity\Validation\AuthObject;
 use MongoDB\BSON\Persistable;
 use MongoDB\BSON\UTCDatetime;

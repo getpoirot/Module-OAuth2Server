@@ -1,11 +1,11 @@
 <?php
 namespace Module\OAuth2\Actions\Api;
 
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\OAuth2\Actions\aApiAction;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 

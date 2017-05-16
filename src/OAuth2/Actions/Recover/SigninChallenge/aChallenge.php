@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Http\Interfaces\iHttpRequest;

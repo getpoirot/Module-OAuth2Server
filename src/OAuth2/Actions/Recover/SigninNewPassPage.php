@@ -1,10 +1,10 @@
 <?php
 namespace Module\OAuth2\Actions\Recover;
 
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+use Module\HttpFoundation\Actions\UrlAction;
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
-use Module\Foundation\Actions\Helper\UrlAction;
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;

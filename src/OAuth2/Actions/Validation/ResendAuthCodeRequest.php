@@ -1,12 +1,12 @@
 <?php
 namespace Module\OAuth2\Actions\Validation;
 
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 
 use Poirot\Application\Exception\exRouteNotMatch;
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 

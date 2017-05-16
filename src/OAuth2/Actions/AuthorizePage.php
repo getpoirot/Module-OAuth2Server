@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions;
 
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\OAuth2\Interfaces\Server\Repository\iRepoUsersApprovedClients;
 use Poirot\Http\HttpMessage\Response\BuildHttpResponse;
@@ -12,7 +12,6 @@ use Poirot\Http\Psr\ResponseBridgeInPsr;
 use Poirot\Http\Psr\ServerRequestBridgeInPsr;
 use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthClient;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
-use Poirot\OAuth2\Server\Grant\aGrant;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
 

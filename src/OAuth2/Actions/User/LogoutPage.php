@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;

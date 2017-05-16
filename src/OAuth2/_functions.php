@@ -1,12 +1,7 @@
 <?php
 namespace Module\OAuth2
 {
-
     use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
-    use Poirot\Http\Interfaces\iHttpRequest;
-    use Poirot\Http\Psr\ServerRequestBridgeInPsr;
-    use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
-    use Poirot\OAuth2\Resource\Validation\AuthorizeByInternalServer;
     use Poirot\Storage\Gateway\DataStorageSession;
 
 

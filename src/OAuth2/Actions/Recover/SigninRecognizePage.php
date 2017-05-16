@@ -1,12 +1,12 @@
 <?php
 namespace Module\OAuth2\Actions\Recover;
 
+use Module\HttpFoundation\Actions\UrlAction;
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Module\OAuth2\Model\Entity\User\MobileObject;
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\Authorization\Actions\AuthenticatorAction;
-use Module\Foundation\Actions\Helper\UrlAction;
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;

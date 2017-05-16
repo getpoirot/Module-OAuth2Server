@@ -2,16 +2,16 @@
 namespace Module\OAuth2\Actions\Api;
 
 use Module;
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
+use Module\HttpRenderer\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
 
-use Module\Foundation\HttpSapi\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 
 use Poirot\Application\Exception\exRouteNotMatch;
-use Poirot\Application\Sapi\Server\Http\ListenerDispatch;
 use Poirot\Http\Interfaces\iHttpRequest;
 
 
