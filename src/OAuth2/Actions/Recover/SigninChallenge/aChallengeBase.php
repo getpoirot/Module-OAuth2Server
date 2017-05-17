@@ -29,7 +29,7 @@ abstract class aChallengeBase
     /**
      * Constructor.
      * @param iRepoValidationCodes  $validationCodes @IoC /module/oauth2/services/repository/
-     * @param iViewModelPermutation $viewModel       @IoC /
+     * @param iViewModelPermutation $viewModel       @IoC /ViewModel
      * @param iRepoUsers            $users           @IoC /module/oauth2/services/repository/
      */
     function __construct(iRepoValidationCodes $validationCodes, iViewModelPermutation $viewModel, iRepoUsers $users)

@@ -56,11 +56,11 @@ abstract class aAction
     /**
      * aAction constructor.
      *
-     * @param iHttpRequest $request @IoC /
+     * @param iHttpRequest $httpRequest @IoC /HttpRequest
      */
-    function __construct(iHttpRequest $request)
+    function __construct(iHttpRequest $httpRequest)
     {
-        $this->request = $request;
+        $this->request = $httpRequest;
     }
 
 

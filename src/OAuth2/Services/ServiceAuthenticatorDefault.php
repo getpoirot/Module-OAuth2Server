@@ -38,7 +38,7 @@ class ServiceAuthenticatorDefault
 
         ### Attain Login Continue If Has
         /** @var iHttpRequest $request */
-        $request  = \IOC::GetIoC()->get('/Request');
+        $request  = \IOC::GetIoC()->get('/HttpRequest');
 
         $authenticator = new Authenticator(
             __(new IdentifierWrapIdentityMap(

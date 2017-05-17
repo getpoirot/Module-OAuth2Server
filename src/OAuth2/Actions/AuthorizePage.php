@@ -30,18 +30,18 @@ class AuthorizePage
      * Authorize constructor.
      *
      * @param iRepoUsersApprovedClients $repoApprovedClients @IoC /module/oauth2/services/repository/Users.ApprovedClients
-     * @param iHttpRequest              $request             @IoC /
-     * @param iHttpResponse             $response            @IoC /
+     * @param iHttpRequest              $httpRequest         @IoC /HttpRequest
+     * @param iHttpResponse             $response            @IoC /HttpResponse
      */
     function __construct(
         iRepoUsersApprovedClients $repoApprovedClients
-        , iHttpRequest $request
+        , iHttpRequest $httpRequest
         , iHttpResponse $response
 
     ) {
         $this->repoApprovedClients = $repoApprovedClients;
 
-        $this->request  = $request;
+        $this->request  = $httpRequest;
         $this->response = $response;
     }
 

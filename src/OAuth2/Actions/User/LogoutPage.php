@@ -17,12 +17,12 @@ class LogoutPage
     /**
      * ValidatePage constructor.
      *
-     * @param iRepoClients $clientRepo   @IoC /module/oauth2/services/repository/Clients
-     * @param iHttpRequest $request      @IoC /
+     * @param iRepoClients $clientRepo  @IoC /module/oauth2/services/repository/Clients
+     * @param iHttpRequest $httpRequest @IoC /HttpRequest
      */
-    function __construct(iRepoClients $clientRepo, iHttpRequest $request)
+    function __construct(iRepoClients $clientRepo, iHttpRequest $httpRequest)
     {
-        parent::__construct($request);
+        parent::__construct($httpRequest);
 
         $this->repoClients = $clientRepo;
     }

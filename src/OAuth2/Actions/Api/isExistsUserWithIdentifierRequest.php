@@ -25,14 +25,14 @@ class isExistsUserWithIdentifierRequest
 
 
     /**
-     * @param iRepoUsers           $users               @IoC /module/oauth2/services/repository/Users
-     * @param iHttpRequest         $request             @IoC /
+     * @param iRepoUsers           $users       @IoC /module/oauth2/services/repository/Users
+     * @param iHttpRequest         $httpRequest @IoC /HttpRequest
      */
-    function __construct(iRepoUsers $users, iHttpRequest $request)
+    function __construct(iRepoUsers $users, iHttpRequest $httpRequest)
     {
         $this->repoUsers = $users;
 
-        parent::__construct($request);
+        parent::__construct($httpRequest);
     }
 
 

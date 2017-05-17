@@ -33,13 +33,13 @@ class SigninChallengePage
     /**
      * Constructor.
      *
-     * @param iRepoUsers            $users     @IoC /module/oauth2/services/repository/Users
-     * @param iViewModelPermutation $viewModel @IoC /
-     * @param iHttpRequest          $request   @IoC /
+     * @param iRepoUsers            $users       @IoC /module/oauth2/services/repository/Users
+     * @param iViewModelPermutation $viewModel   @IoC /ViewModel
+     * @param iHttpRequest          $httpRequest @IoC /HttpRequest
      */
-    function __construct(iRepoUsers $users, iViewModelPermutation $viewModel, iHttpRequest $request)
+    function __construct(iRepoUsers $users, iViewModelPermutation $viewModel, iHttpRequest $httpRequest)
     {
-        parent::__construct($request);
+        parent::__construct($httpRequest);
 
         $this->repoUsers = $users;
         $this->viewModel = $viewModel;

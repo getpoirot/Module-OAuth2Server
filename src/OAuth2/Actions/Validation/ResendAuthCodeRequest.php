@@ -23,9 +23,9 @@ class ResendAuthCodeRequest
      * ValidatePage constructor.
      *
      * @param iRepoValidationCodes $validationCodes @IoC /module/oauth2/services/repository/
-     * @param iHttpRequest         $request         @IoC /
+     * @param iHttpRequest         $httpRequest     @IoC /HttpRequest
      */
-    function __construct(iRepoValidationCodes $validationCodes, iHttpRequest $request)
+    function __construct(iRepoValidationCodes $validationCodes, iHttpRequest $httpRequest)
     {
         $this->repoValidationCodes = $validationCodes;
     }

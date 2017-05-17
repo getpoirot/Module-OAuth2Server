@@ -32,17 +32,17 @@ class ValidatePage
      *
      * @param iRepoValidationCodes $validationCodes @IoC /module/oauth2/services/repository/
      * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
-     * @param iHttpRequest         $request         @IoC /
+     * @param iHttpRequest         $httpRequest     @IoC /HttpRequest
      */
     function __construct(
         iRepoValidationCodes $validationCodes
         , iRepoUsers $users
-        , iHttpRequest $request
+        , iHttpRequest $httpRequest
     ) {
         $this->repoValidationCodes = $validationCodes;
         $this->repoUsers = $users;
 
-        parent::__construct($request);
+        parent::__construct($httpRequest);
     }
 
 

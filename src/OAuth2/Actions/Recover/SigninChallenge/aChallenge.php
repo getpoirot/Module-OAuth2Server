@@ -26,7 +26,7 @@ abstract class aChallenge
 
     /**
      * Constructor.
-     * @param iViewModelPermutation $viewModel @IoC /
+     * @param iViewModelPermutation $viewModel @IoC /ViewModel
      */
     function __construct(iViewModelPermutation $viewModel)
     {

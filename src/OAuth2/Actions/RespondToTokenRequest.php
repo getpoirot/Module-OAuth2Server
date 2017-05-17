@@ -22,14 +22,14 @@ class RespondToTokenRequest
     /**
      * RespondToTokenRequest constructor.
      *
-     * @param iHttpResponse $response @IoC /
-     * @param iHttpRequest  $request  @IoC /
+     * @param iHttpResponse $httpResponse @IoC /HttpResponse
+     * @param iHttpRequest  $httpRequest  @IoC /HttpRequest
      */
-    function __construct(iHttpResponse $response, iHttpRequest $request)
+    function __construct(iHttpResponse $httpResponse, iHttpRequest $httpRequest)
     {
-        parent::__construct($request);
+        parent::__construct($httpRequest);
 
-        $this->response = $response;
+        $this->response = $httpResponse;
     }
 
 

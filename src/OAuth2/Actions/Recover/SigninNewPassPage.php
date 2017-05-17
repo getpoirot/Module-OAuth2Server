@@ -34,16 +34,16 @@ class SigninNewPassPage
      *
      * @param iRepoValidationCodes  $validationCodes @IoC /module/oauth2/services/repository/
      * @param iRepoUsers            $users           @IoC /module/oauth2/services/repository/
-     * @param iViewModelPermutation $viewModel       @IoC /
-     * @param iHttpRequest $request @IoC /
+     * @param iViewModelPermutation $viewModel       @IoC /ViewModel
+     * @param iHttpRequest $httpRequest              @IoC /HttpRequest
      */
     function __construct(
         iRepoValidationCodes $validationCodes
         , iRepoUsers $users
         , iViewModelPermutation $viewModel
-        , iHttpRequest $request
+        , iHttpRequest $httpRequest
     ) {
-        parent::__construct($request);
+        parent::__construct($httpRequest);
 
         $this->repoValidationCodes = $validationCodes;
         $this->repoUsers = $users;
