@@ -3,7 +3,7 @@ namespace Module\OAuth2\Actions\Api;
 
 use Module;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
 
 use Module\OAuth2\Actions\aAction;

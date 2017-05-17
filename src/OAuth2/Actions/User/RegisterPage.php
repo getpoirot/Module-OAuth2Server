@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Actions\User;
 
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
@@ -51,11 +51,11 @@ class RegisterPage
         # Is Exists Account Identifier When Registering?
         # prepare recovery link
         #
-        $catchedExceptions = $this->withModule('foundation')
-            ->flashMessage(self::FLASH_MESSAGE_ID)->hasObject('flash_exception');
+        $catchedExceptions = \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
+            ->hasObject('flash_exception');
 
         if ($catchedExceptions) {
-            $existsIdentifiers = \Module\Foundation\Actions\IOC::flashMessage(self::FLASH_MESSAGE_ID)
+            $existsIdentifiers = \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
                 ->fetchObjects('flash_exception');
             /*
             [meta => NULL
@@ -78,7 +78,7 @@ class RegisterPage
                     #'avatar'  => $userAvatarUrl,
                     'identifier_exists' => $existsIdentifiers['value']->value,
                 ],
-                '_link' => \Module\Foundation\Actions\IOC::url(
+                '_link' => \Module\HttpFoundation\Module::url(
                     'main/oauth/recover/signin_challenge'
                     , [ 'uid' => $u->getUid() ]
                 ),
@@ -133,7 +133,7 @@ response:
             list($_, $validationHash) = $this->Register()->persistUser($entityUser, $continue);
 
             // Redirect To Validation Page
-            $r = $this->withModule('foundation')->url(
+            $r = \Module\HttpFoundation\Module::url(
                 'main/oauth/recover/validate'
                 , ['validation_code' => $validationHash]
             );
@@ -145,7 +145,7 @@ response:
             throw $e;
         }
         catch (exIdentifierExists $e) {
-            $flash = \Module\Foundation\Actions\IOC::flashMessage(self::FLASH_MESSAGE_ID);
+            $flash = \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID);
             $flash->error(sprintf('این مشخصه قبلا توسط کاربر دیگری ثبت شده است.'));
 
             ## tell page that exception catches here; show user account recovery follow
@@ -158,11 +158,11 @@ response:
             );
         }
         catch (exRegistration $e) {
-            $flash = \Module\Foundation\Actions\IOC::flashMessage(self::FLASH_MESSAGE_ID);
+            $flash = \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID);
             $flash->error( $e->getMessage() );
         }
         catch (\Exception $e) {
-            \Module\Foundation\Actions\IOC::flashMessage(self::FLASH_MESSAGE_ID)
+            \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
                 ->error('سرور در حال حاضر قادر به انجام درخواست شما نیست. لطفا مجدد تلاش کنید.');
             ;
         }
@@ -170,7 +170,7 @@ response:
 
         if (!isset($r)) {
             // Redirect Refresh
-            $r = (string) \Module\Foundation\Actions\IOC::url(null, null, true);
+            $r = (string) \Module\HttpFoundation\Module::url(null, null, true);
         }
 
 

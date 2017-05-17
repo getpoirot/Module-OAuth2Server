@@ -3,7 +3,7 @@ namespace Module\OAuth2\Actions\Validation;
 
 use Module;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
 
 use Module\Authorization\Actions\AuthenticatorAction;
@@ -123,7 +123,7 @@ class ValidatePage
 
         ## User must redirect to Login Page to Authenticate then Continue
         $continue = $validationCode->getContinueFollowRedirection();
-        $redirect = $this->withModule('foundation')->url('main/oauth/login');
+        $redirect = \Module\HttpFoundation\Module::url('main/oauth/login');
         (!$continue) ?: $redirect = $redirect->uri()->withQuery(sprintf('continue=%s', $continue));
 
 

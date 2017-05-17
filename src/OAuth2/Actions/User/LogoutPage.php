@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
@@ -34,7 +34,7 @@ class LogoutPage
             $this->_authenticator()->identifier()->signOut();
 
 
-        $redirectUri = $this->withModule('foundation')->url('main/home');
+        $redirectUri = \Module\HttpFoundation\Module::url('main/home');
 
 
         // Allow 3rd Party OAuth To Logout and Redirect User Directly

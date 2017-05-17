@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Http\Interfaces\iHttpRequest;
@@ -79,7 +79,7 @@ abstract class aChallenge
             // Some user is logged in
             if ( $identifier->withIdentity()->getUid() == $user->getUid() ) {
                 // The Same User is found
-                $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
+                $continue = (string) \Module\HttpFoundation\Module::url('main/oauth/login');
                 return new ResponseRedirect($continue);
             }
         }

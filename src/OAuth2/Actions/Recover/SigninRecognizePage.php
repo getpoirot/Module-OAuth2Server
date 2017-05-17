@@ -3,7 +3,7 @@ namespace Module\OAuth2\Actions\Recover;
 
 use Module\HttpFoundation\Actions\UrlAction;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Model\Entity\User\MobileObject;
 use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\Authorization\Actions\AuthenticatorAction;
@@ -73,7 +73,7 @@ class SigninRecognizePage
             // Some user is logged in
             if ( $identifier->withIdentity()->getUid() == $user->getUid() ) {
                 // The Same User is found
-                $continue = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login');
+                $continue = (string) \Module\HttpFoundation\Module::url('main/oauth/login');
                 return [
                     ListenerDispatch::RESULT_DISPATCH => new ResponseRedirect($continue)
                 ];
@@ -104,12 +104,12 @@ class SigninRecognizePage
     protected function _handleRecognizeIdentifier(iHttpRequest $request)
     {
         /** @var UrlAction $url */
-        $url = $this->withModule('foundation')->url(null, null, true);
+        $url = \Module\HttpFoundation\Module::url(null, null, true);
 
         $_post = Plugin\ParseRequestData::_($request)->parseBody();
         if (! isset($_post['identifier']) )
         {
-            $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
+            \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
                 ->error('پارامتر های مورد نیاز ارسال نشده است.');
             ;
 
@@ -136,7 +136,7 @@ class SigninRecognizePage
 
         if (false === $u = $this->repoUsers->findOneHasIdentifierWithValue($identifier))
         {
-            $this->withModule('foundation')->flashMessage(self::FLASH_MESSAGE_ID)
+            \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
                 ->error('کاربر با این مشخصه پیدا نشد.');
             ;
 

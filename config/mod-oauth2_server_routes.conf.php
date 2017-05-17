@@ -13,8 +13,8 @@ return [
         ),
         'params'  => array(
             ListenerDispatch::ACTIONS => function() {
-                return new \Module\HttpRenderer\Response\ResponseRedirect(
-                    \Module\Foundation\Actions\IOC::url('main/oauth/login')
+                return new \Module\HttpFoundation\Response\ResponseRedirect(
+                    \Module\HttpFoundation\Module::url('main/oauth/login')
                 );
             },
         ),

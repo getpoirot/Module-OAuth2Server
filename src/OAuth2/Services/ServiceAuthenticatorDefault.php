@@ -44,8 +44,8 @@ class ServiceAuthenticatorDefault
             __(new IdentifierWrapIdentityMap(
                 // TODO using cookie+session identifier to recognize user and feature to remember me!!
                 __(new IdentifierSession)->setIssuerException(function(exAuthentication $e) use ($request) {
-                    $loginUrl = (string) \Module\Foundation\Actions\IOC::url('main/oauth/login'); // ensure routes loaded
-                    $continue = \Module\Foundation\Actions\IOC::path(sprintf(
+                    $loginUrl = (string) \Module\HttpFoundation\Module::url('main/oauth/login'); // ensure routes loaded
+                    $continue = \Module\Foundation\Module::path(sprintf(
                         '$baseUrl/%s'
                         , ltrim($request->getTarget(), '/'))
                     );

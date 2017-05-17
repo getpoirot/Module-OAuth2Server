@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
 use Module;
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Entity\Validation\AuthObject;
@@ -74,7 +74,7 @@ abstract class aChallengeBase
             ->sendAuthCodeByMediumType($validationEntity, static::CHALLENGE_TYPE);
 
 
-        $redirect = \Module\Foundation\Actions\IOC::url();
+        $redirect = \Module\HttpFoundation\Module::url();
         $redirect = $redirect->uri()
             ->withQuery( http_build_query(['a'=>'confirm', 'vc'=> $validationEntity->getValidationCode() ]) );
 
@@ -125,11 +125,11 @@ abstract class aChallengeBase
 
                     if (! $ac->isValidated() ) {
                         // Invalid code provided!
-                        \Module\Foundation\Actions\IOC::flashMessage(static::FLASH_MESSAGE_ID)
+                        \Module\HttpFoundation\Module::flashMessage(static::FLASH_MESSAGE_ID)
                             ->error('کد ارسال شده صحیح نیست.');
                         ;
 
-                        $redirect = \Module\Foundation\Actions\IOC::url(null, null, true);
+                        $redirect = \Module\HttpFoundation\Module::url(null, null, true);
                         return new ResponseRedirect((string) $redirect);
                     }
 
@@ -153,7 +153,7 @@ abstract class aChallengeBase
 
                 ## redirect to change password
 
-                $redirect = \Module\Foundation\Actions\IOC::url(
+                $redirect = \Module\HttpFoundation\Module::url(
                     'main/oauth/recover/pick_new_password'
                     , [ 'validation_code' => $validationCode, 'token' => $token]
                 );

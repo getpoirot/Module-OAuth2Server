@@ -121,7 +121,7 @@ class RegisterRequest
             if ($ident->isValidated())
                 continue;
 
-            $resendLinks[$ident->getType()] = (string) $this->withModule('foundation')->url(
+            $resendLinks[$ident->getType()] = (string) \Module\HttpFoundation\Module::url(
                 'main/oauth/recover/validate_resend'
                 , array('validation_code' => $validationHash, 'identifier_type' => $ident->getType())
             );
@@ -129,11 +129,11 @@ class RegisterRequest
 
         (! $validationHash ) ?: $r += [
             '_link' => [
-                'validate' => (string) $this->withModule('foundation')->url(
+                'validate' => (string) \Module\HttpFoundation\Module::url(
                     'main/oauth/recover/validate'
                     , ['validation_code' => $validationHash]
                 ),
-                'validation_page' => (string) $this->withModule('foundation')->url(
+                'validation_page' => (string) \Module\HttpFoundation\Module::url(
                     'main/oauth/recover/validate'
                     , array('validation_code' => $validationHash)
                 ),

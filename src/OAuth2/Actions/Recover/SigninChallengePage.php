@@ -3,7 +3,7 @@ namespace Module\OAuth2\Actions\Recover;
 
 use Module\HttpFoundation\Actions\UrlAction;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
-use Module\HttpRenderer\Response\ResponseRedirect;
+use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Module\OAuth2\Actions\Recover\SigninChallenge\aChallenge;
 use Module\OAuth2\Actions\Recover\SigninChallenge\ChallengeEmail;
@@ -105,7 +105,7 @@ class SigninChallengePage
 
 
         # build redirect uri point to challenge
-        $redirect = $this->withModule('foundation')->url(
+        $redirect = \Module\HttpFoundation\Module::url(
             'main/oauth/recover/signin_challenge'
             , ['uid' => $user->getUid(), 'identifier' => $challengeType]
             , true
@@ -171,9 +171,8 @@ class SigninChallengePage
 
 
         /** @var UrlAction $nextUrl */
-        $foundation = $this->withModule('foundation');
         $uid = $user->getUid();
-        $nextUrl = $foundation->url(
+        $nextUrl = \Module\HttpFoundation\Module::url(
             'main/oauth/recover/signin_challenge'
             , ['uid' => $uid, 'identifier' => $nextChallengeType]
             , true
