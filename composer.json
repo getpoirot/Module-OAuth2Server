@@ -20,7 +20,6 @@
         }
         , "files" : [
             "src/OAuth2/_functions.php"
-            , "src/OAuth2/_ioc-facade.php"
         ]
     }
 }
