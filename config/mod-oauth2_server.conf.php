@@ -163,7 +163,7 @@ return [
 
     # View Renderer:
 
-    ServiceViewModelResolver::CONF_KEY => array(
+    ServiceViewModelResolver::CONF => array(
         'Poirot\Loader\LoaderNamespaceStack' => array(
             // Use Default Theme Folder To Achieve Views
             'main/oauth/' => __DIR__. '/../view/main/oauth',

@@ -332,7 +332,7 @@ class Validation
             'body' => sprintf(
                 '<h4><a href="%s">برای فعال سازی اینجا کلیک کنید</a></h4>'
                 // TODO base url prefixed within ->url() helper
-                , $this->withModule('foundation')->path('$serverUrl').$urlString
+                , \Module\Foundation\Module::path('$serverUrl').$urlString
             )
         ));
         */
