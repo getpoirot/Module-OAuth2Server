@@ -137,7 +137,7 @@ class ChangeIdentityRequest
             );
 
 
-            $resendLinks[$id->getType()] = (string) \Module\HttpFoundation\Module::url(
+            $resendLinks[$id->getType()] = (string) \Module\HttpFoundation\Actions::url(
                 'main/oauth/recover/validate_resend'
                 , array('validation_code' => $validationCode, 'identifier_type' => $id->getType())
             );
@@ -150,11 +150,11 @@ class ChangeIdentityRequest
 
         (! $validationCode )
             ?: $r['_link'] = array(
-                'validate' => (string) \Module\HttpFoundation\Module::url(
+                'validate' => (string) \Module\HttpFoundation\Actions::url(
                     'main/oauth/api/me/identifiers/confirm'
                     , array('validation_code' => $validationCode)
                 ),
-                'validate_page' => (string) \Module\HttpFoundation\Module::url(
+                'validate_page' => (string) \Module\HttpFoundation\Actions::url(
                     'main/oauth/recover/validate'
                     , array('validation_code' => $validationCode)
                 ),

@@ -79,7 +79,7 @@ abstract class aChallenge
             // Some user is logged in
             if ( $identifier->withIdentity()->getUid() == $user->getUid() ) {
                 // The Same User is found
-                $continue = (string) \Module\HttpFoundation\Module::url('main/oauth/login');
+                $continue = (string) \Module\HttpFoundation\Actions::url('main/oauth/login');
                 return new ResponseRedirect($continue);
             }
         }

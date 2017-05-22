@@ -314,7 +314,7 @@ class Validation
 
 
         /** @var UrlAction $validationUrl */
-        $validationUrl = \Module\HttpFoundation\Module::url(
+        $validationUrl = \Module\HttpFoundation\Actions::url(
             'main/oauth/recover/validate'
             , array('validation_code' => $validationCode->getValidationCode())
         );
@@ -331,8 +331,8 @@ class Validation
             'to'   => $authCode->getValue(),
             'body' => sprintf(
                 '<h4><a href="%s">برای فعال سازی اینجا کلیک کنید</a></h4>'
-                // TODO base url prefixed within \Module\HttpFoundation\Module::url() helper
-                , \Module\Foundation\Module::path('$serverUrl').$urlString
+                // TODO base url prefixed within \Module\HttpFoundation\Actions::url() helper
+                , \Module\Foundation\Actions::path('$serverUrl').$urlString
             )
         ));
         */

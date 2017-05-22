@@ -34,7 +34,7 @@ class LogoutPage
             $this->_authenticator()->identifier()->signOut();
 
 
-        $redirectUri = \Module\HttpFoundation\Module::url('main/home');
+        $redirectUri = \Module\HttpFoundation\Actions::url('main/home');
 
 
         // Allow 3rd Party OAuth To Logout and Redirect User Directly

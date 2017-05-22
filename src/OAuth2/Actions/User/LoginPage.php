@@ -27,7 +27,7 @@ class LoginPage
             $queryParams = Plugin\ParseRequestData::_($request)->parseQueryParams();
             $continue    = (isset($queryParams['continue']))
                 ? $queryParams['continue']
-                : (string) \Module\HttpFoundation\Module::url('main/oauth/me/profile')
+                : (string) \Module\HttpFoundation\Actions::url('main/oauth/me/profile')
             ;
 
             return [
@@ -42,27 +42,27 @@ class LoginPage
                 $this->_login($request);
             }
             catch (exUnexpectedValue $e) {
-                \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
+                \Module\HttpFoundation\Actions::flashMessage(self::FLASH_MESSAGE_ID)
                     ->error( $e->getMessage() );
                 ;
             }
             catch (exAuthentication $e) {
                 ## Invalid Credential !!!
-                \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
+                \Module\HttpFoundation\Actions::flashMessage(self::FLASH_MESSAGE_ID)
                     ->error('نام کاربری و یا کلمه عبور اشتباه است.');
                 ;
             }
             catch (\Exception $e) {
                 // TODO Log Critical Error
 
-                \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
+                \Module\HttpFoundation\Actions::flashMessage(self::FLASH_MESSAGE_ID)
                     ->error('سیستم در حال حاضر قادر به پاسخگویی نیست.');
                 ;
             }
 
 
             // redirect to itself (matchedRoute)
-            return new ResponseRedirect( (string) \Module\HttpFoundation\Module::url(null, null, true) );
+            return new ResponseRedirect( (string) \Module\HttpFoundation\Actions::url(null, null, true) );
         }
 
 

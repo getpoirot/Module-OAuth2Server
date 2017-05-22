@@ -14,7 +14,7 @@ return [
         'params'  => array(
             ListenerDispatch::ACTIONS => function() {
                 return new \Module\HttpFoundation\Response\ResponseRedirect(
-                    \Module\HttpFoundation\Module::url('main/oauth/login')
+                    \Module\HttpFoundation\Actions::url('main/oauth/login')
                 );
             },
         ),

@@ -91,11 +91,11 @@ class SigninNewPassPage
     function _handleChangePassword($request)
     {
         /** @var UrlAction $url */
-        $url = \Module\HttpFoundation\Module::url(null, null, true);
+        $url = \Module\HttpFoundation\Actions::url(null, null, true);
 
         $_post = Plugin\ParseRequestData::_($request)->parseBody();
         if (! isset($_post['newpassword']) ) {
-            \Module\HttpFoundation\Module::flashMessage(self::FLASH_MESSAGE_ID)
+            \Module\HttpFoundation\Actions::flashMessage(self::FLASH_MESSAGE_ID)
                 ->error('پارامتر های مورد نیاز ارسال نشده است.');
             ;
 
@@ -118,7 +118,7 @@ class SigninNewPassPage
         ## Continue Follow:
         $continue = ( $vc->getContinueFollowRedirection() )
             ? $vc->getContinueFollowRedirection()
-            : (string) \Module\HttpFoundation\Module::url('main/oauth/login')
+            : (string) \Module\HttpFoundation\Actions::url('main/oauth/login')
         ;
 
         ## Delete Validation Entity From Repo
@@ -138,7 +138,7 @@ class SigninNewPassPage
         ## Continue Follow:
         $continue = ($vc->getContinueFollowRedirection())
             ? $vc->getContinueFollowRedirection()
-            : (string) \Module\HttpFoundation\Module::url('main/oauth/login')
+            : (string) \Module\HttpFoundation\Actions::url('main/oauth/login')
         ;
 
         ## Delete Validation Entity From Repo

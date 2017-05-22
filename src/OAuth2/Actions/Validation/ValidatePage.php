@@ -123,7 +123,7 @@ class ValidatePage
 
         ## User must redirect to Login Page to Authenticate then Continue
         $continue = $validationCode->getContinueFollowRedirection();
-        $redirect = \Module\HttpFoundation\Module::url('main/oauth/login');
+        $redirect = \Module\HttpFoundation\Actions::url('main/oauth/login');
         (!$continue) ?: $redirect = $redirect->uri()->withQuery(sprintf('continue=%s', $continue));
 
 

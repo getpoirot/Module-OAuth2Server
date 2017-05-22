@@ -74,7 +74,7 @@ abstract class aChallengeBase
             ->sendAuthCodeByMediumType($validationEntity, static::CHALLENGE_TYPE);
 
 
-        $redirect = \Module\HttpFoundation\Module::url();
+        $redirect = \Module\HttpFoundation\Actions::url();
         $redirect = $redirect->uri()
             ->withQuery( http_build_query(['a'=>'confirm', 'vc'=> $validationEntity->getValidationCode() ]) );
 
@@ -125,11 +125,11 @@ abstract class aChallengeBase
 
                     if (! $ac->isValidated() ) {
                         // Invalid code provided!
-                        \Module\HttpFoundation\Module::flashMessage(static::FLASH_MESSAGE_ID)
+                        \Module\HttpFoundation\Actions::flashMessage(static::FLASH_MESSAGE_ID)
                             ->error('کد ارسال شده صحیح نیست.');
                         ;
 
-                        $redirect = \Module\HttpFoundation\Module::url(null, null, true);
+                        $redirect = \Module\HttpFoundation\Actions::url(null, null, true);
                         return new ResponseRedirect((string) $redirect);
                     }
 
@@ -153,7 +153,7 @@ abstract class aChallengeBase
 
                 ## redirect to change password
 
-                $redirect = \Module\HttpFoundation\Module::url(
+                $redirect = \Module\HttpFoundation\Actions::url(
                     'main/oauth/recover/pick_new_password'
                     , [ 'validation_code' => $validationCode, 'token' => $token]
                 );
