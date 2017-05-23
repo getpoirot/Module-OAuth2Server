@@ -66,7 +66,7 @@ class SigninRecognizePage
 
         /** @var AuthenticatorAction $authenticator */
         $authenticator = \Module\Authorization\Actions::Authenticator();
-        $identifier    = $authenticator->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)
+        $identifier    = $authenticator->authenticator(\Module\OAuth2\Module::REALM)
             ->hasAuthenticated();
 
         if (false !== $identifier) {

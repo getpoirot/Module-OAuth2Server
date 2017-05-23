@@ -11,12 +11,12 @@ class ServiceAuthGuard
     /**
      * Create Service
      *
-     * @return mixed
+     * @return GuardRoute
      */
     function newService()
     {
         $guard = new GuardRoute;
-        $auth  = \Module\Authorization\Actions::Authenticator( \Module\OAuth2\Module::AUTHENTICATOR );
+        $auth  = \Module\Authorization\Actions::Authenticator( \Module\OAuth2\Module::REALM );
         $guard->setAuthenticator( $auth );
         $guard->setRoutesDenied([
             'main/oauth/authorize',

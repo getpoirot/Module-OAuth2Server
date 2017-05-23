@@ -30,7 +30,7 @@ namespace Module\OAuth2
         , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
     {
         const CONF_KEY      = 'module.oauth2';
-        const AUTHENTICATOR = 'module.oauth2.default_authenticator';
+        const REALM = 'module.oauth2.default_authenticator';
 
 
         /**

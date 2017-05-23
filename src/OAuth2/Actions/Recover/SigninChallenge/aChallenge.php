@@ -72,7 +72,7 @@ abstract class aChallenge
     protected function _assertUser($user)
     {
         $authorization = \Module\Authorization\Actions::Authenticator();
-        $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)
+        $identifier    = $authorization->authenticator(\Module\OAuth2\Module::REALM)
             ->hasAuthenticated();
 
         if (false !== $identifier) {

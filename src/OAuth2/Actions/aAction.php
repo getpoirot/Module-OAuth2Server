@@ -91,7 +91,7 @@ abstract class aAction
 
         /** @var AuthenticatorAction $authenticator */
         $authenticator = $this->withModule('authorization')->Authenticator();
-        $authenticator = $authenticator->authenticator(Module::AUTHENTICATOR);
+        $authenticator = $authenticator->authenticator(Module::REALM);
         return $this->_authenticator = $authenticator;
     }
 }

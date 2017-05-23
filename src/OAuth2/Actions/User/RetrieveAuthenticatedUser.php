@@ -19,7 +19,7 @@ class RetrieveAuthenticatedUser
     {
         /** @var AuthenticatorAction $authenticator */
         $authenticator = \Module\Authorization\Actions::Authenticator();
-        if (!$identifier = $authenticator->authenticator(Module::AUTHENTICATOR)->hasAuthenticated())
+        if (!$identifier = $authenticator->authenticator(Module::REALM)->hasAuthenticated())
             return false;
 
 

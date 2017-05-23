@@ -189,7 +189,7 @@ abstract class aChallengeBase
         $user      = __( new IdentityOpen() )->setUid((string) $userUID);
 
         $authenticator = \Module\Authorization\Actions::Authenticator();
-        $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)
+        $identifier    = $authenticator->authenticator(Module\OAuth2\Module::REALM)
             ->authenticate($user);
 
         $identifier->signIn();

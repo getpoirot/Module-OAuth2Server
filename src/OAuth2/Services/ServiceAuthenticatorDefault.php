@@ -21,13 +21,13 @@ use Poirot\Ioc\Container\Service\aServiceContainer;
 class ServiceAuthenticatorDefault
     extends aServiceContainer
 {
-    protected $name = \Module\OAuth2\Module::AUTHENTICATOR;
+    protected $name = \Module\OAuth2\Module::REALM;
     
     
     /**
      * Create Service
      *
-     * @return mixed
+     * @return Authenticator
      */
     function newService()
     {
