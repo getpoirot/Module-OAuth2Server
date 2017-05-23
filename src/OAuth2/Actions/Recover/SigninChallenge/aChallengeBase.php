@@ -188,7 +188,7 @@ abstract class aChallengeBase
         /** @see RepoUserPassCredential::doFindIdentityMatch */
         $user      = __( new IdentityOpen() )->setUid((string) $userUID);
 
-        $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
+        $authenticator = \Module\Authorization\Actions::Authenticator();
         $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)
             ->authenticate($user);
 

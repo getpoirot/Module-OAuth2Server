@@ -71,7 +71,7 @@ abstract class aChallenge
      */
     protected function _assertUser($user)
     {
-        $authorization = \Module\Authorization\Actions\IOC::Authenticator();
+        $authorization = \Module\Authorization\Actions::Authenticator();
         $identifier    = $authorization->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)
             ->hasAuthenticated();
 

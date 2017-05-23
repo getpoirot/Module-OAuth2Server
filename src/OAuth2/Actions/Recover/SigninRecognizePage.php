@@ -65,7 +65,7 @@ class SigninRecognizePage
         # Check Whether Attained User Is Same As Current Logged in User?!
 
         /** @var AuthenticatorAction $authenticator */
-        $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
+        $authenticator = \Module\Authorization\Actions::Authenticator();
         $identifier    = $authenticator->authenticator(\Module\OAuth2\Module::AUTHENTICATOR)
             ->hasAuthenticated();
 

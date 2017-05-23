@@ -18,7 +18,7 @@ class RetrieveAuthenticatedUser
     function __invoke()
     {
         /** @var AuthenticatorAction $authenticator */
-        $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
+        $authenticator = \Module\Authorization\Actions::Authenticator();
         if (!$identifier = $authenticator->authenticator(Module::AUTHENTICATOR)->hasAuthenticated())
             return false;
 

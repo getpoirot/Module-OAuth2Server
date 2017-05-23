@@ -143,7 +143,7 @@ class ValidatePage
 
             // Then Login User Manually
             /** @var AuthenticatorAction $authenticator */
-            $authenticator = \Module\Authorization\Actions\IOC::Authenticator();
+            $authenticator = \Module\Authorization\Actions::Authenticator();
             $identifier    = $authenticator->authenticator(Module\OAuth2\Module::AUTHENTICATOR)
                 ->authenticate($user);
             $identifier->signIn();

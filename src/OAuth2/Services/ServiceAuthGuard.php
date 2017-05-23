@@ -16,7 +16,7 @@ class ServiceAuthGuard
     function newService()
     {
         $guard = new GuardRoute;
-        $auth  = \Module\Authorization\Actions\IOC::Authenticator( \Module\OAuth2\Module::AUTHENTICATOR );
+        $auth  = \Module\Authorization\Actions::Authenticator( \Module\OAuth2\Module::AUTHENTICATOR );
         $guard->setAuthenticator( $auth );
         $guard->setRoutesDenied([
             'main/oauth/authorize',
