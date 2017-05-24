@@ -112,7 +112,7 @@ return [
                         'route' => 'RouteSegment',
                         'options' => [
                             // also "validation_code" exists in params and pass through actions as argument
-                            'criteria'    => '/validate/:validation_code{{\w+}}',
+                            'criteria'    => '/validate/:validation_code~\w+~',
                             'match_whole' => true,
                         ],
                         'params'  => [
@@ -125,7 +125,7 @@ return [
                         'route' => 'RouteSegment',
                         'options' => [
                             // also "validation_code" exists in params and pass through actions as argument
-                            'criteria'    => '/validate/resend/:validation_code{{\w+}}/:identifier_type{{\w+}}',
+                            'criteria'    => '/validate/resend/:validation_code~\w+~/:identifier_type~\w+~',
                             'match_whole' => true,
                         ],
                         'params'  => [
@@ -152,7 +152,7 @@ return [
                     'signin_challenge' => [
                         'route' => 'RouteSegment',
                         'options' => [
-                            'criteria'    => '/challenge/:uid{{\w+}}[/:identifier{{\w+}}]',
+                            'criteria'    => '/challenge/:uid~\w+~</:identifier~\w+~>',
                             'match_whole' => true,
                         ],
                         'params'  => [
@@ -165,7 +165,7 @@ return [
                     'pick_new_password' => [
                         'route' => 'RouteSegment',
                         'options' => [
-                            'criteria'    => '/newpass/:validation_code{{\w+}}/:token{{\w+}}',
+                            'criteria'    => '/newpass/:validation_code~\w+~/:token~\w+~',
                             'match_whole' => true,
                         ],
                         'params'  => [

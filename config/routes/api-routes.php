@@ -17,7 +17,7 @@ return [
              *    [1] => routes defined callable
              *     ...
              */
-            \Module\OAuth2Client\Actions\IOC::bareService()->AssertToken,
+            '/module/oauth2client/actions/AssertToken',
         ],
     ],
     'routes' => [
@@ -94,7 +94,7 @@ return [
                         'confirm' => [
                             'route' => 'RouteSegment',
                             'options' => [
-                                'criteria'    => '/change/confirm/:validation_code{{\w+}}',
+                                'criteria'    => '/change/confirm/:validation_code~\w+~',
                                 'match_whole' => true,
                             ],
                             'params'  => [
@@ -142,7 +142,7 @@ return [
                     'route' => 'RouteSegment',
                     'options' => [
                         // TODO . in username not matched
-                        'criteria'    => '/profile/[@:username{{\w+}}][:userid{{\w{24}}}]',
+                        'criteria'    => '/profile/<@:username~\w+~><:userid~\w{24}~>',
                         'match_whole' => true,
                     ],
                     'params'  => [
