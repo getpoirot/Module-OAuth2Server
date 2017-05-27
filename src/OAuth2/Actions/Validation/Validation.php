@@ -3,7 +3,7 @@ namespace Module\OAuth2\Actions\Validation;
 
 use Module;
 
-use Module\HttpFoundation\Actions\UrlAction;
+use Module\HttpFoundation\Actions\Url;
 use Module\OAuth2\Exception\exRegistration;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
@@ -313,7 +313,7 @@ class Validation
         }
 
 
-        /** @var UrlAction $validationUrl */
+        /** @var Url $validationUrl */
         $validationUrl = \Module\HttpFoundation\Actions::url(
             'main/oauth/recover/validate'
             , array('validation_code' => $validationCode->getValidationCode())

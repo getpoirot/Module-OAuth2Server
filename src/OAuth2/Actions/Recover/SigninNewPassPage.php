@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Recover;
 
-use Module\HttpFoundation\Actions\UrlAction;
+use Module\HttpFoundation\Actions\Url;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\HttpFoundation\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
@@ -90,7 +90,7 @@ class SigninNewPassPage
 
     function _handleChangePassword($request)
     {
-        /** @var UrlAction $url */
+        /** @var Url $url */
         $url = \Module\HttpFoundation\Actions::url(null, null, true);
 
         $_post = Plugin\ParseRequestData::_($request)->parseBody();

@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\Recover;
 
-use Module\HttpFoundation\Actions\UrlAction;
+use Module\HttpFoundation\Actions\Url;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
@@ -170,7 +170,7 @@ class SigninChallengePage
         } while( next($userIdentifiers) );
 
 
-        /** @var UrlAction $nextUrl */
+        /** @var Url $nextUrl */
         $uid = $user->getUid();
         $nextUrl = \Module\HttpFoundation\Actions::url(
             'main/oauth/recover/signin_challenge'
