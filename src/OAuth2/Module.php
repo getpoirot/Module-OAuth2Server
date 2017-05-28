@@ -15,6 +15,7 @@ namespace Module\OAuth2
     use Poirot\Loader\Autoloader\LoaderAutoloadNamespace;
     use Poirot\Loader\Interfaces\iLoaderAutoload;
 
+    use Poirot\Loader\LoaderNamespaceStack;
     use Poirot\Router\BuildRouterStack;
     use Poirot\Router\Interfaces\iRouterStack;
 
@@ -149,9 +150,22 @@ namespace Module\OAuth2
          *
          * @internal param null $services service names must have default value
          */
-        function resolveRegisteredServices(
-            $router = null
-        ) {
+        function resolveRegisteredServices($viewModelResolver = null, $router = null)
+        {
+            # Attach Module Scripts To View Resolver:
+
+            // But We May Need Template Rendering Even In API Calls
+            /** @var LoaderNamespaceStack $resolver */
+            $resolver = $viewModelResolver->loader(LoaderNamespaceStack::class);
+            $resolver->with([
+                // Use Default Theme Folder To Achieve Views With Force First ("**")
+                '**'       => __DIR__.'/../../theme_alter/',
+                // Use Default Theme Folder To Achieve Views
+                'main/oauth/' => __DIR__. '/../../view/main/oauth',
+                'error/oauth/' => __DIR__ . '/../../view/error/oauth', // Looks for Errors In This Folder
+            ]);
+
+
             # Register Http Routes:
             if ($router) {
                 $routes = include __DIR__ . '/../../config/mod-oauth2_server_routes.conf.php';

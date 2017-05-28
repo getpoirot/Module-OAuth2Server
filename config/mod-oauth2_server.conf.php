@@ -5,9 +5,21 @@ use Module\OAuth2;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
 use Module\OAuth2Client\Actions\ServiceAssertTokenAction;
-use Module\Foundation\ServiceManager\ServiceViewModelResolver;
+
 
 return [
+    \Module\Foundation\Services\PathService::CONF => [
+        'paths' => [
+            // According to route name 'www-assets' to serve statics files
+            // @see cor-http_foundation.routes
+            'www-alter' => "\$baseUrl/auth/www/",
+        ],
+        'variables' => [
+            'serverUrl' => function() { return \Module\HttpFoundation\getServerUrl(); },
+            'basePath'  => function() { return \Module\HttpFoundation\getBasePath(); },
+            'baseUrl'   => function() { return \Module\HttpFoundation\getBaseUrl(); },
+        ],
+    ],
 
     \Module\OAuth2\Module::CONF_KEY => [
         OAuth2\Services\ServiceGrantsContainer::CONF => [
@@ -163,14 +175,6 @@ return [
 
     # View Renderer:
 
-    ServiceViewModelResolver::CONF => array(
-        'Poirot\Loader\LoaderNamespaceStack' => array(
-            // Use Default Theme Folder To Achieve Views
-            'main/oauth/' => __DIR__. '/../view/main/oauth',
-            'error/oauth/' => __DIR__ . '/../view/error/oauth', // Looks for Errors In This Folder
-        ),
-    ),
-    
     ListenersRenderDefaultStrategy::CONF_KEY => [
         ListenerError::CONF_KEY => [
             // Display Authentication Exceptions Specific Template

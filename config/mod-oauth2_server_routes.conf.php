@@ -20,6 +20,21 @@ return [
         ),
     ),
 
+    'www-alter' => [
+        'route' => 'RouteMethodSegment',
+        'options' => [
+            'method'   => 'GET',
+            'criteria' => '/auth/www/:file~.+~',
+            'match_whole' => false,
+        ],
+        'params' => [
+            ListenerDispatch::ACTIONS => \Poirot\Ioc\newInitIns( new \Poirot\Ioc\instance(
+                '/module/httpfoundation/actions/FileServeAction'
+                , [ 'baseDir' => __DIR__.'/../theme_alter/www' ]
+            ) ),
+        ],
+    ],
+
     'oauth'  => [
         'routes' => [
 

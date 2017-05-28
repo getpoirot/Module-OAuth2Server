@@ -1,0 +1,9 @@
+<?php // Inline Scripts
+echo \Module\HttpFoundation\Actions::htmlScript()
+    ->attachFile(\Module\Foundation\Actions::path('www-alter').'/js/uikit_custom.min.js')
+    ->attachFile(\Module\Foundation\Actions::path('www-alter').'/js/altair_admin_common.min.js')
+    ->attachFile(\Module\Foundation\Actions::path('www-alter').'/js/kendoui_custom.min.js')
+    ->attachScript('altair_forms.parsley_validation_config()') // Order Is Mandatory
+    ->attachFile(\Module\Foundation\Actions::path('www-alter').'/js/parsley.min.js')
+;
+?>
