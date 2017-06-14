@@ -15,6 +15,7 @@ use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Ioc\instance;
+use Poirot\View\Interfaces\iViewModel;
 use Poirot\View\Interfaces\iViewModelPermutation;
 use Poirot\View\ViewModelTemplate;
 
@@ -33,11 +34,11 @@ class SigninChallengePage
     /**
      * Constructor.
      *
-     * @param iRepoUsers            $users       @IoC /module/oauth2/services/repository/Users
-     * @param iViewModelPermutation $viewModel   @IoC /ViewModel
-     * @param iHttpRequest          $httpRequest @IoC /HttpRequest
+     * @param iRepoUsers   $users       @IoC /module/oauth2/services/repository/Users
+     * @param iViewModel   $viewModel   @IoC /ViewModel
+     * @param iHttpRequest $httpRequest @IoC /HttpRequest
      */
-    function __construct(iRepoUsers $users, iViewModelPermutation $viewModel, iHttpRequest $httpRequest)
+    function __construct(iRepoUsers $users, iViewModel $viewModel, iHttpRequest $httpRequest)
     {
         parent::__construct($httpRequest);
 

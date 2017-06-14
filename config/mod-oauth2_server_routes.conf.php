@@ -28,10 +28,12 @@ return [
             'match_whole' => false,
         ],
         'params' => [
-            ListenerDispatch::ACTIONS => \Poirot\Ioc\newInitIns( new \Poirot\Ioc\instance(
-                '/module/httpfoundation/actions/FileServeAction'
-                , [ 'baseDir' => __DIR__.'/../theme_alter/www' ]
-            ) ),
+            ListenerDispatch::ACTIONS => \Poirot\Ioc\newInitIns(
+                new \Poirot\Ioc\instance(
+                    '/module/httpfoundation/actions/FileServeAction'
+                    , [ 'baseDir' => __DIR__.'/../theme_alter/www' ]
+                )
+            ),
         ],
     ],
 
@@ -54,7 +56,7 @@ return [
                     'criteria'    => '/auth/token',
                 ],
                 'params'  => [
-                    ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/RespondToTokenRequest' ],
+                    ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/RespondToTokenRequest', ],
                 ],
             ],
 
@@ -67,7 +69,7 @@ return [
                 ],
                 'params'  => [
                     ListenerDispatch::ACTIONS => [
-                        \Module\OAuth2\Actions\IOC::bareService()->RegisterPage,
+                        '/module/oauth2/actions/RegisterPage',
                     ],
                 ],
             ],
@@ -78,7 +80,7 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::ACTIONS => \Module\OAuth2\Actions\IOC::bareService()->LoginPage,
+                    '/module/oauth2/actions/LoginPage',
                 ],
             ],
             'logout' => [
@@ -88,7 +90,9 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    ListenerDispatch::ACTIONS => \Module\OAuth2\Actions\IOC::bareService()->LogoutPage,
+                    ListenerDispatch::ACTIONS => [
+                        '/module/oauth2/actions/LogoutPage',
+                    ],
                 ],
             ],
 
@@ -107,7 +111,7 @@ return [
                             'match_whole' => true,
                         ],
                         'params'  => [
-                            ListenerDispatch::ACTIONS => function() { return []; },
+                            ListenerDispatch::ACTIONS => [ function() { return []; }, ]
                         ],
                     ],
 
@@ -132,7 +136,7 @@ return [
                         ],
                         'params'  => [
                             ListenerDispatch::ACTIONS => [
-                                \Module\OAuth2\Actions\IOC::bareService()->ValidatePage,
+                                '/module/oauth2/actions/ValidatePage',
                             ],
                         ],
                     ],
@@ -145,7 +149,7 @@ return [
                         ],
                         'params'  => [
                             ListenerDispatch::ACTIONS => [
-                                \Module\OAuth2\Actions\IOC::bareService()->ResendAuthCodeRequest,
+                                '/module/oauth2/actions/ResendAuthCodeRequest',
                             ],
                         ],
                     ],
@@ -159,7 +163,7 @@ return [
                         ],
                         'params'  => [
                             ListenerDispatch::ACTIONS => [
-                                \Module\OAuth2\Actions\IOC::bareService()->SigninRecognizePage,
+                                '/module/oauth2/actions/SigninRecognizePage',
                             ],
                         ],
                     ],
@@ -172,7 +176,7 @@ return [
                         ],
                         'params'  => [
                             ListenerDispatch::ACTIONS => [
-                                \Module\OAuth2\Actions\IOC::bareService()->SigninChallengePage,
+                                '/module/oauth2/actions/SigninChallengePage',
                             ],
                         ],
                     ],
@@ -185,7 +189,7 @@ return [
                         ],
                         'params'  => [
                             ListenerDispatch::ACTIONS => [
-                                \Module\OAuth2\Actions\IOC::bareService()->SigninNewPassPage,
+                                '/module/oauth2/actions/SigninNewPassPage',
                             ],
                         ],
                     ],

@@ -10,6 +10,7 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Poirot\Application\Exception\exRouteNotMatch;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\View\Interfaces\iViewModel;
 use Poirot\View\Interfaces\iViewModelPermutation;
 use Poirot\View\ViewModelTemplate;
 
@@ -34,13 +35,13 @@ class SigninNewPassPage
      *
      * @param iRepoValidationCodes  $validationCodes @IoC /module/oauth2/services/repository/
      * @param iRepoUsers            $users           @IoC /module/oauth2/services/repository/
-     * @param iViewModelPermutation $viewModel       @IoC /ViewModel
-     * @param iHttpRequest $httpRequest              @IoC /HttpRequest
+     * @param iViewModel            $viewModel       @IoC /ViewModel
+     * @param iHttpRequest          $httpRequest     @IoC /HttpRequest
      */
     function __construct(
         iRepoValidationCodes $validationCodes
         , iRepoUsers $users
-        , iViewModelPermutation $viewModel
+        , iViewModel $viewModel
         , iHttpRequest $httpRequest
     ) {
         parent::__construct($httpRequest);
