@@ -176,9 +176,15 @@ return [
     # View Renderer:
 
     ListenersRenderDefaultStrategy::CONF_KEY => [
-        ListenerError::CONF_KEY => [
-            // Display Authentication Exceptions Specific Template
-            \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth/oauth-server',
+        'themes' => [
+            'default' => [
+                'layout' => [
+                    'exception' => [
+                        // Display Authentication Exceptions Specific Template
+                        \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth/oauth-server',
+                    ],
+                ],
+            ],
         ],
     ],
 ];
