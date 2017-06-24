@@ -2,6 +2,8 @@
 /**
  * @var array                                         $user
  */
+use Module\HttpFoundation\Actions\Url;
+
 \Module\HttpFoundation\Actions::htmlHeadTitle('Alternate Login Issues');
 
 \Module\HttpFoundation\Actions::htmlScript()
@@ -16,7 +18,7 @@
                     <p>کاربر گرامی، خوش آمدید ....</p>
                 </div>
                 <?php
-                    $url = \Module\HttpFoundation\Actions::url('main/oauth/logout', null, true);
+                    $url = \Module\HttpFoundation\Actions::url('main/oauth/logout', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY);
                 ?>
                 <a href="<?php echo $url ?>" id="backStep" class="uk-position-top-right uk-close uk-margin-right uk-margin-top"></a>
         </div>

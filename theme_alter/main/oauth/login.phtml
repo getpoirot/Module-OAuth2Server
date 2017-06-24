@@ -1,4 +1,5 @@
 <?php
+use Module\HttpFoundation\Actions\Url;
 use Module\OAuth2\Actions\User\LoginPage;
 
 \Module\HttpFoundation\Actions::htmlHeadTitle('Login To Continue');
@@ -15,7 +16,7 @@ if (\Module\HttpFoundation\Actions::flashMessage(LoginPage::FLASH_MESSAGE_ID)->h
 <div class="login_page_wrapper">
     <div class="md-card" id="login_card">
         <div class="md-card-content large-padding" id="login_form">
-            <form action="<?php echo \Module\HttpFoundation\Actions::url(null, null, true) ?>" method="post" novalidate>
+            <form action="<?php echo \Module\HttpFoundation\Actions::url(null, [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) ?>" method="post" novalidate>
                 <div class="uk-form-row">
                     <div class="parsley-row">
                         <label for="login_username">نام کاربری</label>
@@ -33,7 +34,7 @@ if (\Module\HttpFoundation\Actions::flashMessage(LoginPage::FLASH_MESSAGE_ID)->h
                 </div>
                 <div class="uk-margin-top uk-margin-bottom">
                     <br/>
-                    <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/recover/signin_recognize', null, true); ?>" class="uk-float-right font-size-small">نمیتوانم وارد شوم، دیگر راههای ورود!</a>
+                    <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/recover/signin_recognize', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY); ?>" class="uk-float-right font-size-small">نمیتوانم وارد شوم، دیگر راههای ورود!</a>
                     <!--<span class="icheck-inline uk-margin-remove">
                             <input type="checkbox" name="login_page_stay_signed" id="login_page_stay_signed" data-md-icheck />
                             <label for="login_page_stay_signed" class="inline-label font-size-small">مرا به خاطر بسپار</label>
@@ -44,6 +45,6 @@ if (\Module\HttpFoundation\Actions::flashMessage(LoginPage::FLASH_MESSAGE_ID)->h
 
     </div>
     <div class="uk-margin-top uk-text-center">
-        <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', null, true) ?>">ثبت نام</a>
+        <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) ?>">ثبت نام</a>
     </div>
 </div>

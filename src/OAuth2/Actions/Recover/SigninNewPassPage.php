@@ -92,7 +92,7 @@ class SigninNewPassPage
     function _handleChangePassword($request)
     {
         /** @var Url $url */
-        $url = \Module\HttpFoundation\Actions::url(null, null, true);
+        $url = \Module\HttpFoundation\Actions::url(null, [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY);
 
         $_post = Plugin\ParseRequestData::_($request)->parseBody();
         if (! isset($_post['newpassword']) ) {

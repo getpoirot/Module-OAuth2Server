@@ -109,7 +109,7 @@ class SigninChallengePage
         $redirect = \Module\HttpFoundation\Actions::url(
             'main/oauth/recover/signin_challenge'
             , ['uid' => $user->getUid(), 'identifier' => $challengeType]
-            , true
+            , Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY
         );
 
         return [
@@ -176,7 +176,7 @@ class SigninChallengePage
         $nextUrl = \Module\HttpFoundation\Actions::url(
             'main/oauth/recover/signin_challenge'
             , ['uid' => $uid, 'identifier' => $nextChallengeType]
-            , true
+            , Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY
         );
 
         /** @var aChallenge $challenge */

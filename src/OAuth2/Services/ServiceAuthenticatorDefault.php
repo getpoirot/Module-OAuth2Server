@@ -44,12 +44,12 @@ class ServiceAuthenticatorDefault
             __(new IdentifierWrapIdentityMap(
                 // TODO using cookie+session identifier to recognize user and feature to remember me!!
                 __(new IdentifierSession)->setIssuerException(function(exAuthentication $e) use ($request) {
-                    $loginUrl = (string) \Module\HttpFoundation\Actions::url('main/oauth/login'); // ensure routes loaded
+                    $loginUrl = \Module\HttpFoundation\Actions::url('main/oauth/login'); // ensure routes loaded
                     $continue = \Module\Foundation\Actions::path(sprintf(
                         '$baseUrl/%s'
                         , ltrim($request->getTarget(), '/'))
                     );
-                    $loginUrl .= '?continue='.urlencode($continue);
+                    $loginUrl = \Poirot\Psr7\modifyUri( $loginUrl->uri(), [ 'query' => ['continue' => $continue] ] );
                     header('Location: '.$loginUrl);
                 })
                 /** @see Users::findOneMatchBy */

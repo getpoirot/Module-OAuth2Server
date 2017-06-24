@@ -1,4 +1,6 @@
 <?php
+use Module\HttpFoundation\Actions\Url;
+
 \Module\HttpFoundation\Actions::htmlHeadTitle('Alternate Login Issues');
 
 \Module\HttpFoundation\Actions::htmlScript()
@@ -17,7 +19,7 @@
                     <br/>
                 </div>
                 <?php
-                $url = \Module\HttpFoundation\Actions::url('main/oauth/recover/signin_recognize', null, true);
+                $url = \Module\HttpFoundation\Actions::url('main/oauth/recover/signin_recognize', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY);
                 // prepend to achieve delete u params if has
                 $url = \Poirot\Psr7\modifyUri($url->uri(), ['query' => ['u' => null] ], \Poirot\Psr7\URI_PREPEND);
                 ?>
@@ -26,7 +28,7 @@
     </div>
     <div class="md-card" id="next-step">
         <div class="md-card-content large-padding" id="next-step-content">
-            <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', null, true) ?>">از اینجا ثبت نام کنید</a>
+            <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) ?>">از اینجا ثبت نام کنید</a>
         </div>
     </div>
 </div>

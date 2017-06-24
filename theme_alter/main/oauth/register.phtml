@@ -9,6 +9,7 @@
  *  '_link' => '/recover/signin/challenge/586a484fe39b7',
  */
 
+use Module\HttpFoundation\Actions\Url;
 use Module\OAuth2\Actions\User\RegisterPage;
 
 \Module\HttpFoundation\Actions::htmlHeadTitle('Register');
@@ -30,7 +31,7 @@ if (isset($recovery_flow)) {
     <div class="login_page_wrapper">
         <div class="md-card" id="login_card">
             <div class="md-card-content large-padding" id="login_form">
-                <form action="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/recover/signin_challenge', [ 'uid' => $recovery_flow['user']['uid'] ], true) ?>" method="post" novalidate>
+                <form action="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/recover/signin_challenge', [ 'uid' => $recovery_flow['user']['uid'] ], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) ?>" method="post" novalidate>
                     <div class="uk-form-row" id="recognizeImages">
                         <img src="<?php echo \Module\Foundation\Actions::path('www-alter').'/img/user.png' ?>">
                         <p><?php echo $recovery_flow['user']['fullname']; ?></p>
@@ -40,7 +41,7 @@ if (isset($recovery_flow)) {
                         <span class="uk-form-help-block">
                             <?php echo sprintf(
                                 ' کلمه عبور را به خاطر دارید؟ از %s وارد شوید.'
-                                , sprintf('<a href="%s">این لینک</a>', \Module\HttpFoundation\Actions::url('main/oauth/login', null, true) )
+                                , sprintf('<a href="%s">این لینک</a>', \Module\HttpFoundation\Actions::url('main/oauth/login', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) )
                             ) ?>
                         </span>
                         <span class="uk-form-help-block">و یا برای تلاش برای ورود به سیستم روی دکمه زیر کلیک کنید.</span>
@@ -48,7 +49,7 @@ if (isset($recovery_flow)) {
                     <div class="uk-margin-medium-top">
                         <button type="submit" class="md-btn md-btn-primary md-btn-block md-btn-large font-is">تلاش برای ورود به سیستم</button>
                     </div>
-                    <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', null, true) ?>" id="backStep" class="uk-position-top-right uk-close uk-margin-right uk-margin-top"></a>
+                    <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) ?>" id="backStep" class="uk-position-top-right uk-close uk-margin-right uk-margin-top"></a>
                 </form>
             </div>
 
@@ -63,7 +64,7 @@ if (isset($recovery_flow)) {
     <div class="md-card" id="login_card">
         <div class="md-card-content large-padding" id="register_form">
             <h2 class="heading_a uk-margin-medium-bottom font-is">عضویت در سامانه</h2>
-            <form action="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', null, true) ?>" method="POST" novalidate>
+            <form action="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/register', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) ?>" method="POST" novalidate>
                 <div class="uk-form-row">
                     <div class="parsley-row">
                         <label class="label-required" for="register_fullname">نام کامل</label>
@@ -106,7 +107,7 @@ if (isset($recovery_flow)) {
     </div>
 
     <div class="uk-margin-top uk-text-center">
-        <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/login', null, true) ?>">اگر ثبت نام کرده اید، از اینجا وارد شوید.</a>
+        <a href="<?php echo \Module\HttpFoundation\Actions::url('main/oauth/login', [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY) ?>">اگر ثبت نام کرده اید، از اینجا وارد شوید.</a>
     </div>
 </div>
 <?php } ?>

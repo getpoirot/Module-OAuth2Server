@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Actions\Recover\SigninChallenge;
 
 use Module;
+use Module\HttpFoundation\Actions\Url;
 use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
@@ -129,7 +130,7 @@ abstract class aChallengeBase
                             ->error('کد ارسال شده صحیح نیست.');
                         ;
 
-                        $redirect = \Module\HttpFoundation\Actions::url(null, null, true);
+                        $redirect = \Module\HttpFoundation\Actions::url(null, [], Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY);
                         return new ResponseRedirect((string) $redirect);
                     }
 

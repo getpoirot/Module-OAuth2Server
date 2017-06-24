@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
+use Module\HttpFoundation\Actions\Url;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\HttpFoundation\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;
@@ -170,7 +171,11 @@ response:
 
         if (!isset($r)) {
             // Redirect Refresh
-            $r = (string) \Module\HttpFoundation\Actions::url(null, null, true);
+            $r = (string) \Module\HttpFoundation\Actions::url(
+                null
+                , []
+                , Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY
+            );
         }
 
 

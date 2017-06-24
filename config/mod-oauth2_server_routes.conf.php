@@ -80,7 +80,9 @@ return [
                     'match_whole' => true,
                 ],
                 'params'  => [
-                    '/module/oauth2/actions/LoginPage',
+                    ListenerDispatch::ACTIONS => [
+                        '/module/oauth2/actions/LoginPage',
+                    ],
                 ],
             ],
             'logout' => [

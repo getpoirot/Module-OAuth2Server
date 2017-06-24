@@ -62,7 +62,11 @@ class LoginPage
 
 
             // redirect to itself (matchedRoute)
-            return new ResponseRedirect( (string) \Module\HttpFoundation\Actions::url(null, null, true) );
+            return new ResponseRedirect( (string) \Module\HttpFoundation\Actions::url(
+                null
+                , []
+                , Url::DEFAULT_INSTRUCT|Url::APPEND_CURRENT_REQUEST_QUERY
+            ));
         }
 
 
