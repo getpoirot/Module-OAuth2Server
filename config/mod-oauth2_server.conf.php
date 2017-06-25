@@ -1,10 +1,8 @@
 <?php
-use Module\HttpRenderer\Services\RenderStrategy\DefaultStrategy\ListenerError;
 use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Module\OAuth2;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
-use Module\OAuth2Client\Actions\ServiceAssertTokenAction;
 
 
 return [
@@ -54,25 +52,6 @@ return [
                 // Path to Template file or String
                 'message_verification' => '',
             ],
-        ],
-    ],
-
-
-    ## ----------------------------------- ##
-    ## OAuth2Client Module Must Configured ##
-    ## to assert tokens ...                ##
-    ## ----------------------------------- ##
-
-    \Module\OAuth2Client\Module::CONF => [
-        ServiceAssertTokenAction::CONF => [
-            'debug_mode' => [
-                'enabled' => false,
-            ],
-
-            /** @see OAuth2\Services\ServiceAssertToken */
-            // aAssertion Instance Or Registered Service
-            // Service Used By AssertToken To Assert Given Request
-            'assertion_rig' => '/module/oauth2/services/AssertToken',
         ],
     ],
 
