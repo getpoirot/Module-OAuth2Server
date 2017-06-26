@@ -10,21 +10,48 @@
  *
  * @see \Module\OAuth2::getServices()
  */
+use Module\OAuth2;
 use Module\OAuth2\Services\BuildServices;
 use Module\OAuth2\Services;
 use Poirot\Ioc\Container\BuildContainer;
+use Poirot\Ioc\instance;
+
 
 return [
     'services' => [
+        // Available Grants Types Used By Grant Responder
+        // defined in BuildServices by default
+        'ContainerGrants' => new instance(
+            Services\ServiceGrantsContainer::class,
+            [
+                'default_grants' => [
+                    ## Grant Authorization Code:
+                    'authorization_code' => new instance(
+                        OAuth2\Services\Grant\ServiceAuthorizationCode::class
+                        , \Poirot\Std\catchIt(function () {
+                            if (false === $c = \Poirot\Config\load(__DIR__.'/oauth2server/grant-auth_code'))
+                                throw new \Exception('Config (oauth2server/grant-auth_code) not loaded.');
+
+                            return $c->value;
+                        })
+                    ),
+                    ## Grant Authorization Implicit:
+                    'implicit'           => OAuth2\Services\Grant\ServiceImplicit::class,
+                    ## Grant Client Credential:
+                    'client_credentials' => OAuth2\Services\Grant\ServiceClientCredential::class,
+                    ## Grant Password:
+                    'password'           => OAuth2\Services\Grant\ServicePassword::class,
+                    ## Grant Refresh Token:
+                    'refresh_token'      => OAuth2\Services\Grant\ServiceRefreshToken::class,
+                ]
+            ]
+        ),
+
         // Default Authenticator Used By Authorize Module as Authenticators Registered Service
         BuildServices::AUTHENTICATOR => Services\ServiceAuthenticatorDefault::class,
 
         // Authorize Token By OAuthClient Token Assertion
         'AssertToken' => Services\ServiceAssertToken::class,
-
-        // Available Grants Types Used By Grant Responder
-        // defined in BuildServices by default
-        #'ContainerGrants' => Services\ServiceGrantsContainer::class,
     ],
     'nested' => [
         'repository' => [

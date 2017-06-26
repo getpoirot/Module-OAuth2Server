@@ -10,7 +10,7 @@
  *
  * @see \Module\OAuth2::getServices()
  */
-use Module\OAuth2\Services\BuildOAuthModuleServices;
+use Module\OAuth2\Services\BuildServices;
 
 return [
     'nested' => [
@@ -19,12 +19,10 @@ return [
             'services' =>
                 [
                     // Override AccessToken Repository (Persist in Mongo)
-                    BuildOAuthModuleServices::SERVICE_NAME_ACCESS_TOKENS
-                        => Module\OAuth2\Services\Repository\ServiceRepoAccessTokens::class,
+                    BuildServices::ACCESS_TOKENS => Module\OAuth2\Services\Repository\ServiceRepoAccessTokens::class,
 
                     // Override RefreshToken Repository (Persist In Mongo)
-                    BuildOAuthModuleServices::SERVICE_NAME_REFRESH_TOKENS
-                        => Module\OAuth2\Services\Repository\ServiceRepoRefreshTokens::class,
+                    BuildServices::REFRESH_TOKENS => Module\OAuth2\Services\Repository\ServiceRepoRefreshTokens::class,
                 ],
         ],
     ],

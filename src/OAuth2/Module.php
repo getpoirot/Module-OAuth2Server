@@ -158,8 +158,6 @@ namespace Module\OAuth2
             /** @var LoaderNamespaceStack $resolver */
             $resolver = $viewModelResolver->loader(LoaderNamespaceStack::class);
             $resolver->with([
-                // Use Default Theme Folder To Achieve Views With Force First ("**")
-                '**'       => __DIR__.'/../../theme_alter/',
                 // Use Default Theme Folder To Achieve Views
                 'main/oauth/' => __DIR__. '/../../view/main/oauth',
                 'error/oauth/' => __DIR__ . '/../../view/error/oauth', // Looks for Errors In This Folder

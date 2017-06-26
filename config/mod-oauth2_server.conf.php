@@ -1,41 +1,21 @@
 <?php
-use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Module\OAuth2;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
 
+use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
+use Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation;
+
 
 return [
-    \Module\Foundation\Services\PathService::CONF => [
-        'paths' => [
-            // According to route name 'www-assets' to serve statics files
-            // @see cor-http_foundation.routes
-            'www-alter' => "\$baseUrl/auth/www/",
-        ],
-        'variables' => [
-            'serverUrl' => function() { return \Module\HttpFoundation\getServerUrl(); },
-            'basePath'  => function() { return \Module\HttpFoundation\getBasePath(); },
-            'baseUrl'   => function() { return \Module\HttpFoundation\getBaseUrl(); },
-        ],
-    ],
 
     \Module\OAuth2\Module::CONF_KEY => [
+
         OAuth2\Services\ServiceGrantsContainer::CONF => [
             // Capped Container Of Available Grants
-            'services' => [
-                ## Grant Authorization Code:
-                'authorization_code' => OAuth2\Services\Grant\ServiceAuthorizationCode::class,
-                ## Grant Authorization Implicit:
-                'implicit'           => OAuth2\Services\Grant\ServiceImplicit::class,
-                ## Grant Client Credential:
-                'client_credentials' => OAuth2\Services\Grant\ServiceClientCredential::class,
-                ## Grant Password:
-                'password'           => OAuth2\Services\Grant\ServicePassword::class,
-                ## Grant Refresh Token:
-                'refresh_token'      => OAuth2\Services\Grant\ServiceRefreshToken::class,
+            'grants' => [
                 ## Grant Extension Validate Token:
-                \Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation::TYPE_GRANT
-                    => OAuth2\Services\Grant\ServiceExtensionValidation::class
+                GrantExtensionTokenValidation::TYPE_GRANT => OAuth2\Services\Grant\ServiceExtensionValidation::class
             ],
         ],
 
@@ -56,6 +36,17 @@ return [
     ],
 
 
+    # Path
+
+    \Module\Foundation\Services\PathService::CONF => [
+        'paths' => [
+            // According to route name 'www-assets' to serve statics files
+            // @see cor-http_foundation.routes
+            'www-alter' => "\$baseUrl/auth/www/",
+        ],
+    ],
+
+
     # SmsClients:
 
     \Module\SmsClients\Module::CONF_KEY => [
@@ -72,32 +63,33 @@ return [
         ],
     ],
 
+
     # Authorization:
 
-    \Module\Authorization\Module::CONF_KEY => array(
-        ServiceAuthenticatorsContainer::CONF => array(
-            'plugins_container' => array(
-                'services' => array(
+    \Module\Authorization\Module::CONF_KEY => [
+        ServiceAuthenticatorsContainer::CONF => [
+            'plugins_container' => [
+                'services' => [
                     // Authenticators Services
-                    OAuth2\Services\ServiceAuthenticatorDefault::class,
-                ),
-            ),
-        ),
-        ServiceGuardsContainer::CONF => array(
-            'plugins_container' => array(
-                'services' => array(
+                    'module.oauth2.default_authenticator' => OAuth2\Services\ServiceAuthenticatorDefault::class,
+                ],
+            ],
+        ],
+        ServiceGuardsContainer::CONF => [
+            'plugins_container' => [
+                'services' => [
                     // Guards Services
                     'oauth_routes' => OAuth2\Services\ServiceAuthGuard::class,
-                ),
-            ),
-        ),
-    ),
+                ],
+            ],
+        ],
+    ],
 
 
     # Mongo Driver:
 
-    Module\MongoDriver\Module::CONF_KEY 
-    => [
+    Module\MongoDriver\Module::CONF_KEY => [
+
         \Module\MongoDriver\Services\aServiceRepository::CONF_REPOSITORIES => [
             \Module\OAuth2\Services\Repository\ServiceRepoClients::class => [
                 'collection' => [
@@ -154,11 +146,24 @@ return [
 
     # View Renderer:
 
+    // View Renderer Options
     ListenersRenderDefaultStrategy::CONF_KEY => [
         'themes' => [
-            'default' => [
+            'oauth2server' => [
+                'dir' => __DIR__.'/../theme_alter',
+                // (bool) func()
+                // function will instantiated for resolve arguments
+                // or true|false
+                'when' => function($routerMatch) {
+                    // Active Template When We Are On OAuth Route
+                    return (strpos($routerMatch->getName(), 'main/oauth/') === 0);
+                }, // always use this template
+                'priority' => 100,
                 'layout' => [
+                    'default' => 'default',
                     'exception' => [
+                        'Exception' => ['error/error', 'blank'],
+                        'Poirot\Application\Exception\exRouteNotMatch' => 'error/404',
                         // Display Authentication Exceptions Specific Template
                         \Poirot\OAuth2\Server\Exception\exOAuthServer::class => 'error/oauth/oauth-server',
                     ],

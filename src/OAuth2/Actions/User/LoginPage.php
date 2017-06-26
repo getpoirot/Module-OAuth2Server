@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
+use Module\HttpFoundation\Actions\Url;
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\HttpFoundation\Response\ResponseRedirect;
 use Poirot\Http\HttpMessage\Request\Plugin;

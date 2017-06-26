@@ -30,13 +30,6 @@ class BuildServices
             self::AUTHENTICATOR => iAuthenticator::class
         ];
 
-
-    protected $services =
-        [
-            // Available Grants Types Used By Grant Responder
-            'ContainerGrants' => ServiceGrantsContainer::class,
-        ];
-
     protected $nested =
         [
             'repository' => [

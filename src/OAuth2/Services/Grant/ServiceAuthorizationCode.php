@@ -8,6 +8,12 @@ use Poirot\OAuth2\Server\Grant\GrantAuthCode;
 class ServiceAuthorizationCode
     extends aServiceContainer
 {
+    protected $ttlAuthCode;
+    protected $ttlRefreshToken;
+    protected $ttlAccessToken;
+    protected $repoAccessToken;
+
+
     /**
      * Create Service
      *
@@ -17,15 +23,15 @@ class ServiceAuthorizationCode
     {
         $grantType = new GrantAuthCode;
         $grantType
-            ->setTtlAuthCode(new \DateInterval('PT5M'))
-            ->setTtlRefreshToken(new \DateInterval('P1M'))
-            ->setTtlAccessToken(new \DateInterval('PT1H'))
+            ->setTtlAuthCode( $this->ttlAuthCode )
+            ->setTtlRefreshToken( $this->ttlRefreshToken )
+            ->setTtlAccessToken( $this->ttlAccessToken )
 
             ->setRepoUser( \Module\OAuth2\Services\Repository\IOC::Users() )
             ->setRepoClient( \Module\OAuth2\Services\Repository\IOC::Clients() )
             ->setRepoAuthCode( \Module\OAuth2\Services\Repository\IOC::AuthCodes() )
             ->setRepoRefreshToken( \Module\OAuth2\Services\Repository\IOC::RefreshTokens() )
-            ->setRepoAccessToken( \Module\OAuth2\Services\Repository\IOC::AccessTokens() )
+            ->setRepoAccessToken( $this->repoAccessToken )
 
             ->setRetrieveUserCallback(
                 \Module\OAuth2\Actions\IOC::bareService()->RetrieveAuthenticatedUser
@@ -34,4 +40,46 @@ class ServiceAuthorizationCode
 
         return $grantType;
     }
+
+
+    // ..
+
+    /**
+     * @param mixed $ttlAuthCode
+     */
+    function setTtlAuthCode($ttlAuthCode)
+    {
+        // new \DateInterval('PT5M')
+        $this->ttlAuthCode = $ttlAuthCode;
+    }
+
+    /**
+     * @param mixed $ttlRefreshToken
+     */
+    function setTtlRefreshToken($ttlRefreshToken)
+    {
+        // new \DateInterval('P1M')
+        $this->ttlRefreshToken = $ttlRefreshToken;
+    }
+
+    /**
+     * @param mixed $ttlAccessToken
+     */
+    function setTtlAccessToken($ttlAccessToken)
+    {
+        // new \DateInterval('PT1H')
+        $this->ttlAccessToken = $ttlAccessToken;
+    }
+
+    /**
+     * To Generate Different Type Of Token
+     *
+     * @param mixed $repoAccessToken
+     */
+    function setRepoAccessToken($repoAccessToken)
+    {
+        // \Module\OAuth2\Services\Repository\IOC::AccessTokens()
+        $this->repoAccessToken = $repoAccessToken;
+    }
+
 }

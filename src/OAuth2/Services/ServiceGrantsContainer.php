@@ -16,6 +16,8 @@ class ServiceGrantsContainer
     /** @var string Service Name */
     protected $name = self::NAME;
 
+    protected $defaultGrants = [];
+
 
     /**
      * Create Service
@@ -24,8 +26,13 @@ class ServiceGrantsContainer
      */
     function newService()
     {
+        $services = $this->_getConf();
+        $services = [
+            'services' => array_merge( $this->defaultGrants, $services )
+        ];
+
         $builder = new BuildContainer;
-        $builder->with($builder::parseWith($this->_getConf()));
+        $builder->with( $builder::parseWith($services) );
 
         $plugins = new ContainerGrantsCapped($builder);
         return $plugins;
@@ -33,6 +40,14 @@ class ServiceGrantsContainer
 
 
     // ..
+
+    /**
+     * @param array $defaultGrants
+     */
+    function setDefaultGrants($defaultGrants)
+    {
+        $this->defaultGrants = $defaultGrants;
+    }
 
     /**
      * Get Config Values
@@ -51,11 +66,7 @@ class ServiceGrantsContainer
         /** @var DataEntity $config */
         $config = $config->get( \Module\OAuth2\Module::CONF_KEY, array() );
 
-        if (!isset($config[self::CONF]) && !is_array($config[self::CONF]))
-            throw new \Exception('OAuth2 Module, Grants Services Config Not Available.');
-
-
-        $config = $config[self::CONF];
+        $config = $config[self::CONF]['grants'];
         return $config;
     }
 }
