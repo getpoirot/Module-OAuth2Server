@@ -45,7 +45,7 @@ return [
             'www-alter' => "\$baseUrl/auth/www/",
         ],
     ],
-    
+
 
     # Authorization:
 
