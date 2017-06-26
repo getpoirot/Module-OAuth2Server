@@ -45,24 +45,7 @@ return [
             'www-alter' => "\$baseUrl/auth/www/",
         ],
     ],
-
-
-    # SmsClients:
-
-    \Module\SmsClients\Module::CONF_KEY => [
-        \Module\SmsClients\Services\ServiceSmsClient::CONF_CLIENT => [
-            'service' => new \Poirot\Ioc\instance(
-                \Poirot\Sms\Driver\KavehNegar\Sms::class
-                , [
-                    'api_key'  => '752B6370356635416C4F31503074446E7051336868413D3D',
-                    'platform' => new \Poirot\Ioc\instance(
-                        \Poirot\Sms\Driver\KavehNegar\Rest\PlatformRest::class
-                    )
-                ]
-            ),
-        ],
-    ],
-
+    
 
     # Authorization:
 
