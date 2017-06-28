@@ -13,6 +13,7 @@
         , "poirot/mod-driver_mongo": "dev-devel"
         , "poirot/mod-authorization": "dev-devel"
         , "poirot/sms-clients": "dev-devel"
+        , "poirot/mail": "dev-devel"
     }
     , "autoload"  : {
         "psr-4": {
