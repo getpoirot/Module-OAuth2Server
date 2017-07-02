@@ -139,7 +139,7 @@ return [
                 // or true|false
                 'when' => function($routerMatch) {
                     // Active Template When We Are On OAuth Route
-                    return (strpos($routerMatch->getName(), 'main/oauth/') === 0);
+                    return ( $routerMatch && strpos($routerMatch->getName(), 'main/oauth/') === 0 );
                 }, // always use this template
                 'priority' => 100,
                 'layout' => [
