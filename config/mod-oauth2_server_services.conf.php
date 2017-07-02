@@ -13,7 +13,6 @@
 use Module\OAuth2;
 use Module\OAuth2\Services\BuildServices;
 use Module\OAuth2\Services;
-use Poirot\Ioc\Container\BuildContainer;
 use Poirot\Ioc\instance;
 
 
@@ -62,17 +61,17 @@ return [
                 BuildServices::USERS_APPROVED_CLIENTS => Services\Repository\ServiceRepoUsersApprovedClients::class,
                 BuildServices::VALIDATION_CODES       => Services\Repository\ServiceRepoValidationCodes::class,
                 BuildServices::ACCESS_TOKENS          => [
-                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokenRepo::class,
+                    \Poirot\OAuth2\Model\Repo\Stateless\AccessTokenRepo::class,
                     // options:
                     'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                 ],
                 BuildServices::REFRESH_TOKENS         => [
-                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
+                    \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
                     // options:
                     'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                 ],
                 BuildServices::AUTH_CODES             => [
-                    BuildContainer::INST => \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
+                    \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
                     // options:
                     'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
                 ],
