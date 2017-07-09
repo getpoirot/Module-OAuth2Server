@@ -267,13 +267,21 @@ class Validation
          * [ "+98", "9355497674" ]
          */
         $mobileNo    = (string) $authCode->getValue();
-        $messageBody = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
-        $messageBody = $messageBody['mediums']['mobile']['message_verification'];
 
-        $sentMessage = $this->sms->sendTo(
-            [ (string) $mobileNo ]
-            , new SMSMessage( sprintf($messageBody, $authCode->getCode()) )
-        );
+        if (method_exists($this->sms, 'sendVerificationTo')) {
+            // Currently our sms provider support for sending verification codes; with higher priority and delivery!
+            $sentMessage = $this->sms->sendVerificationTo((string) $mobileNo, 'papionVerify', ['token' => $authCode->getCode()]);
+
+        } else {
+            $messageBody = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
+            $messageBody = $messageBody['mediums']['mobile']['message_verification'];
+
+            $sentMessage = $this->sms->sendTo(
+                [ (string) $mobileNo ]
+                , new SMSMessage( sprintf($messageBody, $authCode->getCode()) )
+            );
+        }
+
 
         $sentMessage = current($sentMessage);
 

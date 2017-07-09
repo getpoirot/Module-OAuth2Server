@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions\User;
 
+use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\HttpFoundation\Response\ResponseRedirect;
 use Module\OAuth2\Actions\aAction;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
@@ -64,6 +65,8 @@ class LogoutPage
         }
 
 
-        return new ResponseRedirect( $redirectUri );
+        return [
+            ListenerDispatch::RESULT_DISPATCH => new ResponseRedirect( $redirectUri )
+        ];
     }
 }

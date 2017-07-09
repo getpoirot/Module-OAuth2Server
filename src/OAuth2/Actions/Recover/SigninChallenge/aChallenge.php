@@ -6,6 +6,7 @@ use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Http\Interfaces\iHttpResponse;
+use Poirot\View\Interfaces\iViewModel;
 use Poirot\View\Interfaces\iViewModelPermutation;
 use Poirot\View\ViewModelTemplate;
 use Psr\Http\Message\UriInterface;
@@ -26,9 +27,9 @@ abstract class aChallenge
 
     /**
      * Constructor.
-     * @param iViewModelPermutation $viewModel @IoC /ViewModel
+     * @param iViewModel $viewModel @IoC /ViewModel
      */
-    function __construct(iViewModelPermutation $viewModel)
+    function __construct(iViewModel $viewModel)
     {
         $this->viewModel = $viewModel;
     }

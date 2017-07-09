@@ -12,6 +12,7 @@ use Poirot\AuthSystem\Authenticate\Identity\IdentityOpen;
 use Poirot\Http\HttpMessage\Request\Plugin\MethodType;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\View\Interfaces\iViewModel;
 use Poirot\View\Interfaces\iViewModelPermutation;
 
 
@@ -29,11 +30,11 @@ abstract class aChallengeBase
 
     /**
      * Constructor.
-     * @param iRepoValidationCodes  $validationCodes @IoC /module/oauth2/services/repository/
-     * @param iViewModelPermutation $viewModel       @IoC /ViewModel
-     * @param iRepoUsers            $users           @IoC /module/oauth2/services/repository/
+     * @param iRepoValidationCodes $validationCodes @IoC /module/oauth2/services/repository/
+     * @param iViewModel           $viewModel       @IoC /ViewModel
+     * @param iRepoUsers           $users           @IoC /module/oauth2/services/repository/
      */
-    function __construct(iRepoValidationCodes $validationCodes, iViewModelPermutation $viewModel, iRepoUsers $users)
+    function __construct(iRepoValidationCodes $validationCodes, iViewModel $viewModel, iRepoUsers $users)
     {
         parent::__construct($viewModel);
 
