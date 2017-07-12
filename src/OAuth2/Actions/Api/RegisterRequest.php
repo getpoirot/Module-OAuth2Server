@@ -79,7 +79,7 @@ class RegisterRequest
         } catch (exUnexpectedValue $e)
         {
             // TODO Handle Validation ...
-            throw $e;
+            throw new exUnexpectedValue('Validation Failed', null,  400, $e);
         }
 
         # Register User:
