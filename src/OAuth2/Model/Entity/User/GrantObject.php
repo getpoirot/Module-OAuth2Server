@@ -11,6 +11,7 @@ class GrantObject
 {
     protected $type;
     protected $value;
+    protected $options = array();
     protected $is_validated = false;
 
     /**
@@ -51,5 +52,46 @@ class GrantObject
     function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set Options
+     * @param array $options
+     * @return $this
+     */
+    function setOptions($options)
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    /**
+     * get Options
+     * @return array
+     */
+    function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Insert an Option into Options array
+     * @param string $option
+     * @param string $value
+     * @return $this
+     */
+    function addOption($option, $value)
+    {
+        $options = $this->options;
+        foreach ($options as $key => $value){
+            if($option == $key){
+                $options[$key] = $value;
+                $this->options = $options;
+                return $this;
+            }
+        }
+        $options[$option] = $value;
+        $this->options = $options;
+        return $this;
     }
 }

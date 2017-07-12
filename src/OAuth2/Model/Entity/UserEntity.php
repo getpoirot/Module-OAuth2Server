@@ -18,6 +18,7 @@ class UserEntity
     protected $identifiers = array(
         # iEntityUserContactObject
     );
+    protected $meta = array();
     protected $grants = array(
         # iEntityUserGrantObject
     );
@@ -118,7 +119,7 @@ class UserEntity
                 unset($this->grants[$i]);
 
         $go = new GrantObject();
-        $go->setType('password')->setValue($credential);
+        $go->setType('password')->setValue($credential)->addOption('checksum', 'md5');
         $this->addGrant($go);
 
         return $this;
@@ -188,6 +189,24 @@ class UserEntity
     {
         $this->identifiers[] = $identifier;
         return $this;
+    }
+
+    /**
+     * Set metadata, replacing old ones
+     *
+     * @param array $meta
+     */
+    function setMeta(array $meta){
+        $this->meta = $meta;
+    }
+
+    /**
+     * Get metadata
+     *
+     * @return array
+     */
+    function getMeta(){
+        return $this->meta;
     }
 
     /**

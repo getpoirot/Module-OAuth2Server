@@ -35,4 +35,26 @@ interface iUserGrantObject
      * @return string
      */
     function getValue();
+
+    /**
+     * Set Options
+     * @param array $options
+     * @return $this
+     */
+    function setOptions($options);
+
+    /**
+     * get Options
+     * @return array
+     */
+    function getOptions();
+
+    /**
+     * Insert an Option into Options array
+     * @param string $option
+     * @param string $value
+     * @return $this
+     */
+    function addOption($option, $value);
+
 }

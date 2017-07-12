@@ -8,6 +8,7 @@ use Poirot\Http\HttpMessage\Request\Plugin;
 use Module\OAuth2\Actions\aApiAction;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 use Poirot\Std\Exceptions\exUnexpectedValue;
 
 
@@ -39,8 +40,8 @@ class RegisterRequest
     {
         # Assert Token
         #
-        $this->assertTokenByOwnerAndScope($token);
 
+        $this->assertTokenByOwnerAndScope($token);
 
         $request = $this->request;
 
@@ -54,6 +55,9 @@ class RegisterRequest
             #
             $hydrateUser = new Entity\UserHydrate(
                 Entity\UserHydrate::parseWith($this->request) );
+
+            /** @var iEntityAccessToken $token */
+            $hydrateUser->setClient($token->getClientIdentifier());
 
             $entityUser  = new Entity\UserEntity($hydrateUser);
 
@@ -101,6 +105,8 @@ class RegisterRequest
 
             $userInfo[$identifier->getType()] = $identifier->getValue();
         }
+
+        $userInfo['meta'] = $userEntity->getMeta();
 
         $userInfo['datetime_created']  = [
             'datetime'  => $userEntity->getDateCreated(),

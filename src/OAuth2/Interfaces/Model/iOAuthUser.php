@@ -48,6 +48,13 @@ interface iOAuthUser
     function getIdentifiers();
 
     /**
+     * Get Meta data
+     *
+     * @return array
+     */
+    function getMeta();
+
+    /**
      * Get Grants
      *
      * @return iUserGrantObject[]

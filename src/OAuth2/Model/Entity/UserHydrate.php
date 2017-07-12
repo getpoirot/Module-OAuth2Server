@@ -18,12 +18,14 @@ class UserHydrate
     const FIELD_EMAIL      = 'email';
     const FIELD_MOBILE     = 'mobile';
     const FIELD_USERNAME   = 'username';
+    const FIELD_CLIENT   = 'client';
 
     protected $fullname;
     protected $credential;
     protected $mobileIdentifier;
     protected $emailIdentifier;
     protected $usernameIdentifier;
+    protected $clientMeta;
 
 
     // Hydrate Setter
@@ -55,6 +57,11 @@ class UserHydrate
     {
         $username = strtolower( preg_replace('/\s+/', '.', (string) $username) );
         $this->usernameIdentifier = $username;
+    }
+
+    function setClient($client)
+    {
+        $this->clientMeta = (string) $client;
     }
 
 
@@ -113,6 +120,13 @@ class UserHydrate
 
 
         return $identifiers;
+    }
+
+    function getMeta(){
+        $meta = [
+            'client' => $this->clientMeta
+        ];
+        return $meta;
     }
 
     /**

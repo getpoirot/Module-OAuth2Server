@@ -83,6 +83,7 @@ class UserRepo
             ->setUsername($user->getUsername())
             ->setPassword( $this->makeCredentialHash($user->getPassword()) )
             ->setDateCreated( $user->getDateCreated() )
+            ->setMeta($user->getMeta())
         ;
 
         $r = $this->_query()->insertOne($e);
@@ -96,6 +97,7 @@ class UserRepo
             ->setUsername($user->getUsername())
             ->setPassword($e->getPassword())
             ->setDateCreated($e->getDateCreated())
+            ->setMeta($e->getMeta())
         ;
 
         return $u;
