@@ -2,7 +2,7 @@
 namespace Module\OAuth2
 {
     use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
-    use Poirot\Storage\Gateway\DataStorageSession;
+    use Poirot\Storage\Http\SessionStore;
 
 
     const GENERATE_CODE_NUMBERS       = 2;
@@ -21,7 +21,7 @@ namespace Module\OAuth2
      */
     function hasTokenBind($hash, $token = null)
     {
-        $storage = new DataStorageSession( 'SESSION_REALM_TOKEN_BIND' );
+        $storage = new SessionStore( 'SESSION_REALM_TOKEN_BIND' );
         $vToken  = $storage->get($hash);
 
         if ($token !== null)
@@ -43,7 +43,7 @@ namespace Module\OAuth2
     function generateAndRememberToken($hash)
     {
         $token   = \Poirot\Std\generateShuffleCode(16);
-        $storage = new DataStorageSession( 'SESSION_REALM_TOKEN_BIND' );
+        $storage = new SessionStore( 'SESSION_REALM_TOKEN_BIND' );
         $storage->set($hash, $token);
         return $token;
     }
