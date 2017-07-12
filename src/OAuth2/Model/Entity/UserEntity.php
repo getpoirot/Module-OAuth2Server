@@ -196,7 +196,7 @@ class UserEntity
      *
      * @param array $meta
      */
-    function setMeta(array $meta){
+    function setMeta($meta){
         $this->meta = $meta;
     }
 

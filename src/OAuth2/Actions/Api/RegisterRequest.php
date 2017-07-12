@@ -82,7 +82,6 @@ class RegisterRequest
             throw $e;
         }
 
-
         # Register User:
         #
         // Continue Used to OAuth Registration Follow!!!
@@ -91,8 +90,6 @@ class RegisterRequest
 
         /** @var iOAuthUser $userEntity */
         list($userEntity, $validationHash) = $this->Register()->persistUser($entityUser, $continue);
-
-
         # Build Response:
         #
         $userInfo = [];

@@ -82,16 +82,7 @@ class GrantObject
      */
     function addOption($option, $value)
     {
-        $options = $this->options;
-        foreach ($options as $key => $value){
-            if($option == $key){
-                $options[$key] = $value;
-                $this->options = $options;
-                return $this;
-            }
-        }
-        $options[$option] = $value;
-        $this->options = $options;
+        $this->options[$option] = $value;
         return $this;
     }
 }
