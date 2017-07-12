@@ -3,6 +3,8 @@ namespace Module\OAuth2
 {
     use Module\OAuth2\Services\BuildServices;
 
+    use Poirot\Application\aSapi;
+    use Poirot\Application\Interfaces\iApplication;
     use Poirot\Application\Interfaces\Sapi\iSapiModule;
     use Poirot\Application\ModuleManager\Interfaces\iModuleManager;
     use Poirot\Application\Interfaces\Sapi;
@@ -23,6 +25,7 @@ namespace Module\OAuth2
 
 
     class Module implements iSapiModule
+        , Sapi\Module\Feature\iFeatureModuleInitSapi
         , Sapi\Module\Feature\iFeatureModuleAutoload
         , Sapi\Module\Feature\iFeatureModuleInitModuleManager
         , Sapi\Module\Feature\iFeatureModuleMergeConfig
@@ -33,6 +36,25 @@ namespace Module\OAuth2
         const CONF_KEY      = 'module.oauth2';
         const REALM = 'module.oauth2.default_authenticator';
 
+
+        /**
+         * Init Module Against Application
+         *
+         * - determine sapi server, cli or http
+         *
+         * priority: 1000 A
+         *
+         * @param iApplication|aSapi $sapi Application Instance
+         *
+         * @return false|null False mean not setup with other module features (skip module)
+         * @throws \Exception
+         */
+        function initialize($sapi)
+        {
+            if ( \Poirot\isCommandLine( $sapi->getSapiName() ) )
+                // Sapi Is Not HTTP. SKIP Module Load!!
+                return false;
+        }
 
         /**
          * Register class autoload on Autoload
