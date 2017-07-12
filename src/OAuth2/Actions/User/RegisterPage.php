@@ -143,7 +143,7 @@ response:
         catch (exUnexpectedValue $e)
         {
             // TODO Handle Validation ...
-            throw $e;
+            throw new exUnexpectedValue('Validation Failed', null,  400, $e);
         }
         catch (exIdentifierExists $e) {
             $flash = \Module\HttpFoundation\Actions::flashMessage(self::FLASH_MESSAGE_ID);
