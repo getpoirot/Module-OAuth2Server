@@ -261,44 +261,36 @@ class UserRepo
      */
     function findOneByUserPass($username, $credential)
     {
-        $cursor = $this->_query()->aggregate([
-            [
-                '$match' => ['identifiers' => [
-                    '$elemMatch' => [
-                        'value'     => $username, // match with any element item if array
-                    ],
-                ],],
+        $user = $this->_query()->findOne([
+            'identifiers' => [
+                '$elemMatch' => [
+                    'value' => $username
+                ]
             ],
-            [
-                '$match' => ['grants' => [
-                    '$elemMatch' => [
-                        'type'  => 'password',
-                        'value' => $this->makeCredentialHash($credential),
-                    ]
-                ],],
-            ],
-            [
-                '$limit' => 1,
-            ],
+            'grants' => [
+                '$elemMatch' => [
+                    'type' => 'password'
+                ]
+            ]
         ]);
-        $result = false;
-        /** @var UserEntity $result */
-        foreach ($cursor as $result){
-            foreach ($result->getGrants() as $g){
-                /** @var GrantObject $g */
-                if ($g->getType() == 'password'){
-                    $options = $g->getOptions();
-                    $checksum = null;
-                    if (isset($options['checksums'])){
-                        $checksum = $options['checksums'];
-                    }
-                    if($g->getValue() === $this->makeCredentialHash($credential, $checksum)){
-                        return $result;
-                    }
+        if(!$user){
+            return false;
+        }
+        /** @var UserEntity $user */
+        foreach ($user->getGrants() as $g){
+            /** @var GrantObject $g */
+            if ($g->getType() == 'password'){
+                $options = $g->getOptions();
+                $checksum = null;
+                if (isset($options['checksum'])){
+                    $checksum = $options['checksum'];
+                }
+                if($g->getValue() === $this->makeCredentialHash($credential, $checksum)){
+                    return $user;
                 }
             }
         }
-        return $result;
+        return false;
     }
 
     /**
