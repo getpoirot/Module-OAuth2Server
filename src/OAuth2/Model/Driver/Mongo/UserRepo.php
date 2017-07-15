@@ -8,8 +8,10 @@ use Module\MongoDriver\Model\Repository\aRepository;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Model\Entity\User\GrantObject;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use MongoDB\BSON\ObjectID;
+use MongoDB\Model\BSONDocument;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\Std\Interfaces\Struct\iData;
 
@@ -57,10 +59,14 @@ class UserRepo
      *
      * @param string $credential
      *
+     * @param null $func
      * @return mixed
      */
-    function makeCredentialHash($credential)
+    function makeCredentialHash($credential, $func = null)
     {
+        if($func){
+            return call_user_func($func, $credential);
+        }
         return md5($credential);
     }
 
@@ -255,35 +261,34 @@ class UserRepo
      */
     function findOneByUserPass($username, $credential)
     {
-        /** @var \MongoDB\Driver\Cursor $r */
-        $cursor = $this->_query()->aggregate([
-            [
-                '$match' => ['identifiers' => [
-                    '$elemMatch' => [
-                        // iEntityUserIdentifierObject()
-                        'value'     => $username, // match with any element item if array
-                    ],
-                ],],
-            ],
-            [
-                '$match' => ['grants' => [
-                    '$elemMatch' => [
-                        // iEntityUserGrantObject()
-                        'type'  => 'password',
-                        'value' => $this->makeCredentialHash($credential),
-                    ]
-                ],],
-            ],
-            [
-                '$limit' => 1,
+        /** @var UserEntity $user */
+        $user = $this->_query()->findOne([
+            'identifiers' => [
+                '$elemMatch' => [
+                    'value'     => $username
+                ],
             ],
         ]);
-
-        $r = false;
-        foreach ($cursor as $r)
-            break;
-
-        return $r;
+        $flag = false;
+        if(!$user){
+            return $flag;
+        }
+        foreach ($user->getGrants() as $g){
+            /** @var GrantObject $g */
+            if ($g->getType() == 'password'){
+                /** @var BSONDocument $options */
+                $options = $g->getOptions();
+                if(isset($options->getArrayCopy()['checksum'])){
+                    $flag = !strcmp($g->getValue(), $this->makeCredentialHash($credential, $options->getArrayCopy()['checksum']));
+                }else{
+                    $flag = !strcmp($g->getValue(), $this->makeCredentialHash($credential));
+                }
+            }
+        }
+        if($flag){
+            return $user;
+        }
+        return false;
     }
 
     /**
