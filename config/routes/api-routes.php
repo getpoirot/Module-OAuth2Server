@@ -135,7 +135,7 @@ return [
                         'match_whole' => true,
                     ],
                     'params'  => [
-                        ListenerDispatch::ACTIONS => '/module/oauth2/actions/WhoisRequest',
+                        ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/WhoisRequest' ],
                     ],
                 ],
                 'profile' => [
@@ -146,7 +146,7 @@ return [
                         'match_whole' => true,
                     ],
                     'params'  => [
-                        ListenerDispatch::ACTIONS => '/module/oauth2/actions/GetUserInfoRequest',
+                        ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/GetUserInfoRequest' ],
                     ],
                 ],
                 // Register New User Request By POST
