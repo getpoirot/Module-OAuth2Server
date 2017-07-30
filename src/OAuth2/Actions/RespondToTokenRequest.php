@@ -5,31 +5,28 @@ use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Poirot\Http\HttpMessage\Response\BuildHttpResponse;
 use Poirot\Http\HttpResponse;
 
-use Poirot\Http\Interfaces\iHttpRequest;
-use Poirot\Http\Interfaces\iHttpResponse;
-use Poirot\Http\Psr\ResponseBridgeInPsr;
-
-use Poirot\Http\Psr\ServerRequestBridgeInPsr;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 class RespondToTokenRequest
     extends aAction
 {
     protected $response;
+    protected $requestPsr;
 
 
     /**
      * RespondToTokenRequest constructor.
      *
-     * @param iHttpResponse $httpResponse @IoC /HttpResponse
-     * @param iHttpRequest  $httpRequest  @IoC /HttpRequest
+     * @param ResponseInterface      $HttpResponsePsr @IoC /HttpResponsePsr
+     * @param ServerRequestInterface $HttpRequestPsr  @IoC /HttpRequestPsr
      */
-    function __construct(iHttpResponse $httpResponse, iHttpRequest $httpRequest)
+    function __construct(ResponseInterface $HttpResponsePsr, ServerRequestInterface $HttpRequestPsr)
     {
-        parent::__construct($httpRequest);
-
-        $this->response = $httpResponse;
+        $this->requestPsr = $HttpRequestPsr;
+        $this->response   = $HttpResponsePsr;
     }
 
 
@@ -41,11 +38,11 @@ class RespondToTokenRequest
      */
     function __invoke()
     {
-        $responsePsr = new ResponseBridgeInPsr($this->response);
+        $responsePsr = $this->response;
 
         try {
             $grant = $this->GrantResponder()
-                ->canRespondToRequest( new ServerRequestBridgeInPsr($this->request) );
+                ->canRespondToRequest( $this->requestPsr );
 
             if (! $grant )
                 throw exOAuthServer::unsupportedGrantType();

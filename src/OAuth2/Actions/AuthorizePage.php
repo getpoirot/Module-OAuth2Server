@@ -9,10 +9,10 @@ use Poirot\Http\HttpResponse;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Http\Interfaces\iHttpResponse;
 use Poirot\Http\Psr\ResponseBridgeInPsr;
-use Poirot\Http\Psr\ServerRequestBridgeInPsr;
 use Poirot\OAuth2\Interfaces\Server\Repository\iOAuthClient;
 use Poirot\OAuth2\Server\Exception\exOAuthServer;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 class AuthorizePage
@@ -23,6 +23,7 @@ class AuthorizePage
     /** @var iRepoUsersApprovedClients */
     protected $repoApprovedClients;
 
+    protected $requestPsr;
     protected $response;
 
 
@@ -31,18 +32,22 @@ class AuthorizePage
      *
      * @param iRepoUsersApprovedClients $repoApprovedClients @IoC /module/oauth2/services/repository/Users.ApprovedClients
      * @param iHttpRequest              $httpRequest         @IoC /HttpRequest
+     * @param ServerRequestInterface    $httpRequestPsr      @IoC /HttpRequestPsr
      * @param iHttpResponse             $response            @IoC /HttpResponse
      */
     function __construct(
         iRepoUsersApprovedClients $repoApprovedClients
         , iHttpRequest $httpRequest
+        , ServerRequestInterface $httpRequestPsr
         , iHttpResponse $response
 
     ) {
+        $this->response   = $response;
+        $this->requestPsr = $httpRequestPsr;
+
         $this->repoApprovedClients = $repoApprovedClients;
 
-        $this->request  = $httpRequest;
-        $this->response = $response;
+        parent::__construct($httpRequest);
     }
 
 
@@ -55,7 +60,7 @@ class AuthorizePage
         # Check whether we can respond to request grant?
         #
         $grant = $this->GrantResponder()
-            ->canRespondToRequest( new ServerRequestBridgeInPsr($this->request) );
+            ->canRespondToRequest( $this->requestPsr );
 
         if (! $grant )
             throw exOAuthServer::unsupportedGrantType();
