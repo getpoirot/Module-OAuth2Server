@@ -23,6 +23,8 @@ class GetUserInfoRequest
 
 
     /**
+     * Construct
+     *
      * @param iRepoUsers           $users       @IoC /module/oauth2/services/repository/Users
      * @param iHttpRequest         $httpRequest @IoC /HttpRequest
      */
@@ -57,7 +59,7 @@ class GetUserInfoRequest
             ]);
         }
         elseif ($userid !== null) {
-            $userid = trim($userid);
+            $userid     = trim($userid);
             $userEntity = $this->repoUsers->findOneByUID($userid);
         }
         else {

@@ -24,8 +24,8 @@ class ServiceAssertToken
      */
     function newService()
     {
-        $accessTokens  = $this->services()->get('/module/oauth2/services/repository/AccessTokens');
-        $authorizeToen = new AssertByInternalServer($accessTokens);
-        return $authorizeToen;
+        $repoTokens     = $this->services()->get('/module/oauth2/services/repository/AccessTokens');
+        $tokenAssertion = new AssertByInternalServer($repoTokens);
+        return $tokenAssertion;
     }
 }

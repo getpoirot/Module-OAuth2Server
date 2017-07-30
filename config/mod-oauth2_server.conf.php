@@ -49,12 +49,12 @@ return [
 
     # Authorization:
 
-    \Module\Authorization\Module::CONF_KEY => [
+    \Module\Authorization\Module::CONF => [
         ServiceAuthenticatorsContainer::CONF => [
             'plugins_container' => [
                 'services' => [
                     // Authenticators Services
-                    'module.oauth2.default_authenticator' => OAuth2\Services\ServiceAuthenticatorDefault::class,
+                    OAuth2\Services\ServiceAuthenticatorDefault::class,
                 ],
             ],
         ],

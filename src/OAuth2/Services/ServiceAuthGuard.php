@@ -2,12 +2,15 @@
 namespace Module\OAuth2\Services;
 
 use Module\Authorization\Guard\GuardRoute;
-use Poirot\Ioc\Container\Service\aServiceContainer;
+use Module\OAuth2\Services\Guards\aServiceGuard;
 
 
 class ServiceAuthGuard
-    extends aServiceContainer
+    extends aServiceGuard
 {
+    protected $authenticatorName = \Module\OAuth2\Module::REALM;
+
+
     /**
      * Create Service
      *
@@ -16,7 +19,7 @@ class ServiceAuthGuard
     function newService()
     {
         $guard = new GuardRoute;
-        $auth  = \Module\Authorization\Actions::Authenticator( \Module\OAuth2\Module::REALM );
+        $auth  = $this->_attainAuthenticatorByName($this->authenticatorName);
         $guard->setAuthenticator( $auth );
         $guard->setRoutesDenied([
             'main/oauth/authorize',
