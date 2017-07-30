@@ -2,7 +2,7 @@
 namespace Module\OAuth2\Services;
 
 use Module\Authorization\Guard\GuardRoute;
-use Module\OAuth2\Services\Guards\aServiceGuard;
+use Module\Authorization\Services\Guards\aServiceGuard;
 
 
 class ServiceAuthGuard
