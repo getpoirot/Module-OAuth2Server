@@ -6,6 +6,7 @@ use Module\MongoDriver\Model\Repository\aRepository;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoAccessTokens;
 use Poirot\OAuth2\Model\AccessToken as BaseAccessToken;
+use Poirot\OAuth2\Model\AccessToken;
 
 
 class AccessTokenRepo
@@ -74,6 +75,19 @@ class AccessTokenRepo
             // enforce delete expired token entity!!
             $this->removeByIdentifier($tokenIdentifier);
             return false;
+        }
+
+        if ( $r ) {
+            $accessToken = new AccessToken();
+            $accessToken
+                ->setIdentifier( $r->getIdentifier() )
+                ->setClientIdentifier( $r->getClientIdentifier() )
+                ->setDateTimeExpiration( $r->getDateTimeExpiration() )
+                ->setScopes( $r->getScopes() )
+                ->setOwnerIdentifier( (string) $r->getOwnerIdentifier() )
+            ;
+
+            $r = $accessToken;
         }
 
         return $r ? $r : false;
