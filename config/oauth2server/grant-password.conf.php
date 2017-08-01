@@ -1,6 +1,5 @@
 <?php
 return [
-    'ttl_auth_code' => new \DateInterval('PT5M'),
     'ttl_refresh_token' => new \DateInterval('P1M'),
     'ttl_access_token' => new \DateInterval('PT1H'),
     /*

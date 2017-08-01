@@ -31,7 +31,7 @@ class ServiceAuthorizationCode
             ->setRepoClient( \Module\OAuth2\Services\Repository\IOC::Clients() )
             ->setRepoAuthCode( \Module\OAuth2\Services\Repository\IOC::AuthCodes() )
             ->setRepoRefreshToken( \Module\OAuth2\Services\Repository\IOC::RefreshTokens() )
-            ->setRepoAccessToken( $this->repoAccessToken )
+            ->setRepoAccessToken( ($this->repoAccessToken) ? $this->repoAccessToken: \Module\OAuth2\Services\Repository\IOC::AccessTokens() )
 
             ->setRetrieveUserCallback(
                 \Module\OAuth2\Actions\IOC::bareService()->RetrieveAuthenticatedUser
@@ -81,5 +81,4 @@ class ServiceAuthorizationCode
         // \Module\OAuth2\Services\Repository\IOC::AccessTokens()
         $this->repoAccessToken = $repoAccessToken;
     }
-
 }

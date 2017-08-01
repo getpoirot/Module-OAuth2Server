@@ -39,9 +39,25 @@ return [
                     ## Grant Client Credential:
                     'client_credentials' => OAuth2\Services\Grant\ServiceClientCredential::class,
                     ## Grant Password:
-                    'password'           => OAuth2\Services\Grant\ServicePassword::class,
+                    'password'           => new instance(
+                        OAuth2\Services\Grant\ServicePassword::class
+                        , \Poirot\Std\catchIt(function () {
+                            if (false === $c = \Poirot\Config\load(__DIR__.'/oauth2server/grant-password'))
+                                throw new \Exception('Config (oauth2server/grant-auth_code) not loaded.');
+
+                            return $c->value;
+                        })
+                    ),
                     ## Grant Refresh Token:
-                    'refresh_token'      => OAuth2\Services\Grant\ServiceRefreshToken::class,
+                    'refresh_token'      => new instance(
+                        OAuth2\Services\Grant\ServiceRefreshToken::class
+                        , \Poirot\Std\catchIt(function () {
+                            if (false === $c = \Poirot\Config\load(__DIR__.'/oauth2server/grant-refresh_token'))
+                                throw new \Exception('Config (oauth2server/grant-auth_code) not loaded.');
+
+                            return $c->value;
+                        })
+                    )
                 ]
             ]
         ),
