@@ -268,16 +268,20 @@ class Validation
          */
         $mobileNo    = (string) $authCode->getValue();
 
-        if (method_exists($this->sms, 'sendVerificationTo')) {
-            // Currently our sms provider support for sending verification codes; with higher priority and delivery!
-            $sentMessage = $this->sms->sendVerificationTo((string) $mobileNo, 'papionVerify', ['token' => $authCode->getCode()]);
+        $alterMethod = $this->sapi()->config()
+            ->get(\Module\OAuth2\Module::CONF_KEY);
+        $alterMethod = $alterMethod['mediums']['mobile']['alter_send_method'];
 
+        if ($alterMethod) {
+            // With Config We Can Change a Way We Send SMS From Client Service!!!
+            // Some Providers Has a Specific Command To Send Auth Codes With More Priority; tnx dear provider.
+            $sentMessage = call_user_func( $alterMethod, $this->sms, $mobileNo, $authCode->getCode() );
         } else {
-            $messageBody = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
+            $messageBody = $this->sapi()->config()->get( \Module\OAuth2\Module::CONF_KEY );
             $messageBody = $messageBody['mediums']['mobile']['message_verification'];
 
             $sentMessage = $this->sms->sendTo(
-                [ (string) $mobileNo ]
+                [ $mobileNo ]
                 , new SMSMessage( sprintf($messageBody, $authCode->getCode()) )
             );
         }

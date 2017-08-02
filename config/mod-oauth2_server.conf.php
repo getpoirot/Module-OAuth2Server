@@ -5,6 +5,7 @@ use Module\Authorization\Services\ServiceGuardsContainer;
 
 use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation;
+use Poirot\Sms\Interfaces\iClientOfSMS;
 
 
 return [
@@ -24,9 +25,14 @@ return [
         'allow_server_pick_username' => true,
 
         'mediums' => [
+            // TODO use %auth_code% instead of %s
             'mobile' => [
                 // Path to Template file or String
                 'message_verification' => 'کد فعال سازی شما %s',
+                'alter_send_method'    => function (iClientOfSMS $smsClient, $mobileNo, $code) {
+                    // Currently our sms provider support for sending verification codes; with higher priority and delivery!
+                    return $smsClient->sendVerificationTo($mobileNo, 'papionVerify', ['token' => $code]);
+                }
             ],
             'email' => [
                 // Path to Template file or String
