@@ -171,10 +171,23 @@ class UserEntity
     /**
      * Get Contacts
      *
-     * @return iUserIdentifierObject[]
+     * @param null $identifierType
+     *
+     * @return \Module\OAuth2\Interfaces\Model\iUserIdentifierObject[]
+     * @throws \Exception
      */
-    function getIdentifiers()
+    function getIdentifiers($identifierType=null)
     {
+        if ($identifierType !== null) {
+            if (! isset($this->identifiers[$identifierType]) )
+                throw new \Exception(sprintf(
+                    'Identifier With Type (%s) Not Found.'
+                    , $identifierType
+                ));
+
+            return $this->identifiers[$identifierType];
+        }
+
         return array_values($this->identifiers);
     }
 
@@ -187,7 +200,7 @@ class UserEntity
      */
     function addIdentifier(iUserIdentifierObject $identifier)
     {
-        $this->identifiers[] = $identifier;
+        $this->identifiers[$identifier->getType()] = $identifier;
         return $this;
     }
 
@@ -235,10 +248,24 @@ class UserEntity
     /**
      * Get Grants
      *
-     * @return iUserGrantObject[]
+     * @param null $grantType
+     *
+     * @return \Module\OAuth2\Interfaces\Model\iUserGrantObject[]
+     * @throws \Exception
      */
-    function getGrants()
+    function getGrants($grantType=null)
     {
+        if ($grantType !== null) {
+            if (! isset($this->grants[$grantType]) )
+                throw new \Exception(sprintf(
+                    'Grant Type (%s) Not Found.'
+                    , $grantType
+                ));
+
+            return $this->grants[$grantType];
+        }
+
+
         return array_values($this->grants);
     }
 
@@ -251,7 +278,7 @@ class UserEntity
      */
     function addGrant(iUserGrantObject $grant)
     {
-        $this->grants[] = $grant;
+        $this->grants[$grant->getType()] = $grant;
         return $this;
     }
 
