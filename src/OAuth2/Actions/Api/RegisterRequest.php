@@ -40,8 +40,8 @@ class RegisterRequest
     {
         # Assert Token
         #
-
         $this->assertTokenByOwnerAndScope($token);
+
 
         $request = $this->request;
 
@@ -73,6 +73,7 @@ class RegisterRequest
 
             __(new Entity\UserValidate($entityUser
                 , [ 'must_have_username' => true,
+                    'is_onetime_code'    => true,
                     'must_have_email'    => false, ] // registration through 3rd parties do not restrict email
             )) ->assertValidate();
 
@@ -90,6 +91,7 @@ class RegisterRequest
 
         /** @var iOAuthUser $userEntity */
         list($userEntity, $validationHash) = $this->Register()->persistUser($entityUser, $continue);
+
         # Build Response:
         #
         $userInfo = [];
@@ -131,16 +133,19 @@ class RegisterRequest
         }
 
         (! $validationHash ) ?: $r += [
-            '_link' => [
-                'validate' => (string) \Module\HttpFoundation\Actions::url(
-                    'main/oauth/recover/validate'
-                    , ['validation_code' => $validationHash]
-                ),
-                'validation_page' => (string) \Module\HttpFoundation\Actions::url(
-                    'main/oauth/recover/validate'
-                    , array('validation_code' => $validationHash)
-                ),
-                'resend_authcode' => $resendLinks,
+            'validation' => [
+                'hash' => $validationHash,
+                '_link' => [
+                    'validate' => (string) \Module\HttpFoundation\Actions::url(
+                        'main/oauth/recover/validate'
+                        , ['validation_code' => $validationHash]
+                    ),
+                    'validation_page' => (string) \Module\HttpFoundation\Actions::url(
+                        'main/oauth/recover/validate'
+                        , array('validation_code' => $validationHash)
+                    ),
+                    'resend_authcode' => $resendLinks,
+                ],
             ],
         ];
 
