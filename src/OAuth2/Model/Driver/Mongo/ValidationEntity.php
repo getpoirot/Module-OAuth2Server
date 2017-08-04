@@ -78,7 +78,9 @@ class ValidationEntity
                     );
 
                     $pre->setCode($identifier['code']);
-                    $pre->setTimestampSent($identifier['timestamp_sent']);
+
+                    if (isset($identifier['timestamp_sent']))
+                        $pre->setTimestampSent($identifier['timestamp_sent']);
 
                     $preIdents[] = $pre;
                 }
