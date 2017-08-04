@@ -92,17 +92,24 @@ class ValidationEntity
      */
     function addAuthCode(iValidationAuthCodeObject $authCode)
     {
-        $this->authCodes[] = $authCode;
+        $this->authCodes[$authCode->getType()] = $authCode;
         return $this;
     }
 
     /**
      * Get Authorization Codes
      *
-     * @return iValidationAuthCodeObject[]
+     * @param null $authType
+     *
+     * @return \Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject[]
      */
-    function getAuthCodes()
+    function getAuthCodes($authType=null)
     {
+        if ($authType !== null)
+            return ( isset($this->authCodes[$authType]) )
+                ? $this->authCodes[$authType]
+                : null;
+
         return $this->authCodes;
     }
 
