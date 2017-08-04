@@ -16,6 +16,7 @@ class UserValidate
     // Allow Api Partners Application To Register Without Email When Value is False
     protected $must_have_email    = true;     // user must provide email address
     protected $must_have_username = false;    // user must provide username
+    protected $is_onetime_code    = false;    // registration through onetime code
 
 
     /**
@@ -49,12 +50,13 @@ class UserValidate
     {
         $exceptions = [];
 
-        if (!$this->entity->getFullName())
-            $exceptions[] = exUnexpectedValue::paramIsRequired('fullname');
+        if (!$this->is_onetime_code) {
+            if (!$this->entity->getFullName())
+                $exceptions[] = exUnexpectedValue::paramIsRequired('fullname');
 
-        if (!$this->entity->getPassword())
-            $exceptions[] = exUnexpectedValue::paramIsRequired('password');
-
+            if (!$this->entity->getPassword())
+                $exceptions[] = exUnexpectedValue::paramIsRequired('password');
+        }
 
 
         $identifiers = $this->entity->getIdentifiers();
