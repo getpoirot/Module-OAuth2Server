@@ -81,12 +81,20 @@ class Validation
      * @param iOAuthUser              $user
      * @param iUserIdentifierObject[] $identifiers
      * @param null                    $continue
+     * @param \DateTime               $dateTimeExpiration
      *
      * @return ValidationEntity|null Validation code identifier
      */
-    function madeValidationChallenge(iOAuthUser $user = null, array $identifiers, $continue = null)
+    function madeValidationChallenge(iOAuthUser $user = null, array $identifiers, $continue = null, \DateTime $dateTimeExpiration = null)
     {
+        if ($dateTimeExpiration === null) {
+            $dateTimeExpiration = new \DateTime();
+            $dateTimeExpiration->add(new \DateInterval('P1D'));
+        }
+
+
         # Create Auth Codes for each Identifier:
+        #
         $authCodes = [];
         /** @var iUserIdentifierObject $ident */
         foreach ($identifiers as $ident) {
@@ -109,6 +117,7 @@ class Validation
             ->setValidationCode( \Poirot\Std\generateUniqueIdentifier(30) )
             ->setUserUid($user->getUid())
             ->setAuthCodes($authCodes)
+            ->setDateTimeExpiration($dateTimeExpiration)
             ->setContinueFollowRedirection($continue) // used by oauth registration follow
         ;
 
@@ -126,12 +135,12 @@ class Validation
      * ]
      *
      * @param iValidation $validationEntity
-     * @param array       $validateAgainst
+     * @param array $validateAgainst
+     * @param bool $forget
      *
-     *
-     * @return boolean True if all codes is validated
+     * @return bool True if all codes is validated
      */
-    function validateAuthCodes(iValidation $validationEntity, array $validateAgainst)
+    function validateAuthCodes(iValidation $validationEntity, array $validateAgainst, $forget = false)
     {
         $rIsValidated = true;
 
@@ -160,6 +169,20 @@ class Validation
             }
 
 
+            if ($forget) {
+                // Don`t need to update validation entity
+                // we used to just vaidate given data
+                // in exp. generate ott (one-time-token)
+                $this->repoValidationCodes->deleteByValidationCode(
+                    $validationEntity->getValidationCode()
+                );
+
+                $ac->setValidated();
+
+                continue;
+            }
+
+
             // Given Code Match; Update To Validated!!!
             // TODO implement commit/rollback; maybe momento|aggregate design pattern or something is useful here
 
@@ -179,7 +202,6 @@ class Validation
 
             // Mark As Validated; So Display Latest Status When Code Execution Follows.
             $ac->setValidated();
-
 
             // Determine that user itself has validate code on page, used to login user automatically
             Module\OAuth2\generateAndRememberToken( $validationEntity->getValidationCode() );
