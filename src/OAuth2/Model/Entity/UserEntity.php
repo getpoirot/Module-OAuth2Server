@@ -113,15 +113,23 @@ class UserEntity
      */
     function setPassword($credential)
     {
+        if ( empty($credential) )
+            return $this;
+
         /** @var GrantObject $g */
         foreach ($this->getGrants() as $i => $g)
             if ($g->getType() == 'password')
                 unset($this->grants[$i]);
 
-        $go = new GrantObject();
-        $go->setType('password')->setValue($credential)->addOption('checksum', 'md5');
-        $this->addGrant($go);
 
+        $go = new GrantObject();
+        $go
+            ->setType('password')
+            ->setValue($credential)
+            ->addOption('checksum', 'md5')
+        ;
+
+        $this->addGrant($go);
         return $this;
     }
 
@@ -208,9 +216,13 @@ class UserEntity
      * Set metadata, replacing old ones
      *
      * @param array $meta
+     *
+     * @return $this
      */
-    function setMeta($meta){
+    function setMeta($meta)
+    {
         $this->meta = $meta;
+        return $this;
     }
 
     /**
@@ -218,7 +230,8 @@ class UserEntity
      *
      * @return array
      */
-    function getMeta(){
+    function getMeta()
+    {
         return $this->meta;
     }
 

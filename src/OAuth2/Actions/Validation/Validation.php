@@ -309,12 +309,14 @@ class Validation
         }
 
 
-        $sentMessage = current($sentMessage);
-
-        if ($sentMessage->getStatus() === iSentMessage::STATUS_BANNED)
-            throw new exRegistration(
-                'سیستم قادر به ارسال پیامک فعال سازی نیست، دریافت سرویس های پیامکی توسط شما لغو شده است.'
-            );
+        if ($sentMessage !== null) {
+            // Maybe Function Return Null; It's Considered as Debug or Disabled SMS Sent.
+            $sentMessage = current($sentMessage);
+            if ($sentMessage->getStatus() === iSentMessage::STATUS_BANNED)
+                throw new exRegistration(
+                    'سیستم قادر به ارسال پیامک فعال سازی نیست، دریافت سرویس های پیامکی توسط شما لغو شده است.'
+                );
+        }
 
         # Update Last Sent Validation Code Datetime
         $this->repoValidationCodes->updateAuthTimestampSent(

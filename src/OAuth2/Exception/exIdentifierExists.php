@@ -7,7 +7,7 @@ use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 class exIdentifierExists
     extends exRegistration
 {
-    const MESSAGE = 'The Identifier(s) [%s] Is Given To Another User.';
+    const MESSAGE = 'The Identifier(s) [%s](%s) Is Given To Another User.';
     
     protected $identifiers;
 
@@ -24,10 +24,12 @@ class exIdentifierExists
         $this->identifiers = $identifiers;
         if ($message === null) {
             $idTypes = array();
-            foreach ($identifiers as $id)
-                $idTypes[] = $id->getType();
+            foreach ($identifiers as $id) {
+                $idTypes[]  = $id->getType();
+                $idValues[] = $id->getValue();
+            }
 
-            $message = sprintf(self::MESSAGE, implode(', ', $idTypes));
+            $message = sprintf(self::MESSAGE, implode(', ', $idTypes), implode(', ', $idValues));
         }
 
         parent::__construct($message, 400, $previous);

@@ -16,7 +16,7 @@ class IdentifierObject
 
     protected $type;
     protected $value;
-    protected $is_validated;
+    protected $is_validated = false;
 
 
     /**

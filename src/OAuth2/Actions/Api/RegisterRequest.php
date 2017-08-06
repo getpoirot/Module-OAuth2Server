@@ -56,8 +56,9 @@ class RegisterRequest
             $hydrateUser = new Entity\UserHydrate(
                 Entity\UserHydrate::parseWith($this->request) );
 
+
             /** @var iEntityAccessToken $token */
-            $hydrateUser->setClient($token->getClientIdentifier());
+            $hydrateUser->setClient( $token->getClientIdentifier() );
 
             $entityUser  = new Entity\UserEntity($hydrateUser);
 
