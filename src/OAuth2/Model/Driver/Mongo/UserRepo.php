@@ -85,26 +85,32 @@ class UserRepo
             ->setUid($user->getUid())
             ->setFullName($user->getFullName())
             ->setIdentifiers($user->getIdentifiers())
-            ->setGrants($user->getGrants())
-            ->setUsername($user->getUsername())
-            ->setPassword( $this->makeCredentialHash($user->getPassword()) )
+            ->setGrants( $user->getGrants() )
+            ->setUsername( $user->getUsername() )
             ->setDateCreated( $user->getDateCreated() )
-            ->setMeta($user->getMeta())
+            ->setMeta( $user->getMeta() )
         ;
+
+        // In Some Situations (Single-SignIn, PasswordLess) Users May Registered Without Password.
+
+        ( $pass = $user->getPassword() || empty($pass) )
+            ?: $e->setPassword( $this->makeCredentialHash($pass) );
+
 
         $r = $this->_query()->insertOne($e);
 
         $u = new Entity\UserEntity; // Don`t contains specific Repo Entity Model Fields such as date specific
         $u
-            ->setUid($e->getUid())
-            ->setFullName($e->getFullName())
-            ->setIdentifiers($e->getIdentifiers())
-            ->setGrants($e->getGrants())
-            ->setUsername($user->getUsername())
-            ->setPassword($e->getPassword())
-            ->setDateCreated($e->getDateCreated())
-            ->setMeta($e->getMeta())
+            ->setUid( $e->getUid() )
+            ->setFullName( $e->getFullName() )
+            ->setIdentifiers( $e->getIdentifiers() )
+            ->setGrants( $e->getGrants() )
+            ->setUsername( $user->getUsername() )
+            ->setDateCreated( $e->getDateCreated() )
+            ->setMeta( $e->getMeta() )
         ;
+
+        ( empty($pass) ) ?: $u->setPassword( $e->getPassword() );
 
         return $u;
     }
