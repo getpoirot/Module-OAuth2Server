@@ -569,12 +569,13 @@ class NamesGenerator
 
     function __construct($fullname)
     {
-        $this->fullname = new StdString($fullname);
+        $this->fullname = StdString::of($fullname);
     }
 
     function getName()
     {
-        if ($this->fullname->isUTF8())
+        // Empty String Also Consider as None-Printable
+        if (! $this->fullname->isPrintable() || $this->fullname->isUTF8() )
             return $this->_generateName();
 
         $return = (string) $this->fullname->toLower();

@@ -34,19 +34,21 @@ class AttainUsername
     function __invoke(iOAuthUser $user = null)
     {
         if (! $username = $user->getUsername() )
-            $username = (string) new NamesGenerator($user->getFullName());
+            $username = (string) new NamesGenerator( $user->getFullName() );
 
-        $i        = null;
+        $i = null;
         do {
-            $username .= (string) $i;
+            $newUsername = $username . (string) $i;
+
             $identifier = new IdentifierObject;
             $identifier->setType('username');
-            $identifier->setValue($username);
+            $identifier->setValue($newUsername);
 
             $goNext = $this->repoUsers->hasAnyIdentifiersRegistered( [$identifier] );
             $i++;
         } while ($goNext);
 
-        return $username;
+        
+        return $newUsername;
     }
 }
