@@ -5,7 +5,7 @@ use Module\Authorization\Actions\AuthenticatorAction;
 use Module\OAuth2\Actions\Helper\AttainUsername;
 use Module\OAuth2\Actions\User\Register;
 use Module\OAuth2\Actions\Validation\Validation;
-use Module\OAuth2\Events\EventHeap;
+use Module\OAuth2\Events\EventHeapOfOAuth;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Module;
@@ -47,7 +47,7 @@ abstract class aAction
 {
     /** @var iHttpRequest */
     protected $request;
-    /** @var EventHeap */
+    /** @var EventHeapOfOAuth */
     protected $events;
 
     protected $_authenticator;
@@ -72,7 +72,7 @@ abstract class aAction
     function event()
     {
         if (!$this->events)
-            $this->events = new EventHeap;
+            $this->events = new EventHeapOfOAuth;
 
         return $this->events;
     }
