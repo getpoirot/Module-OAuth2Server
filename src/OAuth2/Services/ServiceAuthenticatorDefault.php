@@ -45,12 +45,11 @@ class ServiceAuthenticatorDefault
                 // TODO using cookie+session identifier to recognize user and feature to remember me!!
                 __(new IdentifierSession)->setIssuerException(function(exAuthentication $e) use ($request) {
                     $loginUrl = \Module\HttpFoundation\Actions::url('main/oauth/login'); // ensure routes loaded
-                    $continue = \Module\Foundation\Actions::path(sprintf(
-                        '$baseUrl/%s'
-                        , ltrim($request->getTarget(), '/'))
-                    );
+                    $continue = \Module\Foundation\Actions::path(
+                        sprintf( '$baseUrl/%s', ltrim($request->getTarget(), '/') ) );
                     $loginUrl = \Poirot\Psr7\modifyUri( $loginUrl->uri(), [ 'query' => ['continue' => $continue] ] );
                     header('Location: '.$loginUrl);
+                    die; // header sent but page not redirected unless we die progress here..
                 })
                 /** @see Users::findOneMatchBy */
                 , new IdentityFulfillmentLazy($repoUsers, 'uid')
