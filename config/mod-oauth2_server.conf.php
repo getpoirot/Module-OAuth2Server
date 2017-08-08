@@ -1,9 +1,9 @@
 <?php
+use Module\HttpRenderer\RenderStrategy\RenderDefaultStrategy;
 use Module\OAuth2;
 use Module\Authorization\Services\ServiceAuthenticatorsContainer;
 use Module\Authorization\Services\ServiceGuardsContainer;
 
-use Module\HttpRenderer\Services\RenderStrategy\ListenersRenderDefaultStrategy;
 use Poirot\OAuth2\Server\Grant\GrantExtensionTokenValidation;
 use Poirot\Sms\Interfaces\iClientOfSMS;
 
@@ -136,7 +136,7 @@ return [
     # View Renderer:
 
     // View Renderer Options
-    ListenersRenderDefaultStrategy::CONF_KEY => [
+    RenderDefaultStrategy::CONF_KEY => [
         'themes' => [
             'oauth2server' => [
                 'dir' => __DIR__.'/../theme_alter',

@@ -130,7 +130,7 @@ namespace Module\OAuth2
      */
     function isValidMobileNum($mobileNumber, &$matches = null)
     {
-        $pattern = '/^[- .\(\)]?((?P<country_code>(98)|(\+98)|(0098)|0){1}[- .\(\)]{0,3})(?P<number>((91)|(93)){1}[0-9]{8})$/';
+        $pattern = '/^[- .\(\)]?((?P<country_code>(98)|(\+98)|(0098)|0){1}[- .\(\)]{0,3})(?P<number>((91)|(93)|(92)|(99)){1}[0-9]{8})$/';
         return preg_match($pattern, (string) $mobileNumber, $matches);
     }
 }
