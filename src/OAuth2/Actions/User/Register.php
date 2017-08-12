@@ -68,7 +68,7 @@ class Register
         ## validate existence identifier
         #- email or mobile not given before
         $identifiers = $repoUsers->hasAnyIdentifiersRegistered( $entity->getIdentifiers() );
-        if (!empty($identifiers))
+        if (! empty($identifiers) )
             throw new exIdentifierExists($identifiers);
 
 

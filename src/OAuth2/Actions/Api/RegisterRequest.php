@@ -84,6 +84,7 @@ class RegisterRequest
             throw new exUnexpectedValue('Validation Failed', null,  400, $e);
         }
 
+
         # Register User:
         #
         // Continue Used to OAuth Registration Follow!!!
@@ -92,6 +93,8 @@ class RegisterRequest
 
         /** @var iOAuthUser $userEntity */
         list($userEntity, $validationHash) = $this->Register()->persistUser($entityUser, $continue);
+
+
 
         # Build Response:
         #
@@ -149,6 +152,7 @@ class RegisterRequest
                 ],
             ],
         ];
+
 
         return [
             ListenerDispatch::RESULT_DISPATCH => $r

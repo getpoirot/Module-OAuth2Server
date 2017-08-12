@@ -110,7 +110,7 @@ class ValidationEntity
                 ? $this->authCodes[$authType]
                 : null;
 
-        return $this->authCodes;
+        return array_values($this->authCodes); // must persist as array
     }
 
     /**

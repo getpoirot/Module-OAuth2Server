@@ -65,7 +65,7 @@ class isExistsUserWithIdentifierRequest
         /** @var iUserIdentifierObject $ident */
         foreach ($identifiers as $ident) {
             $r = $this->repoUsers->hasAnyIdentifiersRegistered([ $ident ]);
-            $return[$ident->getType()] = (boolean) $r;
+            $return[$ident->getType()] = ( empty($r) ) ? false : true;
         }
 
         return [

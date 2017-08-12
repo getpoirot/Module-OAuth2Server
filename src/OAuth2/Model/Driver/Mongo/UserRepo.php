@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Model\Driver\Mongo;
 
+use Module\OAuth2\Interfaces\Model\iUserGrantObject;
 use Module\OAuth2\Model\Entity;
 
 use Module\MongoDriver\Model\Repository\aRepository;
@@ -64,9 +65,9 @@ class UserRepo
      */
     function makeCredentialHash($credential, $func = null)
     {
-        if($func){
+        if (null !== $func)
             return call_user_func($func, $credential);
-        }
+
         return md5($credential);
     }
 
@@ -91,10 +92,23 @@ class UserRepo
             ->setMeta( $user->getMeta() )
         ;
 
+
         // In Some Situations (Single-SignIn, PasswordLess) Users May Registered Without Password.
 
-        ( $pass = $user->getPassword() || empty($pass) )
-            ?: $e->setPassword( $this->makeCredentialHash($pass) );
+        $pass = $user->getPassword();
+        if (! empty($pass) ) {
+            /** @var iUserGrantObject $g */
+            foreach ($user->getGrants() as $g) {
+                if ($g->getType() != 'password')
+                    continue;
+
+                $options  = $g->getOptions();
+
+                $checksum = (isset($options['checksum'])) ? $options['checksum'] : null;
+
+                $e->setPassword( $this->makeCredentialHash($pass, $checksum) );
+            }
+        }
 
 
         $r = $this->_query()->insertOne($e);
@@ -118,6 +132,8 @@ class UserRepo
     /**
      * Has Identifier Existed?
      * return identifiers from list that has picked by someone or empty list
+     *
+     * Note: Identifiers Can Be Validated Nor Not Validated
      *
      * @param []iEntityUserIdentifierObject $identifier
      *
@@ -174,6 +190,9 @@ class UserRepo
     /**
      * Find Match With Exact Identifiers?
      *
+     * Note: There is no different for validated identifier
+     *
+     *
      * @param iUserIdentifierObject[] $identifiers
      *
      * @return iOAuthUser|false
@@ -182,24 +201,50 @@ class UserRepo
     {
         $match = [];
 
-        /** @var iUserIdentifierObject $arg */
-        foreach ($identifiers as $arg) {
+        /** @var iUserIdentifierObject $qArgs */
+        foreach ($identifiers as $ident)
+        {
+            if ($ident instanceof  iUserIdentifierObject) {
+                $value = $ident->getValue();
+                $value = ( $value instanceof \Traversable )
+                    ? \Poirot\Std\cast($value)->toArray(function($val) {
+                        return $val === null; // filter null values
+                        }, true)
+                    : $value;
+
+                $qArgs = [
+                    'type'  => $ident->getType(),
+                    'value' => $value,
+                ];
+            }
+            else {
+                $qArgs =  \Poirot\Std\cast($ident)->toArray(function($val) {
+                    return $val === null; // filter null values
+                }, true);
+
+                $qArgs = [
+                    'type'  => $qArgs['type'],
+                    'value' => $qArgs['value'],
+                ];
+            }
+
+            if ( is_array($qArgs['value']) && array_key_exists('validated', $qArgs['value']) )
+                unset($qArgs['value']['validated']);
+
+
             $match[] = [
                 '$match' => ['identifiers' => [
-                    '$elemMatch' => \Poirot\Std\cast($arg)->toArray(function($val) {
-                            return $val === null; // filter null values
-                        }, true)
+                    '$elemMatch' => $qArgs,
                         // iEntityUserIdentifierObject()
                         /*
                         'type'      => $arg->getType(),
                         'value'     => $arg->getValue(),
-                        'validated' => $arg->isValidated()
                         */
                 ],],
             ];
         }
 
-        
+
         /** @var \MongoDB\Driver\Cursor $r */
         $cursor = $this->_query()->aggregate($match);
 
@@ -279,23 +324,24 @@ class UserRepo
                 ]
             ]
         ]);
-        if(!$user){
+
+        if (! $user )
             return false;
-        }
+
         /** @var UserEntity $user */
-        foreach ($user->getGrants() as $g){
+        foreach ($user->getGrants() as $g) {
             /** @var GrantObject $g */
-            if ($g->getType() == 'password'){
-                $options = $g->getOptions();
+            if ($g->getType() == 'password') {
                 $checksum = null;
-                if (isset($options['checksum'])){
+                $options  = $g->getOptions();
+                if ( isset($options['checksum']) )
                     $checksum = $options['checksum'];
-                }
-                if($g->getValue() === $this->makeCredentialHash($credential, $checksum)){
+
+                if ( $g->getValue() === $this->makeCredentialHash($credential, $checksum) )
                     return $user;
-                }
             }
         }
+
         return false;
     }
 

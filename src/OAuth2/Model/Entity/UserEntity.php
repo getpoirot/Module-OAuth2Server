@@ -126,7 +126,6 @@ class UserEntity
         $go
             ->setType('password')
             ->setValue($credential)
-            ->addOption('checksum', 'md5')
         ;
 
         $this->addGrant($go);
@@ -196,7 +195,7 @@ class UserEntity
             return $this->identifiers[$identifierType];
         }
 
-        return array_values($this->identifiers);
+        return array_values($this->identifiers); // must persist as array
     }
 
     /**

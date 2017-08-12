@@ -42,6 +42,7 @@ class ResendAuthCodeRequest
             return false;
 
 
+
         # Build Response
 
         $expiry = $this->Validation()->sendAuthCodeByMediumType($validationEntity, $identifier_type);

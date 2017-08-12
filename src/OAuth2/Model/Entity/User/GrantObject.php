@@ -11,8 +11,11 @@ class GrantObject
 {
     protected $type;
     protected $value;
-    protected $options = array();
     protected $is_validated = false;
+    protected $options = [
+        # 'checksum' => 'md5' Hash Functionality used by persistence
+    ];
+
 
     /**
      * Set Type

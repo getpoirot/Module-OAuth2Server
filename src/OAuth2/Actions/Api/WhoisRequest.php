@@ -51,11 +51,10 @@ class WhoisRequest
         # Get Identifier Match
         #
         $identifier = IdentifierObject::newIdentifierByType(key($post), current($post));
-
+        $identifier->setValidated();
 
         /** @var iOAuthUser $userEntity */
         $userEntity = $this->repoUsers->findOneMatchByIdentifiers([ $identifier ]);
-
 
         # Build Response
         #

@@ -92,13 +92,12 @@ class Validation
             $dateTimeExpiration->add(new \DateInterval('P1D'));
         }
 
-
         # Create Auth Codes for each Identifier:
         #
         $authCodes = [];
         /** @var iUserIdentifierObject $ident */
         foreach ($identifiers as $ident) {
-            if ($ident->isValidated())
+            if ( $ident->isValidated() )
                 // validated identifiers don't need auth code such as username
                 continue;
 
@@ -168,6 +167,17 @@ class Validation
                 continue;
             }
 
+            // Given Code Match; Update To Validated!!!
+            // TODO implement commit/rollback; maybe momento|aggregate design pattern or something is useful here
+
+            ## Update User Identifier To Validated With Current Value
+            $this->repoUsers->setUserIdentifier(
+                $validationEntity->getUserUid()
+                , $ac->getType()
+                , $ac->getValue()
+                , true
+            );
+
 
             if ($forget) {
                 // Don`t need to update validation entity
@@ -182,17 +192,6 @@ class Validation
                 continue;
             }
 
-
-            // Given Code Match; Update To Validated!!!
-            // TODO implement commit/rollback; maybe momento|aggregate design pattern or something is useful here
-
-            ## Update User Identifier To Validated With Current Value
-            $this->repoUsers->setUserIdentifier(
-                $validationEntity->getUserUid()
-                , $ac->getType()
-                , $ac->getValue()
-                , true
-            );
 
             ## Update Validation Entity
             $this->repoValidationCodes->updateAuthAsValidated(

@@ -87,7 +87,7 @@ class ChangeIdentityRequest
             // User May Retrieved Above!! (From Existence Identifier)
             /** @var iOAuthUser $userEntity */
             if ( false === $userEntity = $this->repoUsers->findOneByUID($token->getOwnerIdentifier()) )
-                throw new \Exception('User not found.', 500);
+                throw new \Exception('Invalid Token Provided, User ID Not Match.', 500);
         }
 
 

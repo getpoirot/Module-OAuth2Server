@@ -99,7 +99,7 @@ class UserHydrate
      *
      * @return string
      */
-    function getPassword()
+    function getPassword($hashed = false)
     {
         return $this->credential;
     }
