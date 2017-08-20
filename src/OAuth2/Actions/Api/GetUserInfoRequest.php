@@ -90,6 +90,8 @@ class GetUserInfoRequest
             $userInfo[$identifier->getType()] = $identifier->getValue();
         }
 
+        $userInfo['meta'] = $userEntity->getMeta();
+
         $userInfo['datetime_created']  = [
             'datetime'  => $userEntity->getDateCreated(),
             'timestamp' => $userEntity->getDateCreated()->getTimestamp(),
