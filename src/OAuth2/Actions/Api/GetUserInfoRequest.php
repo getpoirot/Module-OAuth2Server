@@ -8,6 +8,7 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
+use Poirot\Std\Type\StdTravers;
 
 
 class GetUserInfoRequest
@@ -87,7 +88,11 @@ class GetUserInfoRequest
                 $isValidAll &= $identifier->isValidated();
                 $validated[$identifier->getType()] = (boolean) $identifier->isValidated();
 
-            $userInfo[$identifier->getType()] = $identifier->getValue();
+            $val = $identifier->getValue();
+            if ($val instanceof \Traversable)
+                $userInfo[$identifier->getType()] = StdTravers::of($identifier->getValue())->toArray();
+            else
+                $userInfo[$identifier->getType()] = $identifier->getValue();
         }
 
         $userInfo['meta'] = $userEntity->getMeta();
