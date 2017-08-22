@@ -56,9 +56,12 @@ class RespondToTokenRequest
             $responder = null;
 
             $exception = $e;
-            if (!$e instanceof exOAuthServer) {
+            if (! $e instanceof exOAuthServer ) {
                 $responder = $this->GrantResponder()
-                    ->lastGrantResponder()->newGrantResponse();
+                    ->lastGrantResponder();
+
+                if ($responder)
+                    $responder = $responder->newGrantResponse();
 
                 $exception = exOAuthServer::serverError($e->getMessage(), $responder);
             }

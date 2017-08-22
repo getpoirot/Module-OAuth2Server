@@ -66,7 +66,7 @@ class MobileObject
                 $options['country_code'] = $options['country'];
         }
 
-        if (!isset($options['country_code']))
+        if (!isset($options['country_code']) || !$options['country_code'])
             $options['country_code'] = '+98';
 
         if (! (isset($options['country_code']) && isset($options['number'])) )
