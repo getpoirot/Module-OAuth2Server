@@ -92,6 +92,28 @@ class IdentifierObject
 
     // ..
 
+    /**
+     * @param $value
+     * @param null $validated
+     *
+     * @return static
+     */
+    static function newIdentifier($value, $validated = null)
+    {
+        if ( \Module\OAuth2\isEmailAddress($value) )
+            return self::newEmailIdentifier($value, $validated);
+
+        $matches = [];
+        if ( \Module\OAuth2\isValidMobileNum($value, $matches) )
+            return self::newMobileIdentifier([
+                $matches['country_code'],
+                $matches['number'],
+            ], $validated);
+
+
+        return self::newUsernameIdentifier($value);
+    }
+
     static function newIdentifierByType($name, $value, $validated = null)
     {
         switch ($name) {

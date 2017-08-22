@@ -130,7 +130,22 @@ namespace Module\OAuth2
      */
     function isValidMobileNum($mobileNumber, &$matches = null)
     {
+        if ($matches === null)
+            $matches = [];
+
         $pattern = '/^[- .\(\)]?((?P<country_code>(98)|(\+98)|(0098)|0){1}[- .\(\)]{0,3})(?P<number>((90)|(91)|(92)|(93)|(99)){1}[0-9]{8})$/';
         return preg_match($pattern, (string) $mobileNumber, $matches);
+    }
+
+    /**
+     * Is Valid Email Address?
+     *
+     * @param string $emailAddress
+     *
+     * @return bool
+     */
+    function isEmailAddress($emailAddress)
+    {
+        return filter_var( (string) $emailAddress, FILTER_VALIDATE_EMAIL );
     }
 }

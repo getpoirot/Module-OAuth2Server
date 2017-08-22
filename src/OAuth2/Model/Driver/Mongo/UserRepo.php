@@ -15,6 +15,7 @@ use MongoDB\BSON\ObjectID;
 use MongoDB\Model\BSONDocument;
 use Poirot\AuthSystem\Authenticate\Interfaces\iProviderIdentityData;
 use Poirot\Std\Interfaces\Struct\iData;
+use Poirot\Std\Type\StdTravers;
 
 
 class UserRepo
@@ -312,10 +313,15 @@ class UserRepo
      */
     function findOneByUserPass($username, $credential)
     {
+        $identifier = IdentifierObject::newIdentifier($username);
+        $value      = $identifier->getValue();
+        if ($value instanceof \Traversable)
+            $value = StdTravers::of($identifier->getValue())->toArray();
+
         $user = $this->_query()->findOne([
             'identifiers' => [
                 '$elemMatch' => [
-                    'value' => $username
+                    'value' => $value,
                 ]
             ],
             'grants' => [
