@@ -42,6 +42,15 @@ interface iRepoUsers
     function insert(iOAuthUser $user);
 
     /**
+     * Find All Users Match By Given UIDs
+     *
+     * @param array $uids
+     *
+     * @return iOAuthUser|false
+     */
+    function findAllByUIDs(array $uids);
+
+    /**
      * Has Identifier Existed?
      * return identifiers from list that has picked by someone or empty list
      *

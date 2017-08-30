@@ -30,6 +30,7 @@ return [
 
         'RegisterRequest'          => \Module\OAuth2\Actions\Api\RegisterRequest::class,
         'GetUserInfoRequest'       => \Module\OAuth2\Actions\Api\GetUserInfoRequest::class,
+        'ListUsersInfoRequest'     => \Module\OAuth2\Actions\Api\ListUsersInfoRequest::class,
         'ChangePasswordRequest'    => \Module\OAuth2\Actions\Api\ChangePasswordRequest::class,
         'ChangeIdentityRequest'    => \Module\OAuth2\Actions\Api\ChangeIdentityRequest::class,
         'ConfirmValidationRequest' => \Module\OAuth2\Actions\Api\ConfirmValidationRequest::class,

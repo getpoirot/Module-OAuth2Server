@@ -131,6 +131,31 @@ class UserRepo
     }
 
     /**
+     * Find All Users Match By Given UIDs
+     *
+     * @param array $uids
+     *
+     * @return iOAuthUser[]
+     */
+    function findAllByUIDs(array $uids)
+    {
+        $uids = array_values($uids);
+
+        foreach ($uids as $i => $v )
+            $uids[$i] = $this->attainNextIdentifier($v);
+
+        /** @var iOAuthUser|UserEntity $r */
+        $crsr = $this->_query()->find([
+            'uid' => [
+                '$in' => $uids,
+            ],
+        ]);
+
+
+        return $crsr;
+    }
+
+    /**
      * Has Identifier Existed?
      * return identifiers from list that has picked by someone or empty list
      *

@@ -138,6 +138,16 @@ return [
                         ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/WhoisRequest' ],
                     ],
                 ],
+                'listProfiles' => [
+                    'route' => 'RouteSegment',
+                    'options' => [
+                        'criteria'    => '/profiles',
+                        'match_whole' => true,
+                    ],
+                    'params'  => [
+                        ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/ListUsersInfoRequest' ],
+                    ],
+                ],
                 'profile' => [
                     'route' => 'RouteSegment',
                     'options' => [
