@@ -29,8 +29,8 @@ namespace Module\OAuth2
         , Sapi\Module\Feature\iFeatureModuleAutoload
         , Sapi\Module\Feature\iFeatureModuleInitModuleManager
         , Sapi\Module\Feature\iFeatureModuleMergeConfig
-        , Sapi\Module\Feature\iFeatureModuleNestActions
         , Sapi\Module\Feature\iFeatureModuleNestServices
+        , Sapi\Module\Feature\iFeatureModuleNestActions
         , Sapi\Module\Feature\iFeatureOnPostLoadModulesGrabServices
     {
         const CONF_KEY      = 'module.oauth2';
