@@ -63,16 +63,18 @@ class RegisterRequest
 
             # Register User:
             #
+            /** @var iOAuthUser $userEntity */
+            $entityUser = $this->Register()->persistUser($entityUser);
+
+            /*
+            # Give User Validation Code:
+            #
             // Continue Used to OAuth Registration Follow!!!
             $queryParams    = Plugin\ParseRequestData::_($request)->parseQueryParams();
             $continue       = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
 
-            /** @var iOAuthUser $userEntity */
-            $entityUser = $this->Register()->persistUser($entityUser);
-
-            # Give User Validation Code:
-            #
             $validationHash = $this->Register()->giveUserValidationCode($entityUser, $continue);
+            */
 
         } catch (exUnexpectedValue $e)
         {
@@ -86,7 +88,7 @@ class RegisterRequest
         $userInfo = [];
 
         $isValidAll = true; $validated = array();
-        foreach ($userEntity->getIdentifiers() as $identifier) {
+        foreach ($entityUser->getIdentifiers() as $identifier) {
             // embed identifiers validity
             $isValidAll &= $identifier->isValidated();
             $validated[$identifier->getType()] = (boolean) $identifier->isValidated();
@@ -94,47 +96,23 @@ class RegisterRequest
             $userInfo[$identifier->getType()] = $identifier->getValue();
         }
 
-        $userInfo['meta'] = $userEntity->getMeta();
+        $userInfo['meta'] = $entityUser->getMeta();
 
         $userInfo['datetime_created']  = [
-            'datetime'  => $userEntity->getDateCreated(),
-            'timestamp' => $userEntity->getDateCreated()->getTimestamp(),
+            'datetime'  => $entityUser->getDateCreated(),
+            'timestamp' => $entityUser->getDateCreated()->getTimestamp(),
         ];
 
         $r = [
             'user' => [
-                'uid'         => (string) $userEntity->getUid(),
-                'fullname'    => $userEntity->getFullName(),
+                'uid'         => (string) $entityUser->getUid(),
+                'fullname'    => $entityUser->getFullName(),
             ] + $userInfo ,
-        ];
-
-
-        $resendLinks = [];
-        foreach ($userEntity->getIdentifiers() as $ident)
-        {
-            if ($ident->isValidated())
-                continue;
-
-            $resendLinks[$ident->getType()] = (string) \Module\HttpFoundation\Actions::url(
-                'main/oauth/recover/validate_resend'
-                , array('validation_code' => $validationHash, 'identifier_type' => $ident->getType())
-            );
-        }
-
-        (! $validationHash ) ?: $r += [
-            'validation' => [
-                'hash' => $validationHash,
-                '_link' => [
-                    'validate' => (string) \Module\HttpFoundation\Actions::url(
-                        'main/oauth/recover/validate'
-                        , ['validation_code' => $validationHash]
-                    ),
-                    'validation_page' => (string) \Module\HttpFoundation\Actions::url(
-                        'main/oauth/recover/validate'
-                        , array('validation_code' => $validationHash)
-                    ),
-                    'resend_authcode' => $resendLinks,
-                ],
+            '_link' => [
+                'validation' => (string) \Module\HttpFoundation\Actions::url(
+                    'main/oauth/api/members/delegate/validate'
+                    , [ 'userid' => (string) $entityUser->getUid() ]
+                ),
             ],
         ];
 

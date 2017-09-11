@@ -116,49 +116,44 @@ class ChangeIdentityRequest
         $userEntity->setIdentifiers($newIdentifiers);
 
 
-        # Send Validation Code
-        #
-        $validationCode = null;
-        if (! empty($changedIdentifiers) )
-            $validationCode = $this->Register()->giveUserValidationCode($userEntity);
-
-
         # re-Set user identifiers with given value
         #
-        $resendLinks = [];
+        $validations = [];
         /** @var iUserIdentifierObject $id */
-        foreach ($changedIdentifiers as $id)
+        foreach ($changedIdentifiers as $ident)
         {
             $this->repoUsers->setUserIdentifier(
                 $token->getOwnerIdentifier()
-                , $id->getType()
-                , $id->getValue()
-                , $id->isValidated()
+                , $ident->getType()
+                , $ident->getValue()
+                , $ident->isValidated()
             );
 
 
-            $resendLinks[$id->getType()] = (string) \Module\HttpFoundation\Actions::url(
-                'main/oauth/recover/validate_resend'
-                , array('validation_code' => $validationCode, 'identifier_type' => $id->getType())
-            );
+            $validations[ $ident->getType() ] = [
+                '_link' =>
+                    (string) \Module\HttpFoundation\Actions::url(
+                        'main/oauth/api/members/delegate/validate'
+                        , [
+                            'userid' => (string) $userEntity->getUid(),
+                            'identifier' => $ident->getType(),
+                        ]
+                    )
+            ];
         }
 
 
         # Build Response
         $r = array();
-        $r['validated'] = $rIdentifiers;
+        $r['validated']   = $rIdentifiers;
+        $r['validations'] = $validations;
 
-        (! $validationCode )
-            ?: $r['_link'] = array(
-                'validate' => (string) \Module\HttpFoundation\Actions::url(
-                    'main/oauth/api/me/identifiers/confirm'
-                    , array('validation_code' => $validationCode)
-                ),
-                'validate_page' => (string) \Module\HttpFoundation\Actions::url(
-                    'main/oauth/recover/validate'
-                    , array('validation_code' => $validationCode)
-                ),
-                'resend_authcode' => $resendLinks,
+        if (! empty($validations) )
+            $r['validations']['_link'] = (string) \Module\HttpFoundation\Actions::url(
+                'main/oauth/api/members/delegate/validate'
+                , [
+                    'userid' => (string) $userEntity->getUid(),
+                ]
             );
 
         return [
