@@ -10,9 +10,10 @@ return [
         'LoginPage'             => \Module\OAuth2\Actions\User\LoginPage::class,
         'LogoutPage'            => \Module\OAuth2\Actions\User\LogoutPage::class,
 
-        'ValidatePage'          => \Module\OAuth2\Actions\Validation\ValidatePage::class,
-        'Validation'            => \Module\OAuth2\Actions\Validation\Validation::class,
-        'ResendAuthCodeRequest' => \Module\OAuth2\Actions\Validation\ResendAuthCodeRequest::class,
+        'ValidatePage'                => \Module\OAuth2\Actions\Validation\ValidatePage::class,
+        'Validation'                  => \Module\OAuth2\Actions\Validation\Validation::class,
+        'ResendAuthCodeRequest'       => \Module\OAuth2\Actions\Validation\ResendAuthCodeRequest::class,
+        'ValidationIdentifierRequest' => \Module\OAuth2\Actions\Api\ValidationIdentifierRequest::class,
 
         'SigninRecognizePage'   => \Module\OAuth2\Actions\Recover\SigninRecognizePage::class,
         'SigninChallengePage'   => \Module\OAuth2\Actions\Recover\SigninChallengePage::class,

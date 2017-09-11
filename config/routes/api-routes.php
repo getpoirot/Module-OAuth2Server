@@ -148,6 +148,25 @@ return [
                         ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/ListUsersInfoRequest' ],
                     ],
                 ],
+                'delegate' => [
+                    'route' => 'RouteSegment',
+                    'options' => [
+                        'criteria'    => '/<:userid~\w{24}~>',
+                        'match_whole' => false,
+                    ],
+                    'routes' => [
+                        'validate' => [
+                            'route' => 'RouteSegment',
+                            'options' => [
+                                'criteria'    => '/validate</:identifier~\w+~>',
+                                'match_whole' => true,
+                            ],
+                            'params'  => [
+                                ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/ValidationIdentifierRequest' ],
+                            ],
+                        ],
+                    ],
+                ],
                 'profile' => [
                     'route' => 'RouteSegment',
                     'options' => [
