@@ -11,7 +11,8 @@ use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Module;
 use Poirot\AuthSystem\Authenticate\Authenticator;
 use Poirot\AuthSystem\Authenticate\Interfaces\iAuthenticator;
-use Poirot\Events\Interfaces\iEvent;
+use Poirot\Events\Event\BuildEvent;
+use Poirot\Events\Event\MeeterIoc;
 use Poirot\Events\Interfaces\Respec\iEventProvider;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Http\Interfaces\iHttpResponse;
@@ -45,6 +46,9 @@ abstract class aAction
     extends \Module\Foundation\Actions\aAction
     implements iEventProvider
 {
+    const CONF = 'events';
+
+
     /** @var iHttpRequest */
     protected $request;
     /** @var EventHeapOfOAuth */
@@ -67,12 +71,21 @@ abstract class aAction
     /**
      * Get Events
      *
-     * @return iEvent
+     * @return EventHeapOfOAuth
      */
     function event()
     {
-        if (!$this->events)
-            $this->events = new EventHeapOfOAuth;
+        if (! $this->events ) {
+            // Build Events From Merged Config
+            $conf   = $this->sapi()->config()->get( \Module\OAuth2\Module::CONF_KEY );
+            $conf   = $conf[self::CONF];
+
+            $events = new EventHeapOfOAuth;
+            $builds = new BuildEvent([ 'meeter' => new MeeterIoc, 'events' => $conf ]);
+            $builds->build($events);
+
+            $this->events = $events;
+        }
 
         return $this->events;
     }
@@ -88,6 +101,7 @@ abstract class aAction
     {
         if ($this->_authenticator)
             return $this->_authenticator;
+
 
         /** @var AuthenticatorAction $authenticator */
         $authenticator = $this->withModule('authorization')->Authenticator();

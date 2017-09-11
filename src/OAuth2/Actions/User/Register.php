@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Actions\User;
 
 use Module\OAuth2\Actions\aAction;
+use Module\OAuth2\Events\EventHeapOfOAuth;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
@@ -102,6 +103,16 @@ class Register
         #
         /** @var UserEntity|iOAuthUser $user */
         $user = $repoUsers->insert($entity);
+
+
+        ## Event
+        #
+        $this->event()
+            ->trigger(EventHeapOfOAuth::USER_REGISTER, [
+                /** @see Content\Events\DataCollector */
+                'entity_user' => $user,
+            ])
+        ;
 
         return $user;
     }

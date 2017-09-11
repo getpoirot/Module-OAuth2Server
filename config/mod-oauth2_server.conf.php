@@ -12,6 +12,25 @@ return [
 
     \Module\OAuth2\Module::CONF_KEY => [
 
+        ## Events
+        #
+        \Module\OAuth2\Actions\aAction::CONF => [
+            // Events Section Of Events Builder
+            /** @see \Poirot\Events\Event\BuildEvent */
+
+            OAuth2\Events\EventHeapOfOAuth::USER_REGISTER => [
+                'listeners' => [
+                    ['priority' => 1000,  'listener' => function($entityUser) {
+                        // Implement this
+                        /** @var OAuth2\Model\Entity\UserEntity $entityUser */
+                    }],
+                ],
+            ],
+
+        ],
+
+        ## Grants
+        #
         OAuth2\Services\ServiceGrantsContainer::CONF => [
             // Capped Container Of Available Grants
             'grants' => [
@@ -20,7 +39,8 @@ return [
             ],
         ],
 
-        # extra config
+        ## extra config
+        #
         // Server Automatically Choose a Username For Registered User If Not Sent
         'allow_server_pick_username' => true,
 
