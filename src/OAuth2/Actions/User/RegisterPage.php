@@ -108,30 +108,31 @@ response:
         $hydrateUser = new Entity\UserHydrate(
             Entity\UserHydrate::parseWith($this->request) );
 
+
         try
         {
             $entityUser  = new Entity\UserEntity($hydrateUser);
 
-            // check allow server to pick a username automatically if not given!!
-            $config  = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
-            $isAllow = (boolean) $config['allow_server_pick_username'];
 
-            if (! $entityUser->getUsername() && $isAllow) {
-                // Give Registered User Default Username On Registration
-                $username = $this->AttainUsername($entityUser);
-                $entityUser->setUsername($username);
-            }
-
+            # Validate Entity
+            #
+            // Registration Through Register Page Itself Need Different Validation
             __( new Entity\UserValidate($entityUser, ['must_have_username' => true]) )
                 ->assertValidate();
 
-            # Register User:
 
+            # Register User:
+            #
             // Continue Used to OAuth Registration Follow!!!
             $queryParams    = Plugin\ParseRequestData::_($request)->parseQueryParams();
             $continue       = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
 
-            list($_, $validationHash) = $this->Register()->persistUser($entityUser, $continue);
+            $entityUser = $this->Register()->persistUser($entityUser);
+
+            # Give User Validation Code:
+            #
+            $validationHash = $this->Register()->giveUserValidationCode($entityUser, $continue);
+
 
             // Redirect To Validation Page
             $r = \Module\HttpFoundation\Actions::url(

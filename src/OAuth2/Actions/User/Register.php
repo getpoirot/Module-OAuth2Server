@@ -7,6 +7,7 @@ use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoValidationCodes;
 use Module\OAuth2\Model\Entity\UserEntity;
+use Module\OAuth2\Model\Entity\UserValidate;
 use Module\OAuth2\Model\Entity\Validation\AuthObject;
 
 
@@ -55,12 +56,11 @@ class Register
      * - return validation hashed endpoint for validating codes by send it back
      *
      * @param iOAuthUser  $entity
-     * @param string|null $continue Continue used by oauth partners registration follows
      *
-     * @return array [user, validationHash|null] null when user has no identifier that need validation
+     * @return UserEntity
      * @throws exIdentifierExists
      */
-    function persistUser(iOAuthUser $entity, $continue = null)
+    function persistUser(iOAuthUser $entity)
     {
         # Persist Data:
         $repoUsers = $this->repoUsers;
@@ -71,21 +71,39 @@ class Register
         if (! empty($identifiers) )
             throw new exIdentifierExists($identifiers);
 
-
         if (! $entity->getUid() )
             // User must have identifier when validation code generated
             $entity->setUid( $repoUsers->attainNextIdentifier() );
 
-        // TODO implement commit/rollback; maybe momento/aggregate design pattern or something is useful here
 
-        # Give User Validation Code:
-        $validationHash = $this->giveUserValidationCode($entity, $continue);
+        # Username
+        #
+        // check allow server to pick a username automatically if not given!!
+        $config  = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
+        $isAllow = (boolean) $config['allow_server_pick_username'];
+
+        if (! $entity->getUsername() && $isAllow) {
+            // Give Registered User Default Username On Registration
+            $username = $this->AttainUsername($entity);
+            $entity->setUsername($username);
+        }
+
+
+        # Validate User Entity Object
+        #
+        __(new UserValidate($entity
+            , [ 'must_have_username' => true,
+                'is_onetime_code'    => true,
+                'must_have_email'    => false, ] // registration through 3rd parties do not restrict email
+        )) ->assertValidate();
+
 
         # Then Persist User Entity:
+        #
         /** @var UserEntity|iOAuthUser $user */
         $user = $repoUsers->insert($entity);
 
-        return array( $user, $validationHash );
+        return $user;
     }
 
     /**
@@ -116,5 +134,4 @@ class Register
 
         return $validationHash;
     }
-
 }

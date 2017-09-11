@@ -206,6 +206,7 @@ namespace Module\OAuth2\Actions
     use Module\OAuth2\Actions\Recover\SigninRecognizePage;
     use Module\OAuth2\Actions\User\LoginPage;
     use Module\OAuth2\Actions\User\LogoutPage;
+    use Module\OAuth2\Actions\User\Register;
     use Module\OAuth2\Actions\User\RegisterPage;
     use Module\OAuth2\Actions\User\RetrieveAuthenticatedUser;
     use Module\OAuth2\Actions\Validation\ValidatePage;
@@ -227,6 +228,7 @@ namespace Module\OAuth2\Actions
      *
      * @method static UserEntity  RetrieveAuthenticatedUser()
      * @method static Validation  Validation()
+     * @method static Register    Register()
      */
     class IOC extends \IOC
     { }

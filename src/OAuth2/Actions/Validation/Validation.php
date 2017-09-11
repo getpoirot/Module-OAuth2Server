@@ -307,7 +307,6 @@ class Validation
             );
         }
 
-
         if ($sentMessage !== null) {
             // Maybe Function Return Null; It's Considered as Debug or Disabled SMS Sent.
             $sentMessage = current($sentMessage);

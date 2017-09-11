@@ -569,7 +569,7 @@ class NamesGenerator
 
     function __construct($fullname)
     {
-        $this->fullname = StdString::of($fullname);
+        $this->fullname = StdString::of( (string) $fullname );
     }
 
     function getName()

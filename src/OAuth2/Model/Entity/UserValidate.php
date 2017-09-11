@@ -50,18 +50,18 @@ class UserValidate
     {
         $exceptions = [];
 
-        if (!$this->is_onetime_code) {
-            if (!$this->entity->getFullName())
+        if (! $this->is_onetime_code ) {
+            if (! $this->entity->getFullName() )
                 $exceptions[] = exUnexpectedValue::paramIsRequired('fullname');
 
-            if (!$this->entity->getPassword())
+            if (! $this->entity->getPassword() )
                 $exceptions[] = exUnexpectedValue::paramIsRequired('password');
         }
 
 
         $identifiers = $this->entity->getIdentifiers();
 
-        if (empty($identifiers))
+        if ( empty($identifiers) )
             $exceptions[] = new exUnexpectedValue('No Valid Identifier Is Given.');
 
 

@@ -56,44 +56,29 @@ class RegisterRequest
             $hydrateUser = new Entity\UserHydrate(
                 Entity\UserHydrate::parseWith($this->request) );
 
-
             /** @var iEntityAccessToken $token */
             $hydrateUser->setClient( $token->getClientIdentifier() );
-
             $entityUser  = new Entity\UserEntity($hydrateUser);
 
-            // check allow server to pick a username automatically if not given!!
-            $config  = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
-            $isAllow = (boolean) $config['allow_server_pick_username'];
 
-            if (! $entityUser->getUsername() && $isAllow) {
-                // Give Registered User Default Username On Registration
-                $username = $this->AttainUsername($entityUser);
-                $entityUser->setUsername($username);
-            }
+            # Register User:
+            #
+            // Continue Used to OAuth Registration Follow!!!
+            $queryParams    = Plugin\ParseRequestData::_($request)->parseQueryParams();
+            $continue       = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
 
-            __(new Entity\UserValidate($entityUser
-                , [ 'must_have_username' => true,
-                    'is_onetime_code'    => true,
-                    'must_have_email'    => false, ] // registration through 3rd parties do not restrict email
-            )) ->assertValidate();
+            /** @var iOAuthUser $userEntity */
+            $entityUser = $this->Register()->persistUser($entityUser);
+
+            # Give User Validation Code:
+            #
+            $validationHash = $this->Register()->giveUserValidationCode($entityUser, $continue);
 
         } catch (exUnexpectedValue $e)
         {
             // TODO Handle Validation ...
             throw new exUnexpectedValue('Validation Failed', null,  400, $e);
         }
-
-
-        # Register User:
-        #
-        // Continue Used to OAuth Registration Follow!!!
-        $queryParams    = Plugin\ParseRequestData::_($request)->parseQueryParams();
-        $continue       = (isset($queryParams['continue'])) ? $queryParams['continue'] : null;
-
-        /** @var iOAuthUser $userEntity */
-        list($userEntity, $validationHash) = $this->Register()->persistUser($entityUser, $continue);
-
 
 
         # Build Response:
