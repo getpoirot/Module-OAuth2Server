@@ -79,7 +79,6 @@ abstract class aAction
             // Build Events From Merged Config
             $conf   = $this->sapi()->config()->get( \Module\OAuth2\Module::CONF_KEY );
             $conf   = $conf[self::CONF];
-
             $events = new EventHeapOfOAuth;
             $builds = new BuildEvent([ 'meeter' => new MeeterIoc, 'events' => $conf ]);
             $builds->build($events);

@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Actions\User;
 
 use Module\OAuth2\Actions\aAction;
+use Module\OAuth2\Events\DataCollector;
 use Module\OAuth2\Events\EventHeapOfOAuth;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
@@ -97,6 +98,21 @@ class Register
                 'is_onetime_code'    => true,
                 'must_have_email'    => false, ] // registration through 3rd parties do not restrict email
         )) ->assertValidate();
+
+
+        ## Event
+        #  before register user
+        /** @var UserEntity $entity */
+        $entity = $this->event()
+            ->trigger(EventHeapOfOAuth::USER_REGISTER_BEFORE, [
+                /** @see Content\Events\DataCollector */
+                'entity_user' => $entity,
+            ])
+            ->then(function($c) {
+                /** @var DataCollector $c */
+                return $c->getEntityUser();
+            })
+        ;
 
 
         # Then Persist User Entity:

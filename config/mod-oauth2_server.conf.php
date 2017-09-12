@@ -18,7 +18,7 @@ return [
             // Events Section Of Events Builder
             /** @see \Poirot\Events\Event\BuildEvent */
 
-            OAuth2\Events\EventHeapOfOAuth::USER_REGISTER => [
+            OAuth2\Events\EventHeapOfOAuth::USER_REGISTER_BEFORE => [
                 'listeners' => [
                     ['priority' => 1000,  'listener' => function($entityUser) {
                         // Implement this
@@ -27,6 +27,14 @@ return [
                 ],
             ],
 
+            OAuth2\Events\EventHeapOfOAuth::USER_REGISTER => [
+                'listeners' => [
+                    ['priority' => 1000,  'listener' => function($entityUser) {
+                        // Implement this
+                        /** @var OAuth2\Model\Entity\UserEntity $entityUser */
+                    }],
+                ],
+            ],
         ],
 
         ## Grants

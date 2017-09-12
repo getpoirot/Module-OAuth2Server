@@ -8,7 +8,8 @@ use Poirot\Events\Event;
 class EventHeapOfOAuth
     extends \Poirot\Events\EventHeap
 {
-    const USER_REGISTER = 'oauth2.user.register';
+    const USER_REGISTER_BEFORE = 'oauth2.user.register.before';
+    const USER_REGISTER        = 'oauth2.user.register';
 
 
     /**
@@ -20,8 +21,8 @@ class EventHeapOfOAuth
         $this->collector = new DataCollector;
 
         // attach default event names:
+        $this->bind( new Event(self::USER_REGISTER_BEFORE) );
         $this->bind( new Event(self::USER_REGISTER) );
-
     }
 
     /**
