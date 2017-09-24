@@ -170,8 +170,7 @@ return [
                 'profile' => [
                     'route' => 'RouteSegment',
                     'options' => [
-                        // TODO . in username not matched
-                        'criteria'    => '/profile/<@:username~\w+~><:userid~\w{24}~>',
+                        'criteria'    => '/profile/<@:username~[a-zA-Z.]+~><:userid~\w{24}~>',
                         'match_whole' => true,
                     ],
                     'params'  => [
