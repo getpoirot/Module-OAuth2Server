@@ -51,6 +51,17 @@ interface iRepoUsers
     function findAllByUIDs(array $uids);
 
     /**
+     * Find All Items By Search Term
+     *
+     * @param array  $expression
+     * @param string $offset
+     * @param int    $limit
+     *
+     * @return \Traversable
+     */
+    function findAll(array $expression, $offset = null, $limit = null);
+
+    /**
      * Has Identifier Existed?
      * return identifiers from list that has picked by someone or empty list
      *
