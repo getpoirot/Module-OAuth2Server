@@ -51,9 +51,7 @@ class ChangeIdentityRequest
         # Parse and Validate Sent Data
         #
         $post = ParseRequestData::_($this->request)->parse();
-        $post = self::_assertValidData($post);
-
-        $identifiersToChange = $post['identifiers_changed'];
+        $identifiersToChange = self::_assertValidData($post);
 
 
         # Check Identifier Uniqueness:
@@ -129,6 +127,9 @@ class ChangeIdentityRequest
                 , $ident->isValidated()
             );
 
+            if ($ident->isValidated())
+                // Validated Identifier Such as username do not need validation.
+                continue;
 
             $validations[ $ident->getType() ] = [
                 '_link' =>
@@ -155,6 +156,8 @@ class ChangeIdentityRequest
                     'userid' => (string) $userEntity->getUid(),
                 ]
             );
+
+        $r['_self'] = $post;
 
         return [
             ListenerDispatch::RESULT_DISPATCH => $r
@@ -193,6 +196,6 @@ class ChangeIdentityRequest
         if ( empty($identifiers) )
             throw new \InvalidArgumentException('No Argument Provided', 400);
 
-        return ['identifiers_changed' => $identifiers];
+        return $identifiers;
     }
 }
