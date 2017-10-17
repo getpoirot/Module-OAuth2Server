@@ -12,6 +12,9 @@ class ServiceRepoUsers
     /** @var string Service Name */
     protected $name = BuildServices::USERS;
 
+    # Using alternate client
+    #protected $mongoClient = 'prod1';
+
 
     /**
      * Return new instance of Repository
