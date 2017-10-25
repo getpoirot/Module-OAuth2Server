@@ -12,7 +12,6 @@ use Predis;
 class AccessTokenRepo
     implements iRepoAccessTokens
 {
-    const REDIS_SERVER = 'db-master-redis';
     const PREFIX = 'oauth.access_token.';
     const DIVIDER = '.';
 
@@ -25,14 +24,11 @@ class AccessTokenRepo
     /**
      * Initialize Object
      *
+     * @param Predis\Client $client
      */
-    protected function __construct()
+    protected function __construct(Predis\Client $client)
     {
-        $this->client = new predis\Client([
-            'schema' => 'tcp',
-            'host'   => self::REDIS_SERVER,
-            'port'   => 6379
-        ]);
+        $this->client = $client;
 
         $this->_interchangable = new SerializeInterchange;
     }
