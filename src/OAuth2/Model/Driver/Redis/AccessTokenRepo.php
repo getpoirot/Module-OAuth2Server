@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Model\Driver\Redis;
 
+use Module\OAuth2\Model\Driver\Mongo\AccessTokenEntity;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 use Poirot\OAuth2\Interfaces\Server\Repository\iRepoAccessTokens;
 use Poirot\OAuth2\Model\AccessToken as BaseAccessToken;
@@ -21,17 +22,19 @@ class AccessTokenRepo
     /** @var SerializeInterchange */
     private $_interchangable;
 
+
     /**
      * Initialize Object
      *
      * @param Predis\Client $client
      */
-    protected function __construct(Predis\Client $client)
+    function __construct(Predis\Client $client)
     {
         $this->client = $client;
 
         $this->_interchangable = new SerializeInterchange;
     }
+
 
     /**
      * Insert New Token
@@ -42,24 +45,24 @@ class AccessTokenRepo
      */
     function insert(iEntityAccessToken $token)
     {
-        $accToken = \Poirot\Std\generateUniqueIdentifier(20);
-        $expiredAt    = ($token->getDatetimeExpiration())
-            ? strtotime($token->getDatetimeExpiration()) - time()
+        $accToken   = \Poirot\Std\generateUniqueIdentifier(20);
+        $expiredAt  = ( $token->getDateTimeExpiration() )
+            ? $token->getDateTimeExpiration()->getTimestamp() - time()
             : null;
 
         $result = $this->client->set(
-            self::PREFIX . $accToken,
-            $this->_interchangable->makeForward($token)
+            self::PREFIX . $accToken
+            , $this->_interchangable->makeForward($token)
         );
 
-        if(!is_null($expiredAt)) {
+        if (! is_null($expiredAt) ) {
             $this->client->expire(
-                self::PREFIX . $accToken,
-                $expiredAt
+                self::PREFIX . $accToken
+                , $expiredAt
             );
         }
 
-        if(is_null($result))
+        if ( is_null($result) )
             return false;
 
         $return = new BaseAccessToken;
@@ -88,18 +91,25 @@ class AccessTokenRepo
         $result = $this->client->get(self::PREFIX.$tokenIdentifier);
 
         if (! $result)
-            return null;
+            return false;
 
+
+        /** @var AccessTokenEntity $e */
         $e = $this->_interchangable->retrieveBackward($result);
+
+        // Check For Expiration
+        //
+        if (time() > $e->getDateTimeExpiration()->getTimestamp() )
+            return false;
 
 
         $accessToken = new AccessToken();
         $accessToken
-            ->setIdentifier( $e['identifier'] )
-            ->setClientIdentifier( $e['clientidentifier'] )
-            ->setDateTimeExpiration( $e['datetimeexpiration'] )
-            ->setScopes( $e['scopes'] )
-            ->setOwnerIdentifier( (string) $e['owneridentifier'] )
+            ->setIdentifier( $e->getIdentifier() )
+            ->setClientIdentifier( $e->getClientIdentifier() )
+            ->setDateTimeExpiration( $e->getDateTimeExpiration() )
+            ->setScopes( $e->getScopes() )
+            ->setOwnerIdentifier( (string) $e->getOwnerIdentifier() )
         ;
 
         $r = $accessToken;
