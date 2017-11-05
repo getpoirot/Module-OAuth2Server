@@ -13,7 +13,7 @@ class ServiceRepoUsers
     protected $name = BuildServices::USERS;
 
     # Using alternate client
-    protected $mongoClient = 'prod1';
+//    protected $mongoClient = 'prod1';
 
 
     /**
