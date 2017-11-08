@@ -3,6 +3,7 @@ namespace Module\OAuth2\Actions\Api;
 
 use Module\HttpFoundation\Events\Listener\ListenerDispatch;
 use Module\OAuth2\Actions\aApiAction;
+use Module\OAuth2\Exception\exUserNotFound;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
@@ -75,7 +76,7 @@ class GetUserInfoRequest
         #
         /** @var iOAuthUser $userEntity */
         if (! $userEntity)
-            throw new \Exception('User not Found.', 500);
+            throw new exUserNotFound('User not Found.');
 
 
         # Build Response

@@ -173,6 +173,7 @@ return [
                 // or true|false
                 'when' => function($routerMatch) {
                     // Active Template When We Are On OAuth Route
+                    /** @var \Poirot\Router\Interfaces\iRouterStack $routerMatch */
                     return ( $routerMatch && strpos($routerMatch->getName(), 'main/oauth/') === 0 );
                 }, // always use this template
                 'priority' => 100,
