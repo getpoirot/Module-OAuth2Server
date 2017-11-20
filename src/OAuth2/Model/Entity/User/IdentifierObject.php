@@ -186,7 +186,10 @@ class IdentifierObject
     static function newUsernameIdentifier($value)
     {
         if (! preg_match('/^[a-zA-Z0-9._-]{3,}$/', $value) )
-            throw new exUnexpectedValue('Username Invalid.');
+            throw new exUnexpectedValue(sprintf(
+                'Username "%s" Invalid.'
+                , $value
+            ));
 
 
         $self = new static();
