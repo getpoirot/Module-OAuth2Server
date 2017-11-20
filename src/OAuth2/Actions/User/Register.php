@@ -93,11 +93,11 @@ class Register
 
         # Validate User Entity Object
         #
-        __(new UserValidate($entity
+        (new UserValidate($entity
             , [ 'must_have_username' => true,
                 'is_onetime_code'    => true,
                 'must_have_email'    => false, ] // registration through 3rd parties do not restrict email
-        )) ->assertValidate();
+        ))->assertValidate();
 
 
         ## Event

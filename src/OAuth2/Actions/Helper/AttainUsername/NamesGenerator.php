@@ -575,7 +575,7 @@ class NamesGenerator
     function getName()
     {
         // Empty String Also Consider as None-Printable
-        if (! $this->fullname->isPrintable() || $this->fullname->isUTF8() )
+        if (! $this->fullname->isPrintable() || $this->fullname->isUTF8() || strlen($this->fullname) < 3 )
             return $this->_generateName();
 
         $return = (string) $this->fullname->toLower();

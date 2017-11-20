@@ -50,6 +50,7 @@ class AccessTokenRepo
             ? $token->getDateTimeExpiration()->getTimestamp() - time()
             : null;
 
+
         $result = $this->client->set(
             self::PREFIX . $accToken
             , $this->_interchangable->makeForward($token)

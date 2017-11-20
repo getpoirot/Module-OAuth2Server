@@ -2,6 +2,7 @@
 namespace Module\OAuth2\Model\Entity\User;
 
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
+use Poirot\Std\Exceptions\exUnexpectedValue;
 use Poirot\Std\Struct\DataOptionsOpen;
 
 
@@ -184,9 +185,13 @@ class IdentifierObject
      */
     static function newUsernameIdentifier($value)
     {
+        if (! preg_match('/^[a-zA-Z0-9._-]{3,}$/', $value) )
+            throw new exUnexpectedValue('Username Invalid.');
+
+
         $self = new static();
         $self->setType(self::IDENTITY_USERNAME);
-        $self->setValue( (string) $value);
+        $self->setValue( strtolower( (string) $value) );
         $self->setValidated(); // username is always validated and not require validation send
         
         return $self;

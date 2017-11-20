@@ -80,6 +80,8 @@ class UserValidate
             $usernameIdentifier = $this->entity->getUsername();
             if ($usernameIdentifier == '')
                 $exceptions[] = exUnexpectedValue::paramIsRequired('username');
+            else if (! preg_match('/^[a-zA-Z0-9._-]{3,}$/', $usernameIdentifier) )
+                $exceptions[] = new exUnexpectedValue('username is invalid.');
         }
 
 

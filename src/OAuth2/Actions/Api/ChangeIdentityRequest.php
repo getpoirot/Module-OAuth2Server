@@ -184,7 +184,8 @@ class ChangeIdentityRequest
         $identifiers = [];
         foreach ($post as $k => $v) {
             try {
-                $identifiers[] = IdentifierObject::newIdentifierByType($k, $v);
+                $identifier = IdentifierObject::newIdentifierByType($k, $v);
+                $identifiers[] = $identifier;
             } catch (\Exception $e) {
                 throw new exUnexpectedValue(sprintf(
                     'Identifier type (%s) can`t fulfilled.'
