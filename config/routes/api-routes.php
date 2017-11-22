@@ -170,7 +170,7 @@ return [
                 'profile' => [
                     'route' => 'RouteSegment',
                     'options' => [
-                        'criteria'    => '/profile/<@:username~[a-zA-Z.]+~><:userid~\w{24}~>',
+                        'criteria'    => '/profile/<u/:username~[a-zA-Z0-9._]+~><:userid~\w{24}~>',
                         'match_whole' => true,
                     ],
                     'params'  => [
