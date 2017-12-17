@@ -77,19 +77,25 @@ return [
                 BuildServices::USERS_APPROVED_CLIENTS => Services\Repository\ServiceRepoUsersApprovedClients::class,
                 BuildServices::VALIDATION_CODES       => Services\Repository\ServiceRepoValidationCodes::class,
                 BuildServices::ACCESS_TOKENS          => [
-                    \Poirot\OAuth2\Model\Repo\Stateless\AccessTokenRepo::class,
-                    // options:
-                    'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                    BuildServices::INST => \Poirot\OAuth2\Model\Repo\Stateless\AccessTokenRepo::class,
+                    BuildServices::INST_OPT => [
+                        // options:
+                        'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                    ],
                 ],
                 BuildServices::REFRESH_TOKENS         => [
-                    \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
-                    // options:
-                    'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                    BuildServices::INST => \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class,
+                    BuildServices::INST_OPT => [
+                        // options:
+                        'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                    ],
                 ],
                 BuildServices::AUTH_CODES             => [
-                    \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
-                    // options:
-                    'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                    BuildServices::INST => \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class,
+                    BuildServices::INST_OPT => [
+                        // options:
+                        'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(),
+                    ],
                 ],
             ],
         ],
