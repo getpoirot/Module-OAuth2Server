@@ -12,6 +12,9 @@ class ServiceRepoAccessTokens
     /** @var string Service Name */
     protected $name = BuildServices::ACCESS_TOKENS;
 
+    # Using alternate client
+    // protected $mongoClient = 'prod1';
+
 
     /**
      * Return new instance of Repository
