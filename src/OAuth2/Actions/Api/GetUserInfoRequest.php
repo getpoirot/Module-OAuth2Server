@@ -76,7 +76,10 @@ class GetUserInfoRequest
         #
         /** @var iOAuthUser $userEntity */
         if (! $userEntity)
-            throw new exUserNotFound('User not Found.');
+            throw new exUserNotFound(sprintf(
+                'User (%s) not Found.'
+                , ($username) ? 'uname: '.$username : 'uid: '.$userid
+            ));
 
 
         # Build Response
