@@ -153,6 +153,7 @@ return [
                     'name' => 'oauth.users',
                     // which client to connect and query with
                     'client' => 'master',
+                    #'client' => 'prod1',
                     // ensure indexes
                     'indexes' => [
                         [ 'key' => ['date_created_mongo'=>1, ] ],

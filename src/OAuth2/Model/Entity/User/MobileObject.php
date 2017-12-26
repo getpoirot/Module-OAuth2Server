@@ -19,7 +19,6 @@ class MobileObject
     function __construct($optionsResource)
     {
         $this->with(static::parseWith($optionsResource));
-
     }
 
 
@@ -90,6 +89,13 @@ class MobileObject
      */
     static function parseWith($optionsResource, array $_ = null)
     {
+        if ( is_string($optionsResource) ) {
+            // Parse Mobile Number From String
+            $matches = [];
+            \Module\OAuth2\isValidMobileNum($optionsResource, $matches);
+            $optionsResource = $matches;
+        }
+
         return parent::parseWith($optionsResource);
     }
 }
