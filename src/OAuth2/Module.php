@@ -67,11 +67,11 @@ namespace Module\OAuth2
          */
         function initAutoload(LoaderAutoloadAggregate $baseAutoloader)
         {
-            #$nameSpaceLoader = \Poirot\Loader\Autoloader\LoaderAutoloadNamespace::class;
-            $nameSpaceLoader = 'Poirot\Loader\Autoloader\LoaderAutoloadNamespace';
+            $nameSpaceLoader = \Poirot\Loader\Autoloader\LoaderAutoloadNamespace::class;
             /** @var LoaderAutoloadNamespace $nameSpaceLoader */
             $nameSpaceLoader = $baseAutoloader->loader($nameSpaceLoader);
             $nameSpaceLoader->addResource(__NAMESPACE__, __DIR__);
+
 
             require_once __DIR__.'/_functions.php';
         }
