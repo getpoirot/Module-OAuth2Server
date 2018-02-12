@@ -8,6 +8,9 @@ use Module\Authorization\Services\Guards\aServiceGuard;
 class ServiceAuthGuard
     extends aServiceGuard
 {
+    /** @var string Service Name */
+    protected $name = 'oauth2.routes';
+
     protected $authenticatorName = \Module\OAuth2\Module::REALM;
 
 
