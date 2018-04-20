@@ -166,9 +166,13 @@ class UserRepo
      */
     function findAll(array $expression, $offset = null, $limit = null)
     {
-        # search term to mongo condition
-        $expression = \Module\MongoDriver\parseExpressionFromArray($expression);
-        $condition  = \Module\MongoDriver\buildMongoConditionFromExpression($expression);
+        $condition = [];
+        if (! empty($expression) ) {
+            # search term to mongo condition
+            $expression = \Module\MongoDriver\parseExpressionFromArray($expression);
+            $condition  = \Module\MongoDriver\buildMongoConditionFromExpression($expression);
+        }
+
 
         if ($offset)
             $condition = [
@@ -176,6 +180,7 @@ class UserRepo
                         '$lt' => $this->attainNextIdentifier($offset),
                     ]
                 ] + $condition;
+
 
         $r = $this->_query()->find(
             $condition
