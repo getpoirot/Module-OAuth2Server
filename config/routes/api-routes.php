@@ -148,6 +148,16 @@ return [
                         ListenerDispatch::ACTIONS => [ '/module/oauth2/actions/ListUsersInfoRequest' ],
                     ],
                 ],
+                'lists' => [
+                    'route' => 'RouteSegment',
+                    'options' => [
+                        'criteria'    => '/list',
+                        'match_whole' => true,
+                    ],
+                    'params'  => [
+                        ListenerDispatch::ACTIONS => [ \Module\OAuth2\Actions\Api\ListUsersRequest::class, ],
+                    ],
+                ],
                 'delegate' => [
                     'route' => 'RouteSegment',
                     'options' => [
