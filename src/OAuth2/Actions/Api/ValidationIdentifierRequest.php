@@ -38,8 +38,6 @@ class ValidationIdentifierRequest
 
 
     /**
-     * Get current user info identified with given token
-     *
      * @param iEntityAccessToken $token
      * @param string             $userid
      * @param string|null        $identifier Specific user identifier

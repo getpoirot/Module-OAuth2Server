@@ -10,6 +10,7 @@ use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
+use Poirot\Ioc\instance;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 use Poirot\Std\Exceptions\exUnexpectedValue;
 
@@ -127,7 +128,7 @@ class ChangeIdentityRequest
                 , $ident->isValidated()
             );
 
-            if ($ident->isValidated())
+            if ( $ident->isValidated() )
                 // Validated Identifier Such as username do not need validation.
                 continue;
 
