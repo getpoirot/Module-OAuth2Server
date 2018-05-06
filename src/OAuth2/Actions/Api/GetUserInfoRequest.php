@@ -6,7 +6,9 @@ use Module\OAuth2\Actions\aApiAction;
 use Module\OAuth2\Exception\exUserNotFound;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Model\Entity\User\GrantObject;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
+use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
 use Poirot\Std\Type\StdTravers;
@@ -86,6 +88,14 @@ class GetUserInfoRequest
         #
         $userInfo = [];
 
+        $reqData = ParseRequestData::_($this->request)->parseQueryParams();
+        if ( isset($reqData['grants']) ) {
+            $activeGrants = [];
+            /** @var GrantObject $g */
+            foreach ($userEntity->getGrants() as $g)
+                $activeGrants[] = (string) $g->getType();
+        }
+
         $isValidAll = true; $validated = array();
         foreach ($userEntity->getIdentifiers() as $identifier) {
                 // embed identifiers validity
@@ -115,7 +125,7 @@ class GetUserInfoRequest
                 ] + $userInfo,
                 'is_valid'      => (boolean) $isValidAll,
                 'is_valid_more' => $validated,
-            ],
+            ] + ( (isset($activeGrants)) ? ['grants' => $activeGrants] : [] ),
         ];
     }
 }
