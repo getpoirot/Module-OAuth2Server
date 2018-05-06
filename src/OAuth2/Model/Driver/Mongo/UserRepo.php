@@ -507,6 +507,8 @@ class UserRepo
      *
      * @return int Affected Rows
      */
+    /*
+     * Upsert Not Working
     function updateGrantTypeValue($uid, $grantType, $grantValue)
     {
         if ($grantType == 'password')
@@ -528,6 +530,45 @@ class UserRepo
                 ]
             ]
         );
+
+        return $r->getModifiedCount();
+    }
+    */
+
+    function updateGrantTypeValue($uid, $grantType, $grantValue)
+    {
+        if ($grantType == 'password')
+            // All Passwords Stored As MD5Sum
+            $grantValue = $this->makeCredentialHash($grantValue);
+
+
+        $r = $this->_query()->updateMany(
+            [
+                'uid' => $this->attainNextIdentifier($uid),
+            ],
+            [
+                '$pull' => [
+                    'grants' => [
+                        'type' => $grantType,
+                    ],
+                ]
+            ]
+        );
+
+        $r = $this->_query()->updateMany(
+            [
+                'uid' => $this->attainNextIdentifier($uid),
+            ],
+            [
+                '$addToSet' => [
+                    'grants' => [
+                        'type'      => $grantType,
+                        'value'     => $grantValue,
+                    ],
+                ]
+            ]
+        );
+
 
         return $r->getModifiedCount();
     }

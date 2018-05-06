@@ -60,10 +60,17 @@ class ChangePasswordRequest
 
         # Current password must match
         #
-        if ( $this->repoUsers->makeCredentialHash($post['currpass']) !== $userEntity->getPassword() )
-            throw new exPasswordNotMatch('Current Password Does not match!');
+        if ( null !== $currPasswd = $userEntity->getPassword() ) {
+            if ($this->repoUsers->makeCredentialHash($post['currpass']) !== $currPasswd)
+                throw new exPasswordNotMatch('Current Password Does not match!');
 
-        $r = $this->repoUsers->updateGrantTypeValue($token->getOwnerIdentifier(), 'password', $post['newpass']);
+            $r = $this->repoUsers->updateGrantTypeValue($token->getOwnerIdentifier(), 'password', $post['newpass']);
+
+        } else {
+            // No Password Defined Yet!!
+            $r = $this->repoUsers->updateGrantTypeValue($token->getOwnerIdentifier(), 'password', $post['newpass']);
+        }
+
 
         return [
             ListenerDispatch::RESULT_DISPATCH => [
