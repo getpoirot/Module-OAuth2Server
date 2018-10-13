@@ -50,7 +50,8 @@ return [
         ## extra config
         #
         // Server Automatically Choose a Username For Registered User If Not Sent
-        'allow_server_pick_username' => true,
+        'allow_server_pick_username'          => true,
+        'allow_change_identifier_immediately' => false,
 
         'mediums' => [
             // TODO use %auth_code% instead of %s

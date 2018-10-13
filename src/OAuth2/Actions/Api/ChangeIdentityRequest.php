@@ -8,6 +8,7 @@ use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
 use Module\OAuth2\Model\Entity\User\IdentifierObject;
+use Module\OAuth2\Model\Entity\Validation\AuthObject;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\Ioc\instance;
@@ -117,36 +118,115 @@ class ChangeIdentityRequest
 
         # re-Set user identifiers with given value
         #
-        $validations = [];
+        $validations = []; $generateFor = [];
         /** @var iUserIdentifierObject $id */
         foreach ($changedIdentifiers as $ident)
         {
-            $this->repoUsers->setUserIdentifier(
-                $token->getOwnerIdentifier()
-                , $ident->getType()
-                , $ident->getValue()
-                , $ident->isValidated()
-            );
+            // check allow server change identifier immediately!!
+            //
+            $config  = $this->sapi()->config()->get(\Module\OAuth2\Module::CONF_KEY);
+            $isAllow = (boolean) $config['allow_change_identifier_immediately'];
 
-            if ( $ident->isValidated() )
-                // Validated Identifier Such as username do not need validation.
-                continue;
+            if ($isAllow)
+            {
+                $this->repoUsers->setUserIdentifier(
+                    $token->getOwnerIdentifier()
+                    , $ident->getType()
+                    , $ident->getValue()
+                    , $ident->isValidated()
+                );
+
+                if ( $ident->isValidated() )
+                    // Validated Identifier Such as username do not need validation.
+                    continue;
+            }
+            else
+            {
+                // Just save identifier if validated, otherwise let save after user confirm validation
+                //
+                if ( $ident->isValidated() ) {
+                    // Validated Identifier Such as username do not need validation.
+                    $this->repoUsers->setUserIdentifier(
+                        $token->getOwnerIdentifier()
+                        , $ident->getType()
+                        , $ident->getValue()
+                        , $ident->isValidated()
+                    );
+
+                } else {
+                    // Send validation request code
+                    //
+                    $generateFor[] = $ident;
+                }
+            }
 
             $validations[ $ident->getType() ] = [
                 '_link' =>
                     (string) \Module\HttpFoundation\Actions::url(
                         'main/oauth/api/members/delegate/validate'
                         , [
-                            'userid' => (string) $userEntity->getUid(),
+                            'userid'     => (string) $userEntity->getUid(),
                             'identifier' => $ident->getType(),
                         ]
                     )
             ];
         }
 
+        if (! empty($generateFor) ) {
+            $entityValidation = $this->Validation()->madeValidationChallenge($userEntity, $generateFor);
+            /** @var AuthObject $authCodeObject */
+            foreach ($entityValidation->getAuthCodes() as $authCodeObject)
+                $_ = $this->Validation()->sendAuthCodeByMediumType($entityValidation, $authCodeObject->getType());
+
+
+            $validations = [];
+            foreach ($generateFor as $ident)
+            {
+                $type         = $ident->getType();
+
+                $linkValidate = (string) \Module\HttpFoundation\Actions::url(
+                    'main/oauth/recover/validate'
+                    , ['validation_code' => $entityValidation->getValidationCode()]
+                );
+
+                $linkResend   = (string) \Module\HttpFoundation\Actions::url(
+                    'main/oauth/recover/validate_resend'
+                    , [
+                        'validation_code' => $entityValidation->getValidationCode(),
+                        'identifier_type' => $ident->getType()
+                    ]
+                );
+
+                $validations[$type] = [
+                    '_link' => [
+                        'validate'  => $linkValidate.'?'.$type.'=***',
+                        'send_code' => $linkResend,
+                    ],
+                ];
+            }
+
+            $r = [
+                'validations' => $validations,
+            ];
+
+            (! $entityValidation ) ?: $r += [
+                'hash' => $entityValidation->getValidationCode(),
+                '_link' => [
+                    'validation_page' => (string) \Module\HttpFoundation\Actions::url(
+                        'main/oauth/recover/validate'
+                        , ['validation_code' => $entityValidation->getValidationCode()]
+                    ),
+                ],
+            ];
+
+            return [
+                ListenerDispatch::RESULT_DISPATCH => $r
+            ];
+        }
+
 
         # Build Response
-        $r = array();
+        $r = [];
         $r['validated']   = $rIdentifiers;
         $r['validations'] = $validations;
 

@@ -104,7 +104,7 @@ class Validation
             $authCodes[] = $this->GenIdentifierAuthCode($ident);
         }
 
-        if (empty($authCodes))
+        if ( empty($authCodes) )
             // User Identifiers All Is Validated!
             return null;
 
