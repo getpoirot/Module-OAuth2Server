@@ -89,6 +89,14 @@ class ValidationEntity
             $data['auth_codes'] = $preIdents;
         }
 
+        if (isset($data['meta'])) {
+            $meta = $data['meta'];
+            if ($meta instanceof \Traversable)
+                $meta = \Poirot\Std\cast($meta)->toArray();
+
+            $data['meta'] = $meta;
+        }
+
         $this->import($data);
     }
 }

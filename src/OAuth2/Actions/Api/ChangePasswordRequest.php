@@ -6,6 +6,9 @@ use Module\OAuth2\Actions\aApiAction;
 use Module\OAuth2\Exception\exPasswordNotMatch;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
+use Module\OAuth2\Model\Entity\User\IdentifierObject;
+use Module\OAuth2\Model\Entity\UserEntity;
+use Module\OAuth2\Model\Entity\Validation\AuthObject;
 use Poirot\Http\HttpMessage\Request\Plugin\ParseRequestData;
 use Poirot\Http\Interfaces\iHttpRequest;
 use Poirot\OAuth2\Interfaces\Server\Repository\iEntityAccessToken;
@@ -15,6 +18,8 @@ use Poirot\Std\Exceptions\exUnexpectedValue;
 class ChangePasswordRequest
     extends aApiAction
 {
+    const REASON_CHANGE_PASSWORD = 'change.password';
+
     /** @var iRepoUsers */
     protected $repoUsers;
 
@@ -48,7 +53,7 @@ class ChangePasswordRequest
 
         # Retrieve User With OwnerID
         #
-        /** @var iOAuthUser $userEntity */
+        /** @var UserEntity|iOAuthUser $userEntity */
         if (! $userEntity = $this->repoUsers->findOneByUID( $token->getOwnerIdentifier() ))
             throw new \Exception('User not Found.', 500);
 
@@ -58,25 +63,90 @@ class ChangePasswordRequest
         $post = $this->_assertValidData($post);
 
 
-        # Current password must match
-        #
-        if ( null !== $currPasswd = $userEntity->getPassword() ) {
+        // Current password must match
+        //
+        if (isset($post['currpass']) && null !== $currPasswd = $userEntity->getPassword() ) {
             if ($this->repoUsers->makeCredentialHash($post['currpass']) !== $currPasswd)
                 throw new exPasswordNotMatch('Current Password Does not match!');
 
             $r = $this->repoUsers->updateGrantTypeValue($token->getOwnerIdentifier(), 'password', $post['newpass']);
 
-        } else {
-            // No Password Defined Yet!!
-            $r = $this->repoUsers->updateGrantTypeValue($token->getOwnerIdentifier(), 'password', $post['newpass']);
+
+            ## Build Response
+            #
+            return [
+                ListenerDispatch::RESULT_DISPATCH => [
+                    'stat' => ($r) ? 'changed' : 'unchanged'
+                ],
+            ];
         }
 
 
-        return [
-            ListenerDispatch::RESULT_DISPATCH => [
-                'stat' => ($r) ? 'changed' : 'unchanged'
+        // No Password Defined Yet!!
+        //
+        /** @var IdentifierObject $mobIdentifier */
+        $mobIdentifier = $userEntity->getIdentifiers(IdentifierObject::IDENTITY_MOBILE);
+        if (! $mobIdentifier )
+            throw new exUnexpectedValue('"currpass" Parameters is missing.');
+
+
+        // TODO persist change password validation entity only once
+
+        // force send validation challenge
+        /** @see Validation::madeValidationChallenge */
+        $mobIdentifier->setValidated(false);
+        $entityValidation = $this->Validation()
+            ->madeValidationChallenge($userEntity, [$mobIdentifier], null, null, self::REASON_CHANGE_PASSWORD, ['password_change' => $post['newpass']]);
+        /** @var AuthObject $authCodeObject */
+        foreach ($entityValidation->getAuthCodes() as $authCodeObject)
+            $_ = $this->Validation()->sendAuthCodeByMediumType($entityValidation, $authCodeObject->getType());
+
+
+
+        $validations = []; $generateFor = [$mobIdentifier];
+        foreach ($generateFor as $ident)
+        {
+            $type         = $ident->getType();
+
+            $linkValidate = (string) \Module\HttpFoundation\Actions::url(
+                'main/oauth/api/me/identifiers/confirm'
+                , ['validation_code' => $entityValidation->getValidationCode()]
+            );
+
+            $linkResend   = (string) \Module\HttpFoundation\Actions::url(
+                'main/oauth/recover/validate_resend'
+                , [
+                    'validation_code' => $entityValidation->getValidationCode(),
+                    'identifier_type' => $ident->getType()
+                ]
+            );
+
+            $validations[$type] = [
+                '_link' => [
+                    'validate'  => $linkValidate,
+                    'send_code' => $linkResend,
+                ],
+            ];
+        }
+
+        $r = [
+            'validations' => $validations,
+        ];
+
+        (! $entityValidation ) ?: $r += [
+            'hash' => $entityValidation->getValidationCode(),
+            '_link' => [
+                'validation_page' => (string) \Module\HttpFoundation\Actions::url(
+                    'main/oauth/recover/validate'
+                    , ['validation_code' => $entityValidation->getValidationCode()]
+                ),
             ],
         ];
+
+        return [
+            ListenerDispatch::RESULT_DISPATCH => $r
+        ];
+        // $r = $this->repoUsers->updateGrantTypeValue($token->getOwnerIdentifier(), 'password', $post['newpass']);
     }
 
 
@@ -96,12 +166,13 @@ class ChangePasswordRequest
     protected function _assertValidData(array $post)
     {
         # Validate Data:
-        if (! isset($post['newpass']) || !isset($post['currpass']) )
-            throw new exUnexpectedValue('Arguments "newpass" & "currpass" is required.');
+        if (! isset($post['newpass']) )
+            throw new exUnexpectedValue('Arguments "newpass" is required.');
+
 
         # Sanitize Data:
         $post['newpass']  = trim($post['newpass']);
-        $post['currpass'] = trim($post['currpass']);
+        $post['currpass'] = (isset($post['currpass']) && !empty($post['currpass'])) ? $post['currpass'] : null;
 
         return $post;
     }

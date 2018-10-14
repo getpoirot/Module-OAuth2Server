@@ -77,15 +77,16 @@ class Validation
      *
      * - Persist Validation
      *
-     *
      * @param iOAuthUser              $user
      * @param iUserIdentifierObject[] $identifiers
-     * @param null                    $continue
+     * @param null|string             $continue
      * @param \DateTime               $dateTimeExpiration
+     * @param null|string             $reason
+     * @param array                   $meta
      *
      * @return ValidationEntity|null Validation code identifier
      */
-    function madeValidationChallenge(iOAuthUser $user = null, array $identifiers, $continue = null, \DateTime $dateTimeExpiration = null)
+    function madeValidationChallenge(iOAuthUser $user = null, array $identifiers, $continue = null, \DateTime $dateTimeExpiration = null, $reason = null, array $meta = null)
     {
         if ($dateTimeExpiration === null) {
             $dateTimeExpiration = new \DateTime();
@@ -114,8 +115,10 @@ class Validation
         $validationCode = new ValidationEntity;
         $validationCode
             ->setValidationCode( \Poirot\Std\generateUniqueIdentifier(30) )
+            ->setReason($reason)
             ->setUserUid($user->getUid())
             ->setAuthCodes($authCodes)
+            ->setMeta($meta)
             ->setDateTimeExpiration($dateTimeExpiration)
             ->setContinueFollowRedirection($continue) // used by oauth registration follow
         ;
@@ -148,9 +151,10 @@ class Validation
         $authCodes = $validationEntity->getAuthCodes();
         foreach ($authCodes as $ac)
         {
-            if ($ac->isValidated())
+            if ( $ac->isValidated() )
                 // This Auth Code is Validated.
                 continue;
+
 
             $mediumType = $ac->getType();
             if (! isset($validateAgainst[$mediumType]) ) {
@@ -181,7 +185,7 @@ class Validation
 
             if ($forget) {
                 // Don`t need to update validation entity
-                // we used to just vaidate given data
+                // we used to just validate given data
                 // in exp. generate ott (one-time-token)
                 $this->repoValidationCodes->deleteByValidationCode(
                     $validationEntity->getValidationCode()

@@ -61,7 +61,9 @@ class ValidationRepo
         $e = new ValidationEntity; // use object model persist
         $e  ->setUserUid( $this->attainNextIdentifier($validationCode->getUserUid()) )
             ->setValidationCode($validationCode->getValidationCode())
+            ->setReason($validationCode->getReason())
             ->setAuthCodes($validationCode->getAuthCodes())
+            ->setMeta($validationCode->getMeta())
             ->setDateTimeExpiration($validationCode->getDateTimeExpiration())
             ->setContinueFollowRedirection($validationCode->getContinueFollowRedirection())
         ;

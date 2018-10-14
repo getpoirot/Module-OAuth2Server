@@ -76,7 +76,23 @@ class ConfirmValidationRequest
 
         # All Is Validated? Delete Validation Entity
         if ($isAllValidated)
+        {
+            // Change Password Request
+            //
+            if ($validationEntity->getReason() === ChangePasswordRequest::REASON_CHANGE_PASSWORD)
+            {
+                $password = $validationEntity->getMeta('password_change');
+
+                $this->repoUsers->updateGrantTypeValue(
+                    $validationEntity->getUserUid()
+                    , 'password'
+                    , $password
+                );
+            }
+
+
             $this->repoValidationCodes->deleteByValidationCode($validation_code);
+        }
 
 
         # Build View Params

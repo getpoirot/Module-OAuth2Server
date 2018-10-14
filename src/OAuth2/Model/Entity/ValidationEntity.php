@@ -4,6 +4,7 @@ namespace Module\OAuth2\Model\Entity;
 use Module\OAuth2\Interfaces\Model\iValidation;
 use Module\OAuth2\Interfaces\Model\iValidationAuthCodeObject;
 use Poirot\Std\Struct\DataOptionsOpen;
+use Poirot\Std\Type\StdTravers;
 
 
 class ValidationEntity
@@ -13,6 +14,8 @@ class ValidationEntity
     protected $userIdentifier;
     protected $validationCode;
     protected $authCodes = [];
+    protected $reason;
+    protected $meta = null;
     protected $expirationDateTime;
 
     protected $continueFollowRedirection;
@@ -65,6 +68,29 @@ class ValidationEntity
     }
 
     /**
+     * Reason
+     *
+     * @param string $reason
+     *
+     * @return $this
+     */
+    function setReason($reason)
+    {
+        $this->reason = (string) $reason;
+        return $this;
+    }
+
+    /**
+     * Reason
+     *
+     * @return string|null
+     */
+    function getReason()
+    {
+        return $this->reason;
+    }
+
+    /**
      * Set Authorization codes
      *
      * $authCodes: [
@@ -111,6 +137,45 @@ class ValidationEntity
                 : null;
 
         return array_values($this->authCodes); // must persist as array
+    }
+
+    /**
+     * Set Meta Data
+     *
+     * @param null|array $meta
+     *
+     * @return $this
+     */
+    function setMeta($meta)
+    {
+        if ($meta instanceof \Traversable)
+            $meta = StdTravers::of($meta)->toArray();
+
+        if (null !== $meta && !is_array($meta))
+            throw new \InvalidArgumentException(sprintf(
+                'Meta must be Array or instance of Traversable; given: (%s).'
+                , \Poirot\Std\flatten($meta)
+            ));
+
+
+        $this->meta = $meta;
+        return $this;
+    }
+
+    /**
+     * Get Persist Meta
+     *
+     * @param null|string $key
+     *
+     * @return array|null
+     */
+    function getMeta($key = null)
+    {
+        $meta = $this->meta;
+        if ( $key && is_array($this->meta) )
+            $meta = (isset($this->meta[$key])) ? $this->meta[$key] : null;
+
+        return $meta;
     }
 
     /**

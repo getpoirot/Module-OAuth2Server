@@ -185,7 +185,7 @@ class ChangeIdentityRequest
                 $type         = $ident->getType();
 
                 $linkValidate = (string) \Module\HttpFoundation\Actions::url(
-                    'main/oauth/recover/validate'
+                    'main/oauth/api/me/identifiers/confirm'
                     , ['validation_code' => $entityValidation->getValidationCode()]
                 );
 

@@ -1,6 +1,7 @@
 <?php
 namespace Module\OAuth2\Interfaces\Model;
 
+
 interface iValidation
 {
     /**
@@ -27,6 +28,22 @@ interface iValidation
      * @return $this
      */
     function setValidationCode($code);
+
+    /**
+     * Reason
+     *
+     * @param string $reason
+     *
+     * @return $this
+     */
+    function setReason($reason);
+
+    /**
+     * Reason
+     *
+     * @return string|null
+     */
+    function getReason();
 
     /**
      * Validation Code
@@ -65,6 +82,24 @@ interface iValidation
      * @return []iEntityValidationCodeAuthObject
      */
     function getAuthCodes();
+
+    /**
+     * Set Meta Data
+     *
+     * @param null|array $meta
+     *
+     * @return $this
+     */
+    function setMeta($meta);
+
+    /**
+     * Get Persist Meta
+     *
+     * @param null|string $key
+     *
+     * @return array|null
+     */
+    function getMeta($key = null);
 
     /**
      * Set Expiration DateTime
