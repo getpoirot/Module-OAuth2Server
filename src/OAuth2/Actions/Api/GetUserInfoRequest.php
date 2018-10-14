@@ -77,7 +77,7 @@ class GetUserInfoRequest
         # Retrieve User With OwnerID
         #
         /** @var iOAuthUser $userEntity */
-        if (! $userEntity)
+        if (! $userEntity )
             throw new exUserNotFound(sprintf(
                 'User (%s) not Found.'
                 , ($username) ? 'uname: '.$username : 'uid: '.$userid
