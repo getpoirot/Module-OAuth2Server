@@ -2,8 +2,8 @@
 namespace Module\OAuth2\Actions\User;
 
 use Module\OAuth2\Actions\aAction;
-use Module\OAuth2\Events\DataCollector;
-use Module\OAuth2\Events\EventHeapOfOAuth;
+use Module\OAuth2\Events\OAuthDataTransfer;
+use Module\OAuth2\Events\OAuthEventHeap;
 use Module\OAuth2\Exception\exIdentifierExists;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\Repo\iRepoUsers;
@@ -104,12 +104,12 @@ class Register
         #  before register user
         /** @var UserEntity $entity */
         $entity = $this->event()
-            ->trigger(EventHeapOfOAuth::USER_REGISTER_BEFORE, [
+            ->trigger(OAuthEventHeap::USER_REGISTER_BEFORE, [
                 /** @see Content\Events\DataCollector */
                 'entity_user' => $entity,
             ])
             ->then(function($c) {
-                /** @var DataCollector $c */
+                /** @var OAuthDataTransfer $c */
                 return $c->getEntityUser();
             })
         ;
@@ -124,7 +124,7 @@ class Register
         ## Event
         #
         $this->event()
-            ->trigger(EventHeapOfOAuth::USER_REGISTER, [
+            ->trigger(OAuthEventHeap::USER_REGISTER, [
                 /** @see Content\Events\DataCollector */
                 'entity_user' => $user,
             ])

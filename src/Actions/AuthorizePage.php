@@ -42,6 +42,8 @@ class AuthorizePage
         , iHttpResponse $response
 
     ) {
+        die('dsf');
+
         $this->response   = $response;
         $this->requestPsr = $httpRequestPsr;
 

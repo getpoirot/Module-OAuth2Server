@@ -11,4 +11,4 @@
  *
  *  the autoloader achieve class and never fallback into Module Resolver
  */
-require_once __DIR__ . '/src/OAuth2/Module.php';
+require_once __DIR__ . '/src/Module.php';

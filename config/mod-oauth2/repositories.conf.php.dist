@@ -1,0 +1,21 @@
+<?php
+use Module\OAuth2\Services;
+
+return [
+    Services\Repositories::AccessTokens => new \Poirot\Ioc\instance(
+        \Poirot\OAuth2\Model\Repo\Stateless\AccessTokenRepo::class
+        , [ 'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(), ]
+    ),
+    Services\Repositories::RefreshTokens => new \Poirot\Ioc\instance(
+        \Poirot\OAuth2\Model\Repo\Stateless\RefreshTokens::class
+        , [ 'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(), ]
+    ),
+    Services\Repositories::AuthCodes => new \Poirot\Ioc\instance(
+        \Poirot\OAuth2\Model\Repo\Stateless\AuthorizationCodes::class
+        , [ 'encryption' => new \Poirot\OAuth2\Crypt\Base64\Crypt(), ]
+    ),
+    Services\Repositories::Clients => Services\Repositories\RepoClientsService::class,
+    Services\Repositories::Users => Services\Repositories\RepoUsersService::class,
+    Services\Repositories::UsersApprovedClients => Services\Repositories\RepoUsersApprovedClientsService::class,
+    Services\Repositories::ValidationCodes => Services\Repositories\RepoValidationCodesService::class,
+];

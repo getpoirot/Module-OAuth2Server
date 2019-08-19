@@ -1,7 +1,7 @@
 <?php
 namespace Module\OAuth2\Actions;
 
-use Module\OAuth2\Services\ContainerGrantsCapped;
+use Module\OAuth2\Services\GrantPlugins;
 use Poirot\OAuth2\Server\Grant\GrantAggregateGrants;
 
 
@@ -13,9 +13,9 @@ class GrantResponder
     /**
      * GrantResponder constructor.
      *
-     * @param ContainerGrantsCapped $grantsContainer @IoC /module/oauth2/services/ContainerGrants
+     * @param GrantPlugins $grantsContainer @IoC /module/oauth2/services/ContainerGrants
      */
-    function __construct(ContainerGrantsCapped $grantsContainer)
+    function __construct(GrantPlugins $grantsContainer)
     {
         $this->grantsContainer = $grantsContainer;
 

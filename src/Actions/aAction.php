@@ -5,7 +5,7 @@ use Module\Authorization\Actions\AuthenticatorAction;
 use Module\OAuth2\Actions\Helper\AttainUsername;
 use Module\OAuth2\Actions\User\Register;
 use Module\OAuth2\Actions\Validation\Validation;
-use Module\OAuth2\Events\EventHeapOfOAuth;
+use Module\OAuth2\Events\OAuthEventHeap;
 use Module\OAuth2\Interfaces\Model\iOAuthUser;
 use Module\OAuth2\Interfaces\Model\iUserIdentifierObject;
 use Module\OAuth2\Module;
@@ -51,7 +51,7 @@ abstract class aAction
 
     /** @var iHttpRequest */
     protected $request;
-    /** @var EventHeapOfOAuth */
+    /** @var OAuthEventHeap */
     protected $events;
 
     protected $_authenticator;
@@ -71,7 +71,7 @@ abstract class aAction
     /**
      * Get Events
      *
-     * @return EventHeapOfOAuth
+     * @return OAuthEventHeap
      */
     function event()
     {
@@ -79,7 +79,7 @@ abstract class aAction
             // Build Events From Merged Config
             $conf   = $this->sapi()->config()->get( \Module\OAuth2\Module::CONF_KEY );
             $conf   = $conf[self::CONF];
-            $events = new EventHeapOfOAuth;
+            $events = new OAuthEventHeap;
             $builds = new BuildEvent([ 'meeter' => new MeeterIoc, 'events' => $conf ]);
             $builds->build($events);
 
